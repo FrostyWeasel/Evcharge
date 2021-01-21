@@ -1,5 +1,7 @@
 package ntua.softeng28.evcharge.user;
 
+import java.util.HashSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,13 @@ class AddUser {
   CommandLineRunner initDatabase(UserRepository repository) {
 
     return args -> {
-      log.info("Preloading {}", repository.save(new User("Bilbo", "Baggins", "bb@gmail.com", "theBilbs", passwordEncoder.encode("bilbo123"), false, "ROLE_ADMIN")));
-      log.info("Preloading {}", repository.save(new User("Frodo", "Baggins", "fb@gmail.com", "theFrods", passwordEncoder.encode("frodo456"), false, "ROLE_USER")));
+      try{
+        log.info("Preloading {}", repository.save(new User("Bilbo", "Baggins", "bb@gmail.com", "theBilbs", passwordEncoder.encode("bilbo123"), false, "ROLE_ADMIN", new HashSet<>())));
+        log.info("Preloading {}", repository.save(new User("Frodo", "Baggins", "fb@gmail.com", "theFrods", passwordEncoder.encode("frodo456"), false, "ROLE_USER", new HashSet<>())));
+      }
+      catch(RuntimeException e){
+        log.error("Failed to add users to DB:", e.getMessage());
+      }
     };
   }
 }

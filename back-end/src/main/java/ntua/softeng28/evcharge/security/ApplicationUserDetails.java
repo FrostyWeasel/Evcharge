@@ -22,7 +22,7 @@ public class ApplicationUserDetails implements UserDetails {
     public ApplicationUserDetails(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.isLoggedIn = user.getLoggedIn();
+        this.isLoggedIn = user.isLoggedIn();
         this.authorities = Arrays.asList(new SimpleGrantedAuthority(user.getRole()));
     }
 

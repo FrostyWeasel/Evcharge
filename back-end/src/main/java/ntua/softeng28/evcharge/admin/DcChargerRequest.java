@@ -1,8 +1,10 @@
-package ntua.softeng28.evcharge.car;
+package ntua.softeng28.evcharge.admin;
 
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ntua.softeng28.evcharge.car.ChargingCurvePoint;
 
 public class DcChargerRequest {
     

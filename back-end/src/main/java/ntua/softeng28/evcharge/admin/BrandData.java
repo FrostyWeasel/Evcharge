@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.car;
+package ntua.softeng28.evcharge.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

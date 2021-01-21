@@ -24,28 +24,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     
+    //TODO: Uncomment
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("X-OBSERVATORY-AUTH");
 
-        String username = null;
+        // String username = null;
 
-        if(token != null){
-            username = jwtTokenUtil.getUsernameFromToken(token);
-        }
+        // if(token != null){
+        //     username = jwtTokenUtil.getUsernameFromToken(token);
+        // }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(username);
+        // if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        //     UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(username);
 
-            if(Boolean.TRUE.equals(jwtTokenUtil.validateToken(token, userDetails)) && userDetails.isCredentialsNonExpired()){
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        //     if(Boolean.TRUE.equals(jwtTokenUtil.validateToken(token, userDetails)) && userDetails.isCredentialsNonExpired()){
+        //         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = 
+        //             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        //             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
-        }
+        //             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        //     }
+        // }
 
         filterChain.doFilter(request, response);
     }

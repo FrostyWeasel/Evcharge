@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,12 @@ public class AdminController {
    
     @Autowired
     ChargingPointRepository chargingPointRepository;
+
+    @Autowired
+    ChargingPointService chargingPointService;
+
+	@Autowired
+	CarService carService;
     
     @PostMapping(path = baseURL + "/admin/system/sessionsupd")
     public ResponseEntity loadChargingData(@RequestParam("file") MultipartFile file) {
@@ -73,13 +80,42 @@ public class AdminController {
                     sessionRepository.save(session);
                 }
 
-            } catch (Exception ex) {
+            } catch (Exception e) {
+                logger.error(e.getMessage());
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
         }
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @PostMapping(path = baseURL + "/admin/carsupd")
+	public ResponseEntity createCar(@RequestBody CarDataRequest carDataRequest) {
+		logger.info("Received Car Creation request: {}", carDataRequest);
+		try {
+			carService.saveCarsToDB(carDataRequest);
+
+			return new ResponseEntity(HttpStatus.OK);
+		} 
+		catch (RuntimeException e) {
+            logger.error(e.getMessage());
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+    }
+    
+    @PostMapping(path = baseURL + "/admin/pointsupd")
+	public ResponseEntity createPoints(@RequestBody ChargingPointDataRequest pointDataRequest) {
+		logger.info("Received Point Creation request: {}", pointDataRequest);
+		try {
+			chargingPointService.saveChargingPointsToDB(pointDataRequest);
+
+			return new ResponseEntity(HttpStatus.OK);
+		} 
+		catch (RuntimeException e) {
+            logger.error(e.getMessage());
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+	}
 
     // @GetMapping(path = baseURL + "/admin/healthcheck")
     // public ResponseEntity<?> healthcheck() {

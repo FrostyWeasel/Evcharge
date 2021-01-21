@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.car;
+package ntua.softeng28.evcharge.admin;
 
 import java.util.Arrays;
 

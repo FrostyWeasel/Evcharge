@@ -26,12 +26,12 @@ public class ChargingStationController {
         return new ResponseEntity<>(chargingStationRepository.findAll(), HttpStatus.OK);
     }
 
-	@PostMapping(path = baseURL + "/chargingStations")
-	public ResponseEntity<ChargingStation> createChargingStation(@RequestBody ChargingStation chargingStation) {
+	// @PostMapping(path = baseURL + "/chargingStations")
+	// public ResponseEntity<ChargingStation> createChargingStation(@RequestBody ChargingStation chargingStation) {
 
-		return new ResponseEntity<>(chargingStationRepository.save(chargingStation), HttpStatus.OK);
+	// 	return new ResponseEntity<>(chargingStationRepository.save(chargingStation), HttpStatus.OK);
 
-	}
+	// }
 
 	@GetMapping(path = baseURL + "/chargingStations/{id}")
 	public ResponseEntity<ChargingStation> getChargingStationbyId(@PathVariable Long id) {
@@ -45,27 +45,28 @@ public class ChargingStationController {
 
 	}
 
-	@DeleteMapping(path = baseURL + "/chargingStations/{id}")
-	public ResponseEntity deleteById(@PathVariable Long id) {
-        chargingStationRepository.deleteById(id);
-        return new ResponseEntity(HttpStatus.OK);
-	}
+	//TODO: Add delete and put
+	// @DeleteMapping(path = baseURL + "/chargingStations/{id}")
+	// public ResponseEntity deleteById(@PathVariable Long id) {
+    //     chargingStationRepository.deleteById(id);
+    //     return new ResponseEntity(HttpStatus.OK);
+	// }
 
-	@PutMapping(path = baseURL + "/chargingStations/{id}")
-	public ResponseEntity<ChargingStation> updateById(@RequestBody ChargingStation newChargingStation, @PathVariable Long id) {
+	// @PutMapping(path = baseURL + "/chargingStations/{id}")
+	// public ResponseEntity<ChargingStation> updateById(@RequestBody ChargingStation newChargingStation, @PathVariable Long id) {
 
-		ChargingStation ChargingStationToUpdate = chargingStationRepository.findById(id).orElse(null);
+	// 	ChargingStation ChargingStationToUpdate = chargingStationRepository.findById(id).orElse(null);
 
-		if (ChargingStationToUpdate == null) 
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		else {
+	// 	if (ChargingStationToUpdate == null) 
+	// 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	// 	else {
 
-            ChargingStationToUpdate.setLocation(newChargingStation.getLocation());
+    //         ChargingStationToUpdate.setLocation(newChargingStation.getLocation());
 
-			return new ResponseEntity<>(chargingStationRepository.save(ChargingStationToUpdate), HttpStatus.OK);
-		}
+	// 		return new ResponseEntity<>(chargingStationRepository.save(ChargingStationToUpdate), HttpStatus.OK);
+	// 	}
 
-    }
+    // }
 
 }
 

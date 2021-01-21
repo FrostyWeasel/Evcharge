@@ -1,31 +1,29 @@
 package ntua.softeng28.evcharge.charging_point;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import ntua.softeng28.evcharge.Operator.Operator;
 import ntua.softeng28.evcharge.charging_station.ChargingStation;
+import ntua.softeng28.evcharge.session.Session;
 
 @Entity 
 public class ChargingPoint {
 	
 	private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
-	private String location;
-	private String operator;
-	
+	private Float usage_cost;
+
 	@ManyToOne
-	private ChargingStation chargingstation;
+	private Operator operator;
+
 	
 	public ChargingPoint() {
-	}
-
-	public ChargingPoint(Long id, String location, String operator, ChargingStation chargingstation) {
-		this.id = id;
-		this.location = location;
-		this.operator = operator;
-		this.chargingstation = chargingstation;
 	}
 
 	public Long getId() {
@@ -36,35 +34,25 @@ public class ChargingPoint {
 		this.id = id;
 	}
 
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public ChargingStation getChargingstation() {
-		return chargingstation;
-	}
-
-	public void setChargingstation(ChargingStation chargingstation) {
-		this.chargingstation = chargingstation;
-	}
-
-	public String getOperator() {
+	public Operator getOperator() {
 		return operator;
 	}
 
-	public void setOperator(String operator) {
+	public void setOperator(Operator operator) {
 		this.operator = operator;
+	}
+
+	public Float getUsage_cost() {
+		return usage_cost;
+	}
+
+	public void setUsage_cost(Float usage_cost) {
+		this.usage_cost = usage_cost;
 	}
 
 	@Override
 	public String toString() {
-		return "ChargingPoint [id=" + id + ", location=" + location + ", chargingstation=" + chargingstation
-				+ "]";
+		return "ChargingPoint [id=" + id + ", operator=" + operator + ", usage_cost=" + usage_cost + "]";
 	}
-	
 }
 

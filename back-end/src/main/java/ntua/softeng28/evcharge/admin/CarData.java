@@ -1,6 +1,9 @@
-package ntua.softeng28.evcharge.car;
+package ntua.softeng28.evcharge.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ntua.softeng28.evcharge.car.AcCharger;
+import ntua.softeng28.evcharge.car.EnergyConsumption;
 
 public class CarData {
     @JsonProperty("id")

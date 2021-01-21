@@ -1,13 +1,12 @@
 package ntua.softeng28.evcharge.car;
 
+import java.util.Objects;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-
-import ntua.softeng28.evcharge.user.User;
-
 @Entity
 public class Car {
 
@@ -34,9 +33,6 @@ public class Car {
 
 	@Embedded
 	private EnergyConsumption energy_consumption;
-
-	// @ManyToOne
-	// private User user;
 
 	public Car() {
 	}
@@ -142,6 +138,28 @@ public class Car {
 				+ ", energy_consumption=" + energy_consumption + ", id=" + id + ", model=" + model + ", release_year="
 				+ release_year + ", type=" + type + ", usable_battery_size=" + usable_battery_size + ", variant="
 				+ variant + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Car other = (Car) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 	
