@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.Operator;
+package ntua.softeng28.evcharge.operator;
 
 import java.util.Optional;
 

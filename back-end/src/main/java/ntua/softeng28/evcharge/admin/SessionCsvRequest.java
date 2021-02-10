@@ -20,8 +20,6 @@ public class SessionCsvRequest {
     @CsvBindByName
     private String car_id;
     @CsvBindByName
-    private Long charging_session_id;
-    @CsvBindByName
     private Long charging_point_id;
     
     public SessionCsvRequest() {
@@ -29,7 +27,7 @@ public class SessionCsvRequest {
     }
 
     public SessionCsvRequest(String type, String description, Timestamp started_on, Timestamp finished_on,
-            String protocol, long energy_delivered, String car_id, Long charging_session_id, Long charging_point_id) {
+            String protocol, long energy_delivered, String car_id, Long charging_point_id) {
         this.type = type;
         this.description = description;
         this.started_on = started_on;
@@ -37,7 +35,6 @@ public class SessionCsvRequest {
         this.protocol = protocol;
         this.energy_delivered = energy_delivered;
         this.car_id = car_id;
-        this.charging_session_id = charging_session_id;
         this.charging_point_id = charging_point_id;
     }
 
@@ -97,14 +94,6 @@ public class SessionCsvRequest {
         this.car_id = car_id;
     }
 
-    public Long getCharging_session_id() {
-        return charging_session_id;
-    }
-
-    public void setCharging_session_id(Long charging_session_id) {
-        this.charging_session_id = charging_session_id;
-    }
-
     public Long getCharging_point_id() {
         return charging_point_id;
     }
@@ -116,7 +105,7 @@ public class SessionCsvRequest {
     @Override
     public String toString() {
         return "SessionCsvRequest [car_id=" + car_id + ", charging_point_id=" + charging_point_id
-                + ", charging_session_id=" + charging_session_id + ", description=" + description
+                + ", description=" + description
                 + ", energy_delivered=" + energy_delivered + ", finished_on=" + finished_on + ", protocol=" + protocol
                 + ", started_on=" + started_on + ", type=" + type + "]";
     }

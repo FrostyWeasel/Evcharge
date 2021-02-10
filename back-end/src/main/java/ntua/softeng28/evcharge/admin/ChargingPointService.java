@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ntua.softeng28.evcharge.Operator.Operator;
-import ntua.softeng28.evcharge.Operator.OperatorRepository;
+import ntua.softeng28.evcharge.operator.Operator;
+import ntua.softeng28.evcharge.operator.OperatorRepository;
 import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 import ntua.softeng28.evcharge.charging_point.ChargingPointRepository;
 import ntua.softeng28.evcharge.charging_station.Address;
@@ -77,7 +77,6 @@ public class ChargingPointService {
                 }
 
                 newChargingPoint.setOperator(newOperator);
-                newChargingPoint.setUsage_cost(chargingPointData.getUsageCost());
 
                 newChargingPoint = chargingPointRepository.save(newChargingPoint);
 

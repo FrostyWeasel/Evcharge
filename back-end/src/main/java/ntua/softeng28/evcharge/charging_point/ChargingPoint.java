@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import ntua.softeng28.evcharge.Operator.Operator;
+import ntua.softeng28.evcharge.operator.Operator;
 import ntua.softeng28.evcharge.charging_station.ChargingStation;
 import ntua.softeng28.evcharge.session.Session;
 
@@ -17,7 +17,6 @@ import ntua.softeng28.evcharge.session.Session;
 public class ChargingPoint {
 	
 	private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
-	private Float usage_cost;
 
 	@ManyToOne
 	private Operator operator;
@@ -42,17 +41,9 @@ public class ChargingPoint {
 		this.operator = operator;
 	}
 
-	public Float getUsage_cost() {
-		return usage_cost;
-	}
-
-	public void setUsage_cost(Float usage_cost) {
-		this.usage_cost = usage_cost;
-	}
-
 	@Override
 	public String toString() {
-		return "ChargingPoint [id=" + id + ", operator=" + operator + ", usage_cost=" + usage_cost + "]";
+		return "ChargingPoint [id=" + id + ", operator=" + operator + "]";
 	}
 }
 

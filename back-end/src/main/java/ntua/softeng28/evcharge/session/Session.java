@@ -2,6 +2,7 @@ package ntua.softeng28.evcharge.session;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,17 +19,15 @@ public class Session {
 	private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
 	private String type;
 	private String description;
-	private Timestamp started_on;
-	private Timestamp finished_on;
+	private Timestamp startedOn;
+	private Timestamp finishedOn;
 	private String protocol;
-	private long energy_delivered;
+	private String payment;
+	private long energyDelivered;
 
 
 	@ManyToOne
 	private Car car;
-
-	@ManyToOne
-	private ChargingStation chargingStation;
 
 	@ManyToOne
 	private ChargingPoint chargingPoint;
@@ -36,18 +35,17 @@ public class Session {
 	public Session() {
 	}
 
-	public Session(Long id, String type, String description, Timestamp started_on, Timestamp finished_on,
-			String protocol, long energy_delivered, Car car, ChargingStation chargingStation,
-			ChargingPoint chargingPoint) {
+	public Session(Long id, String type, String description, Timestamp startedOn, Timestamp finishedOn, String protocol,
+			String payment, long energyDelivered, Car car, ChargingPoint chargingPoint) {
 		this.id = id;
 		this.type = type;
 		this.description = description;
-		this.started_on = started_on;
-		this.finished_on = finished_on;
+		this.startedOn = startedOn;
+		this.finishedOn = finishedOn;
 		this.protocol = protocol;
-		this.energy_delivered = energy_delivered;
+		this.payment = payment;
+		this.energyDelivered = energyDelivered;
 		this.car = car;
-		this.chargingStation = chargingStation;
 		this.chargingPoint = chargingPoint;
 	}
 
@@ -75,20 +73,20 @@ public class Session {
 		this.description = description;
 	}
 
-	public Timestamp getStarted_on() {
-		return started_on;
+	public Timestamp getStartedOn() {
+		return startedOn;
 	}
 
-	public void setStarted_on(Timestamp started_on) {
-		this.started_on = started_on;
+	public void setStartedOn(Timestamp startedOn) {
+		this.startedOn = startedOn;
 	}
 
-	public Timestamp getFinished_on() {
-		return finished_on;
+	public Timestamp getFinishedOn() {
+		return finishedOn;
 	}
 
-	public void setFinished_on(Timestamp finished_on) {
-		this.finished_on = finished_on;
+	public void setFinishedOn(Timestamp finishedOn) {
+		this.finishedOn = finishedOn;
 	}
 
 	public String getProtocol() {
@@ -99,12 +97,20 @@ public class Session {
 		this.protocol = protocol;
 	}
 
-	public long getEnergy_delivered() {
-		return energy_delivered;
+	public String getPayment() {
+		return payment;
 	}
 
-	public void setEnergy_delivered(long energy_delivered) {
-		this.energy_delivered = energy_delivered;
+	public void setPayment(String payment) {
+		this.payment = payment;
+	}
+
+	public long getEnergyDelivered() {
+		return energyDelivered;
+	}
+
+	public void setEnergyDelivered(Long energyDelivered) {
+		this.energyDelivered = energyDelivered;
 	}
 
 	public Car getCar() {
@@ -115,14 +121,6 @@ public class Session {
 		this.car = car;
 	}
 
-	public ChargingStation getChargingStation() {
-		return chargingStation;
-	}
-
-	public void setChargingStation(ChargingStation chargingStation) {
-		this.chargingStation = chargingStation;
-	}
-
 	public ChargingPoint getChargingPoint() {
 		return chargingPoint;
 	}
@@ -131,6 +129,11 @@ public class Session {
 		this.chargingPoint = chargingPoint;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "Session [car=" + car + ", chargingPoint=" + chargingPoint + ", description=" + description
+				+ ", energy_delivered=" + energyDelivered + ", finishedOn=" + finishedOn + ", id=" + id + ", payment="
+				+ payment + ", protocol=" + protocol + ", startedOn=" + startedOn + ", type=" + type + "]";
+	}
 
 }

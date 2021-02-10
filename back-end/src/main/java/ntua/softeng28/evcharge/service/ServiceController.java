@@ -1,6 +1,8 @@
 package ntua.softeng28.evcharge.service;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.time.Clock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +17,14 @@ import ntua.softeng28.evcharge.car.Brand;
 import ntua.softeng28.evcharge.car.BrandRepository;
 import ntua.softeng28.evcharge.car.Car;
 import ntua.softeng28.evcharge.car.CarRepository;
+import ntua.softeng28.evcharge.charging_point.ChargingPoint;
+import ntua.softeng28.evcharge.charging_point.ChargingPointRepository;
+import ntua.softeng28.evcharge.session.Session;
+import ntua.softeng28.evcharge.session.SessionRepository;
 
 @RestController
 public class ServiceController {
-    private final String baseURL = "/evcharge/api/";
+    private final String baseURL = "/evcharge/api";
 
     Logger logger = LoggerFactory.getLogger(ServiceController.class);
 
@@ -28,11 +34,30 @@ public class ServiceController {
 	@Autowired
 	BrandRepository brandRepository;
 
-    // @GetMapping(path = baseURL + "/SessionsPerPoint/{pointID}/{date_from}/{date_to}")
-    // public ResponseEntity<?> getSessionsPerPoint() {
+	@Autowired
+	SessionRepository sessionRepository;
 
-        
-    // }
+	@Autowired
+	ChargingPointRepository chargingPointRepository;
+
+    @GetMapping(path = baseURL + "/SessionsPerPoint/{pointID}/{date_from}/{date_to}")
+    public ResponseEntity<SessionsPerPointResponse> getSessionsPerPoint(@PathVariable("pointID") Long pointID, @PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to) {
+		try{	
+			ChargingPoint chargingPoint = chargingPointRepository.findById(pointID).orElseThrow(() -> new RuntimeException(String.format("PointID: %d not found in DB", pointID)));
+			List<Session> sessions = sessionRepository.findByChargingPointAndStartedOnBetween(chargingPoint, date_from, date_to);
+
+			if(sessions.isEmpty()){
+				return new ResponseEntity<>(HttpStatus.PAYMENT_REQUIRED);
+			}
+
+			SessionsPerPointResponse sessionsPerPointResponse = new SessionsPerPointResponse(pointID.toString(), java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(), date_to.toInstant().toString(), Long.valueOf(sessions.size()), sessions);
+			return new ResponseEntity<>(sessionsPerPointResponse, HttpStatus.OK);
+		} 
+		catch (RuntimeException e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+    }
 
     // @GetMapping(path = baseURL + "/SessionsPerStation/{stationID}/{date_from}/{date_to}")
     // public ResponseEntity<?> getSessionsPerStation() {

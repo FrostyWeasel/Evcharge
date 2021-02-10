@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import ntua.softeng28.evcharge.Operator.Operator;
+import ntua.softeng28.evcharge.operator.Operator;
 import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 
 @Entity

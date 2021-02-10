@@ -64,17 +64,18 @@ public class AdminController {
 
                 List<SessionCsvRequest> sessions = csvToBean.parse();
 
+                logger.info("Received Session Creation request: {}", sessions);
+
                 for(SessionCsvRequest sessionRequest: sessions){
                     Session session = new Session();
 
                     session.setCar(carRepository.findById(sessionRequest.getCar_id()).orElse(null));
                     session.setChargingPoint(chargingPointRepository.findById(sessionRequest.getCharging_point_id()).orElse(null));
-                    session.setChargingStation(chargingStationRepository.findById(sessionRequest.getCharging_session_id()).orElse(null));
                     session.setDescription(sessionRequest.getDescription());
                     session.setEnergy_delivered(sessionRequest.getEnergy_delivered());
-                    session.setFinished_on(sessionRequest.getFinished_on());
+                    session.setFinishedOn(sessionRequest.getFinished_on());
                     session.setProtocol(sessionRequest.getProtocol());
-                    session.setStarted_on(sessionRequest.getStarted_on());
+                    session.setStartedOn(sessionRequest.getStarted_on());
                     session.setType(sessionRequest.getType());
 
                     sessionRepository.save(session);
@@ -105,7 +106,7 @@ public class AdminController {
     
     @PostMapping(path = baseURL + "/admin/pointsupd")
 	public ResponseEntity createPoints(@RequestBody ChargingPointDataRequest pointDataRequest) {
-		logger.info("Received Point Creation request: {}", pointDataRequest);
+		//logger.info("Received Point Creation request: {}", pointDataRequest);
 		try {
 			chargingPointService.saveChargingPointsToDB(pointDataRequest);
 
