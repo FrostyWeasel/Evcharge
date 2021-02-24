@@ -11,6 +11,9 @@ public class SessionsPerPointResponse {
 	@JsonProperty("Point")
 	private final String pointID;
 
+	@JsonProperty("PointOperator")
+	private final String operator;
+
 	@JsonProperty("RequestTimestamp")
 	private final String requestTimestamp;
 
@@ -26,13 +29,14 @@ public class SessionsPerPointResponse {
 	@JsonProperty("ChargingSessionsList")
 	private final ChargingSession[] chargingSessions;
 
-	public SessionsPerPointResponse(String pointID, String requestTimestamp, String periodFrom, String periodTo,
+	public SessionsPerPointResponse(String pointID, String operator, String requestTimestamp, String periodFrom, String periodTo,
 			Long numberOfChargingSessions, List<Session> sessions) {
 		this.pointID = pointID;
 		this.requestTimestamp = requestTimestamp;
 		this.periodFrom = periodFrom;
 		this.periodTo = periodTo;
 		this.numberOfChargingSessions = numberOfChargingSessions;
+		this.operator = operator;
 		
 		int i = 1;
 		List<ChargingSession> chargingSessionsList = new ArrayList<>();
@@ -60,6 +64,10 @@ public class SessionsPerPointResponse {
 		return pointID;
 	}
 
+	public String getOperator() {
+		return operator;
+	}
+
 	public String getRequestTimestamp() {
 		return requestTimestamp;
 	}
@@ -84,6 +92,6 @@ public class SessionsPerPointResponse {
 	public String toString() {
 		return "SessionsPerPointResponse [chargingSessions=" + Arrays.toString(chargingSessions)
 				+ ", numberOfChargingSessions=" + numberOfChargingSessions + ", periodFrom=" + periodFrom
-				+ ", periodTo=" + periodTo + ", pointID=" + pointID + ", requestTimestamp=" + requestTimestamp + "]";
+				+ ", periodTo=" + periodTo + ", pointID=" + pointID + ", requestTimestamp=" + requestTimestamp + ", operator=" + operator + "]";
 	}
 }

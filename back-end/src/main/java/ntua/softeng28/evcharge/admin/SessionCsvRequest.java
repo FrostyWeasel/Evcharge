@@ -16,7 +16,7 @@ public class SessionCsvRequest {
     @CsvBindByName
     private String protocol;
     @CsvBindByName
-    private long energy_delivered;
+    private Float energy_delivered;
     @CsvBindByName
     private String car_id;
     @CsvBindByName
@@ -27,7 +27,7 @@ public class SessionCsvRequest {
     }
 
     public SessionCsvRequest(String type, String description, Timestamp started_on, Timestamp finished_on,
-            String protocol, long energy_delivered, String car_id, Long charging_point_id) {
+            String protocol, Float energy_delivered, String car_id, Long charging_point_id) {
         this.type = type;
         this.description = description;
         this.started_on = started_on;
@@ -78,11 +78,11 @@ public class SessionCsvRequest {
         this.protocol = protocol;
     }
 
-    public long getEnergy_delivered() {
+    public Float getEnergy_delivered() {
         return energy_delivered;
     }
 
-    public void setEnergy_delivered(long energy_delivered) {
+    public void setEnergy_delivered(Float energy_delivered) {
         this.energy_delivered = energy_delivered;
     }
 

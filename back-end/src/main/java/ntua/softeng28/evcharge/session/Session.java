@@ -23,7 +23,7 @@ public class Session {
 	private Timestamp finishedOn;
 	private String protocol;
 	private String payment;
-	private long energyDelivered;
+	private Float energyDelivered;
 
 
 	@ManyToOne
@@ -36,7 +36,7 @@ public class Session {
 	}
 
 	public Session(Long id, String type, String description, Timestamp startedOn, Timestamp finishedOn, String protocol,
-			String payment, long energyDelivered, Car car, ChargingPoint chargingPoint) {
+			String payment, Float energyDelivered, Car car, ChargingPoint chargingPoint) {
 		this.id = id;
 		this.type = type;
 		this.description = description;
@@ -105,11 +105,11 @@ public class Session {
 		this.payment = payment;
 	}
 
-	public long getEnergyDelivered() {
+	public Float getEnergyDelivered() {
 		return energyDelivered;
 	}
 
-	public void setEnergyDelivered(Long energyDelivered) {
+	public void setEnergyDelivered(Float energyDelivered) {
 		this.energyDelivered = energyDelivered;
 	}
 

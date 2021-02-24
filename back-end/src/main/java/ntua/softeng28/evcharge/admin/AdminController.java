@@ -72,7 +72,7 @@ public class AdminController {
                     session.setCar(carRepository.findById(sessionRequest.getCar_id()).orElse(null));
                     session.setChargingPoint(chargingPointRepository.findById(sessionRequest.getCharging_point_id()).orElse(null));
                     session.setDescription(sessionRequest.getDescription());
-                    session.setEnergy_delivered(sessionRequest.getEnergy_delivered());
+                    session.setEnergyDelivered(sessionRequest.getEnergy_delivered());
                     session.setFinishedOn(sessionRequest.getFinished_on());
                     session.setProtocol(sessionRequest.getProtocol());
                     session.setStartedOn(sessionRequest.getStarted_on());
