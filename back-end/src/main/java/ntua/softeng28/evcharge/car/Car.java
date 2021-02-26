@@ -19,11 +19,11 @@ public class Car {
 	
 	private String model;
 
-	private int release_year;
+	private Integer release_year;
 
 	private String variant;
 
-	private float usable_battery_size;
+	private Float usable_battery_size;
 
 	@OneToOne
 	private AcCharger ac_charger;
@@ -37,8 +37,8 @@ public class Car {
 	public Car() {
 	}
 
-	public Car(String id, String type, Brand brand, String model, int release_year, String variant,
-			float usable_battery_size, AcCharger ac_charger, DcCharger dc_charger,
+	public Car(String id, String type, Brand brand, String model, Integer release_year, String variant,
+			Float usable_battery_size, AcCharger ac_charger, DcCharger dc_charger,
 			EnergyConsumption energy_consumption) {
 		this.id = id;
 		this.type = type;
@@ -84,11 +84,11 @@ public class Car {
 		this.model = model;
 	}
 
-	public int getRelease_year() {
+	public Integer getRelease_year() {
 		return release_year;
 	}
 
-	public void setRelease_year(int release_year) {
+	public void setRelease_year(Integer release_year) {
 		this.release_year = release_year;
 	}
 
@@ -100,11 +100,11 @@ public class Car {
 		this.variant = variant;
 	}
 
-	public float getUsable_battery_size() {
+	public Float getUsable_battery_size() {
 		return usable_battery_size;
 	}
 
-	public void setUsable_battery_size(float usable_battery_size) {
+	public void setUsable_battery_size(Float usable_battery_size) {
 		this.usable_battery_size = usable_battery_size;
 	}
 

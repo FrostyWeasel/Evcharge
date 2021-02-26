@@ -22,13 +22,13 @@ public class CarData {
 	private String model;
 
 	@JsonProperty("release_year")
-	private int release_year;
+	private Integer release_year;
 
 	@JsonProperty("variant")
 	private String variant;
 
 	@JsonProperty("usable_battery_size")
-    private float usable_battery_size;
+    private Float usable_battery_size;
     
     @JsonProperty("ac_charger")
     private AcCharger ac_charger;
@@ -43,8 +43,8 @@ public class CarData {
 
     }
 
-    public CarData(String id, String brand, String type, String brand_id, String model, int release_year,
-            String variant, float usable_battery_size, AcCharger ac_charger, DcChargerRequest dc_charger,
+    public CarData(String id, String brand, String type, String brand_id, String model, Integer release_year,
+            String variant, Float usable_battery_size, AcCharger ac_charger, DcChargerRequest dc_charger,
             EnergyConsumption energyConsumption) {
         this.id = id;
         this.brand = brand;
@@ -99,11 +99,11 @@ public class CarData {
         this.model = model;
     }
 
-    public int getRelease_year() {
+    public Integer getRelease_year() {
         return release_year;
     }
 
-    public void setRelease_year(int release_year) {
+    public void setRelease_year(Integer release_year) {
         this.release_year = release_year;
     }
 
@@ -115,11 +115,11 @@ public class CarData {
         this.variant = variant;
     }
 
-    public float getUsable_battery_size() {
+    public Float getUsable_battery_size() {
         return usable_battery_size;
     }
 
-    public void setUsable_battery_size(float usable_battery_size) {
+    public void setUsable_battery_size(Float usable_battery_size) {
         this.usable_battery_size = usable_battery_size;
     }
 

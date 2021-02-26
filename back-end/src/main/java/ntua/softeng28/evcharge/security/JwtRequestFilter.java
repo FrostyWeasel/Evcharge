@@ -29,7 +29,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("X-OBSERVATORY-AUTH");
 
-        // String username = null;
+        String username = null;
 
         // if(token != null){
         //     username = jwtTokenUtil.getUsernameFromToken(token);

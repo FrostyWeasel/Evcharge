@@ -8,45 +8,51 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import ntua.softeng28.evcharge.car.Car;
 import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 import ntua.softeng28.evcharge.charging_station.ChargingStation;
+import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
 
 @Entity
 public class Session {
 
 	private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
-	private String type;
-	private String description;
+	// private String type;
+	// private String description;
 	private Timestamp startedOn;
 	private Timestamp finishedOn;
 	private String protocol;
 	private String payment;
 	private Float energyDelivered;
+	private Float cost;
 
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Car car;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private ChargingPoint chargingPoint;
 
-	public Session() {
-	}
+	@OneToOne(optional = false)
+	private EnergyProvider energyProvider;
 
-	public Session(Long id, String type, String description, Timestamp startedOn, Timestamp finishedOn, String protocol,
-			String payment, Float energyDelivered, Car car, ChargingPoint chargingPoint) {
+	public Session(Long id, Timestamp startedOn, Timestamp finishedOn, String protocol, String payment,
+			Float energyDelivered, Float cost, Car car, ChargingPoint chargingPoint, EnergyProvider energyProvider) {
 		this.id = id;
-		this.type = type;
-		this.description = description;
 		this.startedOn = startedOn;
 		this.finishedOn = finishedOn;
 		this.protocol = protocol;
 		this.payment = payment;
 		this.energyDelivered = energyDelivered;
+		this.cost = cost;
 		this.car = car;
 		this.chargingPoint = chargingPoint;
+		this.energyProvider = energyProvider;
+	}
+
+	public Session() {
 	}
 
 	public Long getId() {
@@ -55,22 +61,6 @@ public class Session {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public Timestamp getStartedOn() {
@@ -113,6 +103,14 @@ public class Session {
 		this.energyDelivered = energyDelivered;
 	}
 
+	public Float getCost() {
+		return cost;
+	}
+
+	public void setCost(Float cost) {
+		this.cost = cost;
+	}
+
 	public Car getCar() {
 		return car;
 	}
@@ -129,11 +127,22 @@ public class Session {
 		this.chargingPoint = chargingPoint;
 	}
 
+	public EnergyProvider getEnergyProvider() {
+		return energyProvider;
+	}
+
+	public void setEnergyProvider(EnergyProvider energyProvider) {
+		this.energyProvider = energyProvider;
+	}
+
 	@Override
 	public String toString() {
-		return "Session [car=" + car + ", chargingPoint=" + chargingPoint + ", description=" + description
-				+ ", energy_delivered=" + energyDelivered + ", finishedOn=" + finishedOn + ", id=" + id + ", payment="
-				+ payment + ", protocol=" + protocol + ", startedOn=" + startedOn + ", type=" + type + "]";
+		return "Session [car=" + car + ", chargingPoint=" + chargingPoint + ", cost=" + cost + ", energyDelivered="
+				+ energyDelivered + ", energyProvider=" + energyProvider + ", finishedOn=" + finishedOn + ", id=" + id
+				+ ", payment=" + payment + ", protocol=" + protocol + ", startedOn=" + startedOn + "]";
 	}
+
+	
+
 
 }

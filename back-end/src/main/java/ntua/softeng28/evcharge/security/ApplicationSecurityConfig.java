@@ -32,7 +32,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .authorizeRequests().anyRequest().permitAll()
+            .authorizeRequests()
+            .anyRequest().permitAll() //DELETE
             // .antMatchers("/evcharge/api/login").permitAll()
             // .antMatchers("/evcharge/api/admin/**").hasRole("ADMIN")
             // .antMatchers("/evcharge/api/**").hasAnyRole("ADMIN", "USER")

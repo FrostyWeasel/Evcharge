@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.EnergyProvider;
+package ntua.softeng28.evcharge.energy_provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class EnergyProviderController {
         return new ResponseEntity<>(energyproviderrepository.findAll(), HttpStatus.OK);
     }
 
-	@PostMapping(path = baseURL + "/energyproviders")
+	@PostMapping(path = baseURL + "admin/energyproviders")
 	public ResponseEntity<EnergyProvider> createProvider(@RequestBody EnergyProvider energyprovider) {
 
 		return new ResponseEntity<>(energyproviderrepository.save(energyprovider), HttpStatus.OK);
@@ -47,13 +47,13 @@ public class EnergyProviderController {
 
 	}
 
-	@DeleteMapping(path = baseURL + "/energyproviders/{id}")
+	@DeleteMapping(path = baseURL + "admin/energyproviders/{id}")
 	public ResponseEntity deleteById(@PathVariable Long id) {
         energyproviderrepository.deleteById(id);
         return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@PutMapping(path = baseURL + "/payments/{id}")
+	@PutMapping(path = baseURL + "admin/payments/{id}")
 	public ResponseEntity<EnergyProvider> updateById(@RequestBody EnergyProvider newProvider, @PathVariable Long id) {
 
 		EnergyProvider providertoupdate = energyproviderrepository.findById(id).orElse(null);
@@ -63,11 +63,11 @@ public class EnergyProviderController {
 		else {
 
             providertoupdate.setBrandName(newProvider.getBrandName());
-            providertoupdate.setLow_Price(newProvider.getLow_Price());
-            providertoupdate.setMid_Price(newProvider.getMid_Price());
-            providertoupdate.setHigh_Price(newProvider.getHigh_Price());
-            providertoupdate.setLowtoMid_Limit(newProvider.getLowtoMid_Limit());
-            providertoupdate.setMidtoHigh_Limit(newProvider.getMidtoHigh_Limit());
+            providertoupdate.setLowPrice(newProvider.getLowPrice());
+            providertoupdate.setMidPrice(newProvider.getMidPrice());
+            providertoupdate.setHighPrice(newProvider.getHighPrice());
+            providertoupdate.setLowtoMidLimit(newProvider.getLowtoMidLimit());
+            providertoupdate.setMidtoHighLimit(newProvider.getMidtoHighLimit());
 
 			return new ResponseEntity<>(energyproviderrepository.save(providertoupdate), HttpStatus.OK);
 		}
