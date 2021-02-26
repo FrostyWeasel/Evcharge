@@ -22,9 +22,6 @@ public class EnergyProvider {
 	private int LowtoMid_Limit;
 	private int MidtoHigh_Limit;
 
-	@OneToOne
-	private Session session;
-
 	public Long getId() {
 		return id;
 	}
@@ -79,14 +76,6 @@ public class EnergyProvider {
 
 	public void setMidtoHigh_Limit(int midtoHigh_Limit) {
 		MidtoHigh_Limit = midtoHigh_Limit;
-	}
-
-	public Session getSession() {
-		return session;
-	}
-
-	public void setSession(Session session) {
-		this.session = session;
 	}
 
 }
