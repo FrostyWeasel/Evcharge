@@ -6,31 +6,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SessionDataRequest {
     @JsonProperty("StartedOn")
-	private final Timestamp startedOn;
+	private Timestamp startedOn;
 
 	@JsonProperty("FinishedOn")
-	private final Timestamp finishedOn;
+	private Timestamp finishedOn;
 
 	@JsonProperty("Protocol")
-	private final String protocol;
+	private String protocol;
 
 	@JsonProperty("Payment")
-	private final String payment;
+	private String payment;
 
 	@JsonProperty("Cost")
-	private final Float cost;
+	private Float cost;
 
 	@JsonProperty("EnergyDelivered")
-	private final Float energyDelivered;
+	private Float energyDelivered;
 
     @JsonProperty("VehicleID")
-	private final String vehicleID;
+	private String vehicleID;
 
 	@JsonProperty("ChargingPointID")
-	private final Long chargingPointID;
+	private Long chargingPointID;
 
     @JsonProperty("EnergyProviderID")
-	private final Long energyProviderID;
+	private Long energyProviderID;
+
+	public SessionDataRequest(){
+
+	}
 
 	public SessionDataRequest(Timestamp startedOn, Timestamp finishedOn, String protocol, String payment, Float cost,
 			Float energyDelivered, String vehicleID, Long chargingPointID, Long energyProviderID) {
