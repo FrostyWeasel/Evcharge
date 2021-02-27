@@ -31,8 +31,18 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2',
-            	'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2',
+			'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+	// https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
+	implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.7', ext: 'pom'
+
+	// https://mvnrepository.com/artifact/org.spockframework/spock-core
+	testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-M4-groovy-3.0'
+
+	// https://mvnrepository.com/artifact/org.spockframework/spock-spring
+	testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.0-M4-groovy-3.0'
+
 }
 
 test {
