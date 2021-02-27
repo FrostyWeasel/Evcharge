@@ -23,7 +23,6 @@ import ntua.softeng28.evcharge.car.CarRepository;
 import ntua.softeng28.evcharge.charging_point.ChargingPointRepository;
 import ntua.softeng28.evcharge.charging_station.ChargingStationRepository;
 import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
-import ntua.softeng28.evcharge.energy_provider.EnergyProviderController;
 import ntua.softeng28.evcharge.energy_provider.EnergyProviderRepository;
 import ntua.softeng28.evcharge.session.Session;
 import ntua.softeng28.evcharge.session.SessionRepository;
@@ -74,42 +73,38 @@ public class AdminController {
 
                 for(SessionCsvRequest sessionRequest: sessions){
                     Session session = new Session();
-                    EnergyProvider energyProvider = energyProviderRepository.findById(sessionRequest.getEnergy_provider_id()).orElse(null);
+                    EnergyProvider energyProvider = energyProviderRepository.findById(sessionRequest.getEnergy_provider_id()).orElseThrow(() -> new RuntimeException(String.format("Energy_provider_id: %d not found in DB", sessionRequest.getEnergy_provider_id())));
 
-                    session.setCar(carRepository.findById(sessionRequest.getCar_id()).orElse(null));
-                    session.setChargingPoint(chargingPointRepository.findById(sessionRequest.getCharging_point_id()).orElse(null));
+                    session.setCar(carRepository.findById(sessionRequest.getCar_id()).orElseThrow(() -> new RuntimeException(String.format("Car_id: %s not found in DB", sessionRequest.getCar_id()))));
+                    session.setChargingPoint(chargingPointRepository.findById(sessionRequest.getCharging_point_id()).orElseThrow(() -> new RuntimeException(String.format("Charging_point_id: %d not found in DB", sessionRequest.getCharging_point_id()))));
                     session.setEnergyDelivered(sessionRequest.getEnergy_delivered());
                     session.setFinishedOn(sessionRequest.getFinished_on());
                     session.setProtocol(sessionRequest.getProtocol());
                     session.setStartedOn(sessionRequest.getStarted_on());
                     session.setEnergyProvider(energyProvider);
 
-                    if(sessionRequest.getCost() == 0){
-                        if(energyProvider == null)
-                            session.setCost(sessionRequest.getCost());
-                        else{
-                            Float energyRemaining = sessionRequest.getEnergy_delivered();
-                            Float totalCost = Float.valueOf(0);
+                    if(sessionRequest.getCost() == 0 || sessionRequest.getCost() == null){
+                        Float energyRemaining = sessionRequest.getEnergy_delivered();
+                        Float totalCost = Float.valueOf(0);
 
-                            if(sessionRequest.getEnergy_delivered() >= energyProvider.getMidtoHighLimit()) {
+                        if(sessionRequest.getEnergy_delivered() >= energyProvider.getMidtoHighLimit()) {
+                            totalCost += energyProvider.getLowtoMidLimit() * energyProvider.getLowPrice();
+                            totalCost += (energyProvider.getMidtoHighLimit() - energyProvider.getLowtoMidLimit())
+                                    * energyProvider.getMidPrice();
+
+                            energyRemaining -= energyProvider.getMidtoHighLimit();
+                            totalCost += energyRemaining * energyProvider.getHighPrice();
+                        } else {
+                            if (sessionRequest.getEnergy_delivered() >= energyProvider.getLowtoMidLimit()) {
                                 totalCost += energyProvider.getLowtoMidLimit() * energyProvider.getLowPrice();
-                                totalCost += (energyProvider.getMidtoHighLimit() - energyProvider.getLowtoMidLimit())
-                                        * energyProvider.getMidPrice();
 
-                                energyRemaining -= energyProvider.getMidtoHighLimit();
-                                totalCost += energyRemaining * energyProvider.getHighPrice();
+                                energyRemaining -= energyProvider.getLowtoMidLimit();
+                                totalCost += energyRemaining * energyProvider.getMidPrice();
                             } else {
-                                if (sessionRequest.getEnergy_delivered() >= energyProvider.getLowtoMidLimit()) {
-                                    totalCost += energyProvider.getLowtoMidLimit() * energyProvider.getLowPrice();
-
-                                    energyRemaining -= energyProvider.getLowtoMidLimit();
-                                    totalCost += energyRemaining * energyProvider.getMidPrice();
-                                } else {
-                                    totalCost += energyRemaining * energyProvider.getLowPrice();
-                                }
+                                totalCost += energyRemaining * energyProvider.getLowPrice();
                             }
-                            session.setCost(totalCost);
                         }
+                        session.setCost(totalCost);
                     }
                     else
                         session.setCost(sessionRequest.getCost());
