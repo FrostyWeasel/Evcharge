@@ -15,9 +15,9 @@ import ntua.softeng28.evcharge.car.Car;
 @Entity
 public class User {
   private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
-  private String firstName;
-  private String lastName;
-  private String email;
+  // private String firstName;
+  // private String lastName;
+  // private String email;
   private @Column(unique = true) String username;
   private String password;
   private boolean isLoggedIn;
@@ -29,11 +29,7 @@ public class User {
   User() {
   }
 
-  public User(String firstName, String lastName, String email, String username, String password,
-      boolean isLoggedIn, String role, Set<Car> cars) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
+  public User(String username, String password, boolean isLoggedIn, String role, Set<Car> cars) {
     this.username = username;
     this.password = password;
     this.isLoggedIn = isLoggedIn;
@@ -41,36 +37,13 @@ public class User {
     this.cars = cars;
   }
 
+
   public Long getId() {
     return id;
   }
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getFirstName() {
-    return firstName;
-  }
-
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public String getLastName() {
-    return lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
   }
 
   public String getUsername() {
@@ -115,9 +88,8 @@ public class User {
 
   @Override
   public String toString() {
-    return "User [cars=" + cars + ", email=" + email + ", firstName=" + firstName + ", id=" + id + ", isLoggedIn="
-        + isLoggedIn + ", lastName=" + lastName + ", password=" + password + ", role=" + role + ", username=" + username
-        + "]";
+    return "User [cars=" + cars + ", id=" + id + ", isLoggedIn=" + isLoggedIn + ", password=" + password + ", role="
+        + role + ", username=" + username + "]";
   }
 
 }

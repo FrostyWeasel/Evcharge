@@ -24,7 +24,9 @@ public class UserController {
     UserRepository userRepository;
 
     @PostMapping(path = baseURL + "/admin/usermod/{username}/{password}")
-    public ResponseEntity<String> createUser(@RequestBody User user, @PathVariable String username, @PathVariable String password) {
+    public ResponseEntity<String> createUser(@PathVariable String username, @PathVariable String password) {
+
+        User user = new User();
 
         user.setRole("ROLE_USER");
         user.setLoggedIn(false);
@@ -41,7 +43,7 @@ public class UserController {
         return new ResponseEntity<>(user.toString(), HttpStatus.OK);
     }
 
-    @GetMapping(path = baseURL + "/admin/users")
+    @GetMapping(path = baseURL + "/users")
     public ResponseEntity<List<User>> all() {
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }

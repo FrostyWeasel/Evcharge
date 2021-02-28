@@ -3,28 +3,28 @@ package ntua.softeng28.evcharge.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ChargingSession {
-    @JsonProperty("SessionIndex")           //Integer Α/Α γεγονότος φόρτισης στην περίοδο (1, 2, 3, ...)
+    @JsonProperty("SessionIndex")           
     private final Integer sessionIndex;
 
-    @JsonProperty("SessionID")              //String Το ID του γεγονότος φόρτισης
+    @JsonProperty("SessionID")              
     private final String sessionID;
 
-    @JsonProperty("StartedOn")              //String Η χρονική στιγμή εκκίνησης της φόρτισης
+    @JsonProperty("StartedOn")              
     private final String startedOn;
 
-    @JsonProperty("FinishedOn")             //String Η χρονική στιγμή ολοκλήρωσης της φόρτισης
+    @JsonProperty("FinishedOn")             
     private final String finishedOn;
 
-    @JsonProperty("Protocol")               //String Το ακολουθούμενο πρωτόκολλο φόρτισης
+    @JsonProperty("Protocol")               
     private final String protocol;
 
-    @JsonProperty("EnergyDelivered")        //Float Η ενέργεια που μεταφέρθηκε σε KWh
+    @JsonProperty("EnergyDelivered")        
     private final Float energyDelivered;
 
-    @JsonProperty("Payment")                //String Ο τρόπος πληρωμής
+    @JsonProperty("Payment")                
     private final String payment;
 
-    @JsonProperty("VehicleType")            //String Ο τύπος του οχήματος
+    @JsonProperty("VehicleType")            
     private final String vehicleType;
 
 	public ChargingSession(Integer sessionIndex, String sessionID, String startedOn, String finishedOn, String protocol,

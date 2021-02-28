@@ -3,29 +3,38 @@ package ntua.softeng28.evcharge.service;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.opencsv.bean.CsvBindByName;
 
 public class SessionsPerEVResponse {
+	@CsvBindByName(column = "VehicleID")
     @JsonProperty("VehicleID")
 	private final String vehicleID;
-
+	
+	@CsvBindByName(column = "RequestTimestamp")
 	@JsonProperty("RequestTimestamp")
 	private final String requestTimestamp;
 
+	@CsvBindByName(column = "PeriodFrom")
 	@JsonProperty("PeriodFrom")
 	private final String periodFrom;
 
+	@CsvBindByName(column = "PeriodTo")
 	@JsonProperty("PeriodTo")
 	private final String periodTo;
 
+	@CsvBindByName(column = "TotalEnergyConsumed")
 	@JsonProperty("TotalEnergyConsumed")
 	private final Float totalEnergyConsumed;
 
+	@CsvBindByName(column = "NumberOfVisitedPoints")
 	@JsonProperty("NumberOfVisitedPoints")
 	private final Integer numberOfVisitedPoints;
 
+	@CsvBindByName(column = "NumberOfVehicleChargingSessions")
     @JsonProperty("NumberOfVehicleChargingSessions")
 	private final Integer numberOfVehicleChargingSessions;
 
+	@CsvBindByName(column = "VehicleChargingSessionsList")
     @JsonProperty("VehicleChargingSessionsList")
 	private final VehicleChargingSession[] vehicleChargingSessionsList;
 
