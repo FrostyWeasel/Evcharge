@@ -17,7 +17,7 @@ class OperatorSpec extends Specification {
 	def operator2 = new Operator(2L,"Cristiano Ronaldo")
 	def operator3 = new Operator(3L,"Kobe Bryant")
 	
-	def "Check if crud is ok"(){
+	def "Check if saving and retrieving is ok"(){
 		given:
 		operatorrepo.save(operator1)
 		operatorrepo.save(operator2)
