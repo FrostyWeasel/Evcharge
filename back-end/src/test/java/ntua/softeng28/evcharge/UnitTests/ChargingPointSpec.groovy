@@ -1,33 +1,52 @@
 package ntua.softeng28.evcharge.UnitTests
 
-import javax.transaction.Transactional
-
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.test.context.ActiveProfiles
+
+import ntua.softeng28.evcharge.charging_point.ChargingPoint
+import ntua.softeng28.evcharge.charging_point.ChargingPointRepository
+import ntua.softeng28.evcharge.operator.Operator
+import ntua.softeng28.evcharge.operator.OperatorRepository
 import spock.lang.Specification
 
-import ntua.softeng28.evcharge.charging_point.ChargingPointRepository
-
-//@ContextConfiguration(locations = "src/test/resources/application.properties")
-@WebMvcTest
-@AutoConfigureMockMvc
-@Transactional
+@DataJpaTest
+@ActiveProfiles("test")
 class ChargingPointSpec extends Specification {
 
 	@Autowired
-	private MockMvc mvc
+	private ChargingPointRepository chargingpointrepo
 
-	def "pray to work"() {
+	@Autowired
+	private OperatorRepository operatorrepo
 
-		expect: "Status is 200 and the response is 'Hello world!'"
-		mvc.perform(get("/"))
-				.andExpect(status().isOk())
-				.andReturn()
-				.response
-				.contentAsString == "Hello world!"
+	def operator = new Operator(1L,"John Cena")
+	def chargingpoint = new ChargingPoint(1L,operator)
+
+	def "find charging point by id"() {
+
+		given:
+		def savedoperator = operatorrepo.save(operator)
+		def savedchargingpoint  = chargingpointrepo.save(chargingpoint)
+
+		when: "load chargingpoint entity"
+		def chargingpointfromdb = chargingpointrepo.findOne(savedchargingpoint.getId())
+
+		then:"saved and retrieved entity by id must be equal"
+		savedchargingpoint.getId() == chargingpointfromdb.getId()
+	}
+
+
+	def "find chargingpoint by operator name"() {
+
+		given:
+		def savedoperator = operatorrepo.save(operator)
+		def savedchargingpoint  = chargingpointrepo.save(chargingpoint)
+
+		when: "find chargingpoint by operator name"
+		def chargingpointentity = chargingpointrepo.findOne(savedchargingpoint.getOperator().getId())
+
+		then: "saved and retrieved entity by name must be equal"
+		chargingpointentity.getId() == savedchargingpoint.getId()
 	}
 }
