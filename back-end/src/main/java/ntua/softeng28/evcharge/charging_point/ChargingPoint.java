@@ -24,6 +24,11 @@ public class ChargingPoint {
 	public ChargingPoint() {
 	}
 
+	public ChargingPoint(Operator operator) {
+		super();
+		this.operator = operator;
+	}
+
 	public ChargingPoint(Long id, Operator operator) {
 		super();
 		this.id = id;
