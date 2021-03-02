@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -21,7 +23,12 @@ public class Operator {
 		this.name = name;
 	}
 
-	public Operator() {		
+	public Operator(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Operator() {
 	}
 
 	public Long getId() {
