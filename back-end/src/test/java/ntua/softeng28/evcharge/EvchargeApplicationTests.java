@@ -1,13 +1,13 @@
-package ntua.softeng28.evcharge;
+// package ntua.softeng28.evcharge;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class EvchargeApplicationTests {
+// @SpringBootTest
+// class EvchargeApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }

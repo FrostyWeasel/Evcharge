@@ -54,6 +54,7 @@ public class AdminController {
 	@Autowired
 	CarService carService;
     
+    //TODO: Return JSON with data
     @PostMapping(path = baseURL + "/admin/system/sessionsupd")
     public ResponseEntity loadChargingData(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -178,6 +179,7 @@ public class AdminController {
 		}
 	}
 
+    //! No user verification required
     // @GetMapping(path = baseURL + "/admin/healthcheck")
     // public ResponseEntity<?> healthcheck() {
 

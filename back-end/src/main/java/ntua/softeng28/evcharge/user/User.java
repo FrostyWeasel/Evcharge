@@ -26,7 +26,7 @@ public class User {
   @OneToMany
   Set<Car> cars;
 
-  User() {
+  public User() {
   }
 
   public User(String username, String password, boolean isLoggedIn, String role, Set<Car> cars) {

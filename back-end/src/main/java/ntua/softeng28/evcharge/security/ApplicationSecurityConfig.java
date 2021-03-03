@@ -31,6 +31,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    
+
     //TODO: Stop permitting all
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,31 +42,25 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .anyRequest().permitAll() //DELETE
-            // .antMatchers("/evcharge/api/login").permitAll()
-            // .antMatchers("/evcharge/api/admin/**").hasRole("ADMIN")
-            // .antMatchers("/evcharge/api/**").hasAnyRole("ADMIN", "USER")
-            // .antMatchers("/**").denyAll()
+            // .anyRequest().permitAll()
+            .antMatchers("/evcharge/api/login").permitAll()
+            .antMatchers("/evcharge/api/admin/**").hasRole("ADMIN")
+            .antMatchers("/evcharge/api/**").hasAnyRole("ADMIN", "USER")
+            .antMatchers("/**").denyAll()
             .and()
             .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             .and()
             .cors();
 
-        // http.logout().logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
-        //     httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-        // });
-        // http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.logout().logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        });
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(applicationUserDetailsService).passwordEncoder(getPasswordEncoder());
-    }
-
-    // Generate a BCryptPasswordEncoder Instance
-    @Bean
-    public BCryptPasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+        auth.userDetailsService(applicationUserDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
@@ -77,6 +75,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

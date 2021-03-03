@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 class AddUser {
 
   private static final Logger log = LoggerFactory.getLogger(AddUser.class);
+  
   @Autowired
   BCryptPasswordEncoder passwordEncoder; 
 
