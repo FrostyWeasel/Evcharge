@@ -38,16 +38,23 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
 	implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.7', ext: 'pom'
-
-	// https://mvnrepository.com/artifact/org.spockframework/spock-spring
-	testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.0-M4-groovy-3.0'
 	// https://mvnrepository.com/artifact/org.spockframework/spock-core
 	testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-M4-groovy-3.0'
+	// https://mvnrepository.com/artifact/org.spockframework/spock-spring
+	testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.0-M4-groovy-3.0'
+
+	// https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-sql
+	implementation group: 'org.codehaus.groovy', name: 'groovy-sql', version: '3.0.7'
+
 
 	implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.5.0'
 
 	// https://mvnrepository.com/artifact/com.h2database/h2
 	testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+	// https://mvnrepository.com/artifact/org.codehaus.groovy.modules.http-builder/http-builder
+	implementation group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
+
 
 }
 
