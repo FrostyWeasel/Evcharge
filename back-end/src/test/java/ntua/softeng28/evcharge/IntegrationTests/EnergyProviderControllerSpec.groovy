@@ -13,14 +13,14 @@ import spock.lang.Stepwise
 @SpringBootTest(webEnvironment=RANDOM_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
 @Stepwise
-class ChargingPointControllerSpec extends Specification {
+class EnergyProviderControllerSpec extends Specification {
 	@Autowired TestRestTemplate client
 	
 	def "return a not allowed response"() {
 		when:
-		def entity=client.getForEntity("/evcharge/api/admin/chargingPoints", List)
+		def entity=client.getForEntity("/evcharge/api/energyproviders", List)
 		
 		then:
-		entity.statusCodeValue==200 //HttpStatus.Ok
+		entity.statusCodeValue == 200 //HttpStatus.Ok
 	}
 }

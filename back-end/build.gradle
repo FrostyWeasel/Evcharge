@@ -55,6 +55,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.codehaus.groovy.modules.http-builder/http-builder
 	implementation group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
 
+	// https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-xml
+	implementation group: 'org.codehaus.groovy', name: 'groovy-xml', version: '3.0.7'
+
+	// https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-json
+	implementation group: 'org.codehaus.groovy', name: 'groovy-json', version: '3.0.7'
 
 }
 
