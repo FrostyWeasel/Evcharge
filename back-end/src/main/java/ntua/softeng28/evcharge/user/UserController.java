@@ -29,7 +29,10 @@ public class UserController {
     @PostMapping(path = baseURL + "/admin/usermod/{username}/{password}")
     public ResponseEntity<String> createUser(@PathVariable String username, @PathVariable String password) {
 
-        User user = new User();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if(user == null)
+            user = new User();
 
         user.setRole("ROLE_USER");
         user.setLoggedIn(false);

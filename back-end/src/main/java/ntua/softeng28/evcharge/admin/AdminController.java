@@ -1,7 +1,9 @@
 package ntua.softeng28.evcharge.admin;
 
 import java.io.Reader;
+import java.util.HashSet;
 import java.util.List;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -13,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +30,8 @@ import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
 import ntua.softeng28.evcharge.energy_provider.EnergyProviderRepository;
 import ntua.softeng28.evcharge.session.Session;
 import ntua.softeng28.evcharge.session.SessionRepository;
+import ntua.softeng28.evcharge.user.User;
+import ntua.softeng28.evcharge.user.UserRepository;
 
 @RestController
 public class AdminController {
@@ -53,6 +59,12 @@ public class AdminController {
 
 	@Autowired
 	CarService carService;
+	
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder; 
     
     //TODO: Return JSON with data
     @PostMapping(path = baseURL + "/admin/system/sessionsupd")
@@ -179,14 +191,39 @@ public class AdminController {
 		}
 	}
 
-    //! No user verification required
-    // @GetMapping(path = baseURL + "/admin/healthcheck")
-    // public ResponseEntity<?> healthcheck() {
+    @GetMapping(path = baseURL + "/admin/healthcheck")
+    public ResponseEntity healthcheck() {
+        try{
+            User user = userRepository.findByUsername("admin").orElseThrow(() -> new RuntimeException(String.format("Connection with DBMS could not be established")));
 
-    // }
+            if(user.getUsername().equals("admin"))
+                return ResponseEntity.ok().body(new HealthCheckResponse("OK"));
+            else
+                throw new RuntimeException(String.format("Connection with DBMS could not be established"));
+        }
+        catch(RuntimeException e){
+            logger.error(e.getMessage());
+            return ResponseEntity.ok().body(new HealthCheckResponse("failed"));
+        }
+    }
 
-    // @PostMapping(path = baseURL + "/admin/resetsessions")
-    // public ResponseEntity<?> resetsessions() {
+    @PostMapping(path = baseURL + "/admin/resetsessions")
+    public ResponseEntity resetsessions() {
+        try{
+            sessionRepository.deleteAll();
 
-    // }
+            User user = userRepository.findByUsername("admin").orElse(null);
+
+            if(user == null)
+                user = new User("admin", passwordEncoder.encode("petrol4ever"), false, "ROLE_ADMIN", new HashSet<>());
+
+            userRepository.save(user);
+
+            return ResponseEntity.ok().body(new HealthCheckResponse("OK"));
+        }
+        catch(RuntimeException e){
+            logger.error(e.getMessage());
+            return ResponseEntity.ok().body(new HealthCheckResponse("failed"));
+        }
+    }
 }

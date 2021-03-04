@@ -43,6 +43,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             // .anyRequest().permitAll()
+            .antMatchers("/evcharge/api/admin/healthcheck").permitAll()
+            .antMatchers("/evcharge/api/admin/resetsessions").permitAll()
             .antMatchers("/evcharge/api/login").permitAll()
             .antMatchers("/evcharge/api/admin/**").hasRole("ADMIN")
             .antMatchers("/evcharge/api/**").hasAnyRole("ADMIN", "USER")
