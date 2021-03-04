@@ -3,7 +3,7 @@
 
 
 
-.body{
+.login-body{
 position: fixed;
 overflow-y: scroll;
 width: 100%;
@@ -13,37 +13,44 @@ right: -40px;
 bottom: -40px;
 width: auto;
 height: auto;
-background-image: url(https://ak.picdn.net/shutterstock/videos/31010797/thumb/3.jpg);
+ background-image: url(https://ak.picdn.net/shutterstock/videos/31010797/thumb/3.jpg); 
 background-size: cover;
 -webkit-filter: blur(0px);
+} 
 
+
+
+.body-login{
+    position: fixed;
+    top: calc(30%);
+left: calc(35%);
+height: 35%;
+padding-top: 35px;
+background-color: rgba(0,0,0,0.5);
+padding-left: 50px;
+border-radius: 19px;
+width: 400px;
 }
 
-
-
-.header{
-position: absolute;
-top: calc(50% - 45px);
-left: calc(33%);
-
+.header-login{
+    font-family: 'Exo', sans-serif;
+    font-size: 40px;
+    font-weight: 400;
+    float: left;
+    margin-bottom: 20px;
 }
 
-.header div{
-float: left;
+.header-login div{
 color: rgb(0, 156, 0);
-font-family: 'Exo', sans-serif;
-font-size: 40px;
-font-weight: 400;
 }
 
-.header div span{
+.header-login div span{
 color: #ffffff !important;
 }
 
 .login{
-position: fixed;
-top: calc(45% );
-left: calc(45%);
+/* top: calc(45% );
+left: calc(45%); */
 height: 150px;
 width: 350px;
 padding: 10px;

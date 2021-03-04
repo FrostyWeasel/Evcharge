@@ -18,32 +18,6 @@ class Charge extends React.Component {
     }
     render() {
         return (
-            <html>
-                <body>
-                    <meta name="viewport" content="width=device-width, initial-scale=1" />
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-                    <title>Charge</title>
-                    <div className="body"></div>
-                    <div className="grad"></div>
-                    <div className="header">
-                        <div>Vehicle<span>Charging</span></div>
-                    </div>
-                    <div className="topnav">
-                        <a href="#vehicles"><i className="fa fa-fw fa-car"></i> My vehicles</a>
-                        <a href="#history"><i className="fa fa-history" aria-hidden="true"></i> history of charging events</a>
-                        <a className="active" href="#charge"><i class="fa fa-plug" aria-hidden="true"></i> charge</a>
-                        <div className="topnav-right">
-                            <div className="dropdown">
-                                <button className="dropbtn">Settings
-                                    <i className="fa fa-caret-down"></i>
-                                </button>
-                                <div className="dropdown-content">
-                                    <a href="#ChangePassword">Change Password</a>
-                                </div>
-                            </div>
-                            <a href="#logout"><i className="fa fa-fw fa-user"></i>Logout</a>
-                        </div>
-                    </div>
                     <div className="body1">
                         <h2><i class="fa fa-calculator" aria-hidden="true"></i> Charging cost calculation </h2>
                         <div className="row">
@@ -64,7 +38,6 @@ class Charge extends React.Component {
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <div className="body1">
                         <h2><i class="fa fa-exchange" aria-hidden="true"></i>Make a new charging</h2>
                         <div className="row">
@@ -136,9 +109,8 @@ class Charge extends React.Component {
                             </div>
                         </div>
                     </div>
-                </body>
-            </html>
-        )
+                    </div>
+      )
     }
 }
 

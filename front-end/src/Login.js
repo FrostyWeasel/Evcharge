@@ -1,8 +1,13 @@
-import React from 'react';
+import React,{Component} from 'react';
 import axios from 'axios';
 import $ from 'jquery';
 import './Login.css';
+import { withRouter,useHistory } from 'react-router-dom';
 
+import 'foundation-sites/dist/css/foundation.min.css';
+import { Button, Colors, Grid, Cell } from 'react-foundation';
+global={}
+global.loggedIn = false;
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -10,40 +15,67 @@ class Login extends React.Component {
   }
 
   handleSubmit() {
-    var params = {
-      username: $('#username').val(),
-      pswd: $('#password').val()
+    // var params = 
+    var x = document.forms["login"]["userid"].value;
+    var y = document.forms["login"]["pswrd"].value;
+    if (x == ""|| y== "") {
+      alert("Username and password must be filled out");
+      return false;
     }
-
-    axios.post('/evcharge/api/login' + params.username + '/' + params.pswd)
-      .then(res => {
-        console.log(res)
+    var bodyFormData = new FormData();
+    bodyFormData.append('username', $('#username').val());
+    bodyFormData.append('password', $('#password').val());
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(bodyFormData)
+    }
+     fetch('//localhost:8765/evcharge/api/login', requestOptions)
+      .then((response) => {
+        return response.json();
+        // console.log(res)
+      })
+      .then((response) => {
+        this.props.history.push("/stations");
+        
+      })
+      .catch(error => {
+        //handle error
+        // if(res.status==400){
+        // alert("Username or password is wrong");
+        // }
+        
+        console.error(error);
       })
   }
 
   render() {
     return (
       <html>
-        <body>
+        <body className="login-body">
           <meta charSet="UTF-8" />
           <title>Login</title>
 
-          <div className="body"></div>
-          <div className="grad"></div>
-          <div className="header">
-            <div>Vehicle<span>Charging</span></div>
-          </div><br />
-          <form name="login">
+          <Grid className="body-login dispay">
+          <Cell large={ 10 } medium={ 10 }>
+          <div className="header-login">
+          <a href="/">
+                <div>Vehicle<span>Charging</span></div>
+              </a>
+          </div>
+          <form name="login" action="/action_page.php" classNameonsubmit="return validateForm()" method="post">
             <div className="login">
-              <input id="username" type="text" placeholder="Username" name="userid" required />
-              <input id="password" type="password" placeholder="Password" name="pswrd" required />
-              <input type="button" onClick={this.handleSubmit} value="Login" />
+              <input id="username" type="text" placeholder="Username" name="userid" required/>
+              <input id="password" type="password" placeholder="Password" name="pswrd" required/>
+              <input type="button" onClick={this.handleSubmit} value="Login"/>
             </div>
           </form>
+          </Cell>
+          </Grid>
         </body>
       </html>
     )
   }
 }
 
-export default Login;
+export default withRouter(Login);
