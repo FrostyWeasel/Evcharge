@@ -19,16 +19,16 @@ public class EnergyProvider {
 
 	@NonNull
 	private Float lowPrice;
-	
+
 	@NonNull
 	private Float midPrice;
-	
+
 	@NonNull
 	private Float highPrice;
 
 	@NonNull
 	private Float lowtoMidLimit;
-	
+
 	@NonNull
 	private Float midtoHighLimit;
 
@@ -38,6 +38,17 @@ public class EnergyProvider {
 	public EnergyProvider(Long id, String brandName, Float lowPrice, Float midPrice, Float highPrice,
 			Float lowtoMidLimit, Float midtoHighLimit) {
 		this.id = id;
+		this.brandName = brandName;
+		this.lowPrice = lowPrice;
+		this.midPrice = midPrice;
+		this.highPrice = highPrice;
+		this.lowtoMidLimit = lowtoMidLimit;
+		this.midtoHighLimit = midtoHighLimit;
+	}
+
+	public EnergyProvider(String brandName, Float lowPrice, Float midPrice, Float highPrice, Float lowtoMidLimit,
+			Float midtoHighLimit) {
+		super();
 		this.brandName = brandName;
 		this.lowPrice = lowPrice;
 		this.midPrice = midPrice;
@@ -67,7 +78,7 @@ public class EnergyProvider {
 	}
 
 	public void setLowPrice(Float lowPrice) {
-		if(lowPrice == null)
+		if (lowPrice == null)
 			this.lowPrice = Float.valueOf(0);
 		else
 			this.lowPrice = lowPrice;
@@ -78,7 +89,7 @@ public class EnergyProvider {
 	}
 
 	public void setMidPrice(Float midPrice) {
-		if(midPrice == null)
+		if (midPrice == null)
 			this.midPrice = Float.valueOf(0);
 		else
 			this.midPrice = midPrice;
@@ -89,7 +100,7 @@ public class EnergyProvider {
 	}
 
 	public void setHighPrice(Float highPrice) {
-		if(highPrice == null)
+		if (highPrice == null)
 			this.highPrice = Float.valueOf(0);
 		else
 			this.highPrice = midPrice;
@@ -100,7 +111,7 @@ public class EnergyProvider {
 	}
 
 	public void setLowtoMidLimit(Float lowtoMidLimit) {
-		if(lowtoMidLimit == null)
+		if (lowtoMidLimit == null)
 			this.lowtoMidLimit = Float.valueOf(0);
 		else
 			this.lowtoMidLimit = lowtoMidLimit;
@@ -111,7 +122,7 @@ public class EnergyProvider {
 	}
 
 	public void setMidtoHighLimit(Float midtoHighLimit) {
-		if(midtoHighLimit == null)
+		if (midtoHighLimit == null)
 			this.midtoHighLimit = Float.valueOf(0);
 		else
 			this.midtoHighLimit = midtoHighLimit;

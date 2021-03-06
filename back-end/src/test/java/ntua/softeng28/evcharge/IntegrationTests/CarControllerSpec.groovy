@@ -10,15 +10,17 @@ import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 import spock.lang.Stepwise
 
+@Stepwise
 @SpringBootTest(webEnvironment=RANDOM_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
-@Stepwise
-class ChargingPointControllerSpec extends Specification {
-	@Autowired TestRestTemplate client
+class CarControllerSpec extends Specification {
+	
+	@Autowired
+	TestRestTemplate client
 	
 	def "check if unauthorized action returns 401"() {
 		when:
-		def entity=client.getForEntity("/evcharge/api/admin/chargingPoints", List)
+		def entity=client.getForEntity("/evcharge/api/cars", List)
 		
 		then:
 		entity.statusCodeValue==401 //unauthorized
