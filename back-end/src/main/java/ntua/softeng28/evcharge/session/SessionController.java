@@ -20,6 +20,8 @@ import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 import ntua.softeng28.evcharge.charging_point.ChargingPointRepository;
 import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
 import ntua.softeng28.evcharge.energy_provider.EnergyProviderRepository;
+import ntua.softeng28.evcharge.user.User;
+import ntua.softeng28.evcharge.user.UserRepository;
 
 @RestController
 public class SessionController {
@@ -39,6 +41,9 @@ public class SessionController {
 
 	@Autowired
 	EnergyProviderRepository energyProviderRepository;
+
+	@Autowired
+	UserRepository userRepository;
     
     @GetMapping(path = baseURL + "/sessions")
     public ResponseEntity<List<Session>> all() {
@@ -51,6 +56,7 @@ public class SessionController {
 			Car car = carRepository.findById(sessionDataRequest.getVehicleID()).orElseThrow(() -> new RuntimeException(String.format("VehicleID: %s not found in DB", sessionDataRequest.getVehicleID())));
 			ChargingPoint chargingPoint = chargingPointRepository.findById(sessionDataRequest.getChargingPointID()).orElseThrow(() -> new RuntimeException(String.format("ChargingPointID: %d not found in DB", sessionDataRequest.getChargingPointID())));
 			EnergyProvider energyProvider = energyProviderRepository.findById(sessionDataRequest.getEnergyProviderID()).orElseThrow(() -> new RuntimeException(String.format("EnergyProviderID: %d not found in DB", sessionDataRequest.getEnergyProviderID())));
+			User user = userRepository.findByUsername(sessionDataRequest.getUsername()).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", sessionDataRequest.getUsername())));
 
 			Session session = new Session();
 
@@ -61,6 +67,7 @@ public class SessionController {
 			session.setProtocol(sessionDataRequest.getProtocol());
 			session.setStartedOn(sessionDataRequest.getStartedOn());
 			session.setEnergyProvider(energyProvider);
+			session.setUser(user);
 
 			if(sessionDataRequest.getCost() == 0 || sessionDataRequest.getCost() == null){
 				Float energyRemaining = sessionDataRequest.getEnergyDelivered();

@@ -87,6 +87,7 @@ public class AdminController {
                 for(SessionCsvRequest sessionRequest: sessions){
                     Session session = new Session();
                     EnergyProvider energyProvider = energyProviderRepository.findById(sessionRequest.getEnergy_provider_id()).orElseThrow(() -> new RuntimeException(String.format("Energy_provider_id: %d not found in DB", sessionRequest.getEnergy_provider_id())));
+                    User user = userRepository.findByUsername(sessionRequest.getUsername()).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", sessionRequest.getUsername())));
 
                     session.setCar(carRepository.findById(sessionRequest.getCar_id()).orElseThrow(() -> new RuntimeException(String.format("Car_id: %s not found in DB", sessionRequest.getCar_id()))));
                     session.setChargingPoint(chargingPointRepository.findById(sessionRequest.getCharging_point_id()).orElseThrow(() -> new RuntimeException(String.format("Charging_point_id: %d not found in DB", sessionRequest.getCharging_point_id()))));
@@ -95,6 +96,7 @@ public class AdminController {
                     session.setProtocol(sessionRequest.getProtocol());
                     session.setStartedOn(sessionRequest.getStarted_on());
                     session.setEnergyProvider(energyProvider);
+                    session.setUser(user);
 
                     if(sessionRequest.getCost() == 0 || sessionRequest.getCost() == null){
                         Float energyRemaining = sessionRequest.getEnergy_delivered();

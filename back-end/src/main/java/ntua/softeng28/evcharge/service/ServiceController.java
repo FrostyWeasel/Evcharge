@@ -37,6 +37,8 @@ import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
 import ntua.softeng28.evcharge.energy_provider.EnergyProviderRepository;
 import ntua.softeng28.evcharge.session.Session;
 import ntua.softeng28.evcharge.session.SessionRepository;
+import ntua.softeng28.evcharge.user.User;
+import ntua.softeng28.evcharge.user.UserRepository;
 
 @RestController
 public class ServiceController {
@@ -61,6 +63,9 @@ public class ServiceController {
 
 	@Autowired
 	EnergyProviderRepository energyProviderRepository;
+
+	@Autowired
+	UserRepository userRepository;
 
 	@GetMapping(path = baseURL + "/SessionsPerPoint/{pointID}/{date_from}/{date_to}")
 	public ResponseEntity getSessionsPerPoint(@PathVariable("pointID") Long pointID,
@@ -517,4 +522,113 @@ public class ServiceController {
 		else
 			return new ResponseEntity<>(carsByBrandResponses, HttpStatus.OK);
 	}
+
+	@GetMapping(path = baseURL + "/UserReport/{username}/{date_from}/{date_to}")
+	public ResponseEntity getUserReport(@PathVariable("username") String username, @PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to, @RequestParam(required = false) String format) throws IOException {
+		try(Writer writer = new StringWriter()){
+			if(format == null || format.equals("json")){
+				User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", username)));
+				Set<Car> userCars = user.getCars();
+				
+				Float totalCost = Float.valueOf(0);
+				Integer totalSessions = Integer.valueOf(0);
+				Integer totalCars = Integer.valueOf(userCars.size());
+				Float totalEnergy = Float.valueOf(0);
+				List<CarSummary> carSummaryList = new ArrayList<>();
+
+				Float cost = Float.valueOf(0);
+				Float energy = Float.valueOf(0);
+				List<Session> sessions = null;
+
+				for(Car car: userCars){
+					sessions = sessionRepository.findByUserAndCarAndStartedOnBetween(user, car, date_from, date_to);
+					cost = Float.valueOf(0);
+					energy = Float.valueOf(0);
+
+					for(Session session: sessions){
+						cost += session.getCost();
+						energy += session.getEnergyDelivered();
+					}
+
+					carSummaryList.add(new CarSummary(car.getId(), car.getBrand().getName(), car.getModel(), cost, Integer.valueOf(sessions.size()), energy));
+					totalCost += cost;
+					totalSessions += sessions.size();
+					totalEnergy += energy;
+				}
+
+				UserReportResponse userReportResponse = new UserReportResponse(username,
+						java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
+						date_to.toInstant().toString(), totalCost, totalSessions,
+						Integer.valueOf(userCars.size()), totalEnergy, carSummaryList.toArray(new CarSummary[0]));
+
+				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userReportResponse);
+			}
+			else if(format.equals("csv")){
+				User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", username)));
+				Set<Car> userCars = user.getCars();
+				
+				Float totalCost = Float.valueOf(0);
+				Integer totalSessions = Integer.valueOf(0);
+				Integer totalCars = Integer.valueOf(userCars.size());
+				Float totalEnergy = Float.valueOf(0);
+				List<CarSummary> carSummaryList = new ArrayList<>();
+
+				Float cost = Float.valueOf(0);
+				Float energy = Float.valueOf(0);
+				List<Session> sessions = null;
+
+				List<UserReportCsvResponse> userReportCsvResponseList = new ArrayList<>();
+
+				for(Car car: userCars){
+					sessions = sessionRepository.findByUserAndCarAndStartedOnBetween(user, car, date_from, date_to);
+					cost = Float.valueOf(0);
+					energy = Float.valueOf(0);
+
+					for(Session session: sessions){
+						cost += session.getCost();
+						energy += session.getEnergyDelivered();
+					}
+
+					totalCost += cost;
+					totalSessions += sessions.size();
+					totalEnergy += energy;
+				}
+
+				for(Car car: userCars){
+					sessions = sessionRepository.findByCarAndStartedOnBetween(car, date_from, date_to);
+					cost = Float.valueOf(0);
+					energy = Float.valueOf(0);
+
+					for(Session session: sessions){
+						cost += session.getCost();
+						energy += session.getEnergyDelivered();
+					}
+
+					userReportCsvResponseList.add(new UserReportCsvResponse(username,
+					java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
+					date_to.toInstant().toString(), totalCost, totalSessions,
+					Integer.valueOf(userCars.size()), totalEnergy,car.getId(), car.getBrand().getName(), car.getModel(), cost, Integer.valueOf(sessions.size()), energy));
+				}
+
+				StatefulBeanToCsv csvResponse = new StatefulBeanToCsvBuilder(writer).build();
+				csvResponse.write(userReportCsvResponseList);
+	
+				return ResponseEntity.ok().contentType(MediaType.parseMediaType("text/csv")).body(writer.toString());
+			}
+			else
+				throw new RuntimeException(String.format("Format %s not known", format));
+
+		}
+		catch (RuntimeException e) {
+			logger.error(e.getMessage());
+			return ResponseEntity.badRequest().build();
+		} catch (CsvDataTypeMismatchException e) {
+			logger.error(e.getMessage());
+			return ResponseEntity.badRequest().build();
+		} catch (CsvRequiredFieldEmptyException e) {
+			logger.error(e.getMessage());
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
 }

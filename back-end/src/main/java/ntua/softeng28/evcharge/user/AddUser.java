@@ -23,8 +23,7 @@ class AddUser {
 
     return args -> {
       try{
-        log.info("Preloading {}", repository.save(new User("theBilbs", passwordEncoder.encode("bilbo123"), false, "ROLE_ADMIN", new HashSet<>())));
-        log.info("Preloading {}", repository.save(new User("theFrods", passwordEncoder.encode("frodo456"), false, "ROLE_USER", new HashSet<>())));
+        log.info("Preloading {}", repository.save(new User("admin", passwordEncoder.encode("petrol4ever"), false, "ROLE_ADMIN", new HashSet<>())));
       }
       catch(RuntimeException e){
         log.error("Failed to add users to DB:", e.getMessage());

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import ntua.softeng28.evcharge.car.Car;
@@ -23,7 +24,7 @@ public class User {
   private boolean isLoggedIn;
   private String role;
 
-  @OneToMany
+  @ManyToMany
   Set<Car> cars;
 
   public User() {

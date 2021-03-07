@@ -1,5 +1,6 @@
 package ntua.softeng28.evcharge.energy_provider;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,19 +18,19 @@ public class EnergyProvider {
 
 	private String brandName;
 
-	@NonNull
+	@Column(nullable = false)
 	private Float lowPrice;
 	
-	@NonNull
+	@Column(nullable = false)
 	private Float midPrice;
 	
-	@NonNull
+	@Column(nullable = false)
 	private Float highPrice;
 
-	@NonNull
+	@Column(nullable = false)
 	private Float lowtoMidLimit;
 	
-	@NonNull
+	@Column(nullable = false)
 	private Float midtoHighLimit;
 
 	public EnergyProvider() {
@@ -92,7 +93,7 @@ public class EnergyProvider {
 		if(highPrice == null)
 			this.highPrice = Float.valueOf(0);
 		else
-			this.highPrice = midPrice;
+			this.highPrice = highPrice;
 	}
 
 	public Float getLowtoMidLimit() {

@@ -14,6 +14,7 @@ import ntua.softeng28.evcharge.car.Car;
 import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 import ntua.softeng28.evcharge.charging_station.ChargingStation;
 import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
+import ntua.softeng28.evcharge.user.User;
 
 @Entity
 public class Session {
@@ -35,25 +36,31 @@ public class Session {
 	@ManyToOne(optional = false)
 	private ChargingPoint chargingPoint;
 
-	@OneToOne(optional = false)
+	@ManyToOne(optional = false)
 	private EnergyProvider energyProvider;
 
-	public Session(Long id, Timestamp startedOn, Timestamp finishedOn, String protocol, String payment,
-			Float energyDelivered, Float cost, Car car, ChargingPoint chargingPoint, EnergyProvider energyProvider) {
-		this.id = id;
-		this.startedOn = startedOn;
-		this.finishedOn = finishedOn;
-		this.protocol = protocol;
-		this.payment = payment;
-		this.energyDelivered = energyDelivered;
-		this.cost = cost;
-		this.car = car;
-		this.chargingPoint = chargingPoint;
-		this.energyProvider = energyProvider;
-	}
+	@ManyToOne(optional = false)
+	private User user;
 
 	public Session() {
+
 	}
+
+    public Session(Long id, Timestamp startedOn, Timestamp finishedOn, String protocol, String payment,
+            Float energyDelivered, Float cost, Car car, ChargingPoint chargingPoint, EnergyProvider energyProvider,
+            User user) {
+        this.id = id;
+        this.startedOn = startedOn;
+        this.finishedOn = finishedOn;
+        this.protocol = protocol;
+        this.payment = payment;
+        this.energyDelivered = energyDelivered;
+        this.cost = cost;
+        this.car = car;
+        this.chargingPoint = chargingPoint;
+        this.energyProvider = energyProvider;
+        this.user = user;
+    }
 
 	public Long getId() {
 		return id;
@@ -135,14 +142,19 @@ public class Session {
 		this.energyProvider = energyProvider;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public String toString() {
 		return "Session [car=" + car + ", chargingPoint=" + chargingPoint + ", cost=" + cost + ", energyDelivered="
 				+ energyDelivered + ", energyProvider=" + energyProvider + ", finishedOn=" + finishedOn + ", id=" + id
-				+ ", payment=" + payment + ", protocol=" + protocol + ", startedOn=" + startedOn + "]";
+				+ ", payment=" + payment + ", protocol=" + protocol + ", startedOn=" + startedOn + ", user=" + user
+				+ "]";
 	}
-
-	
-
-
 }
