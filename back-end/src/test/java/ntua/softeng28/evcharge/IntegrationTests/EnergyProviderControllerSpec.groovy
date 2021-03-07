@@ -22,26 +22,23 @@ class EnergyProviderControllerSpec extends Specification {
 	
 	private provider=new EnergyProvider("Kobe Bryant",100,200,300,150,250)
 	
-	def baseurl="/evecharge/api/"
-	
-	HttpHeaders headers = new HttpHeaders()
-	HttpEntity<EnergyProvider> request = new HttpEntity<>(provider,headers)			
+	def baseurl="/evecharge/api/"	
+	def loginurl="/evecharge/api/login"
 	
 	def "check if unauthorized action returns 401"() {
 		when:
-		def entity=client.getForEntity(baseurl+"energyproviders", EnergyProvider.class)
+		def entity=client.getForEntity(baseurl+"energyproviders", ArrayList.class)
 		
 		then:
 		entity.statusCodeValue == 401 //unauthorized
-		entity.body == null
 	}
 	
-	def "check if post request is done correctly"(){
+	def "check if authorized action returns 200"(){
 		when:		 
-		def entity=client.postForEntity(baseurl+"admin/energyproviders", request, EnergyProvider.class)
+		def entity=client.withBasicAuth("theBilbs","bilbo123").getForEntity(baseurl+"energyproviders",ArrayList.class)
 		
 		then:
-		entity.statusCodeValue == 401
+		entity.statusCodeValue == 200
 	}
 	
 }
