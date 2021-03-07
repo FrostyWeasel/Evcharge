@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge;
+/* package ntua.softeng28.evcharge;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -85,3 +85,4 @@ public class UserControllerUnitTest {
 
     }
 }
+*/
