@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.*
 import org.springframework.test.context.TestPropertySource
 
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovyx.net.http.*
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -18,7 +20,9 @@ class LoginSpec extends Specification {
 	private final static int EXPECTED_PORT = 8765;
 
 	def baseurl = "http://localhost:8765/evcharge/api/"
-
+	
+	def jsontostring = new JsonSlurper()
+    def stringtojason = new JsonOutput()
 
 	def "check simple login"(){
 		given:
@@ -31,10 +35,14 @@ class LoginSpec extends Specification {
 		    def response = client.post(path:"login",
 		                               requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 									   contentType: MediaType.APPLICATION_JSON,
+									   headers: ['Authorization':"hello world"],
 		                               body: user)
 			
+			def token = response.getData().toString()
+			    token = token.substring(7,token.length()-1)
 		then:
 		    response.status==200
-		    println(response.getData())
+		    println(token)
+			println(response.getData().toString())
 	}
 }
