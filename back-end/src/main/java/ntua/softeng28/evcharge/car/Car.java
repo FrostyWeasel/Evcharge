@@ -7,16 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+
 @Entity
 public class Car {
 
 	private @Id String id;
-		
+
 	private String type;
 
 	@ManyToOne
 	private Brand brand;
-	
+
 	private String model;
 
 	private Integer release_year;
@@ -35,6 +36,20 @@ public class Car {
 	private EnergyConsumption energy_consumption;
 
 	public Car() {
+	}
+
+	public Car(String type, Brand brand, String model, Integer release_year, String variant, Float usable_battery_size,
+			AcCharger ac_charger, DcCharger dc_charger, EnergyConsumption energy_consumption) {
+		super();
+		this.type = type;
+		this.brand = brand;
+		this.model = model;
+		this.release_year = release_year;
+		this.variant = variant;
+		this.usable_battery_size = usable_battery_size;
+		this.ac_charger = ac_charger;
+		this.dc_charger = dc_charger;
+		this.energy_consumption = energy_consumption;
 	}
 
 	public Car(String id, String type, Brand brand, String model, Integer release_year, String variant,
@@ -162,5 +177,4 @@ public class Car {
 		return true;
 	}
 
-	
 }

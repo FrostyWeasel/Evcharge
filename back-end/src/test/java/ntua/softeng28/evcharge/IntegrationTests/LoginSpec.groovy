@@ -3,7 +3,7 @@ package ntua.softeng28.evcharge.IntegrationTests
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.*
+import org.springframework.http.MediaType
 import org.springframework.test.context.TestPropertySource
 
 import groovy.json.JsonOutput
@@ -24,24 +24,29 @@ class LoginSpec extends Specification {
 	def jsontostring = new JsonSlurper()
     def stringtojason = new JsonOutput()
 
-	def "check simple login"(){
+	def "check simple login-logout functionality"(){
 		given:
             def client = new RESTClient(baseurl)
 		    Map<String, Object> user = new HashMap<>();
-		    user.put("username", "theBilbs");
-		    user.put("password", "bilbo123");
+		    user.put("username", "admin");
+		    user.put("password", "petrol4ever");
 
 		when:
-		    def response = client.post(path:"login",
+		    def loginResponse = client.post(path:"login",
 		                               requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 									   contentType: MediaType.APPLICATION_JSON,
 		                               body: user)
 			
-			def token = response.getData().toString()
+			def token = loginResponse.getData().toString()
 			    token = token.substring(7,token.length()-1)
+				
+			def logoutResponse = client.post(path:"logout",
+				                             headers:["X-OBSERVATORY-AUTH":token])
 		then:
-		    response.status==200
-		    println(token)
-			println(response.getData().toString())
+		    loginResponse.status==200
+			println(loginResponse.getData().toString())
+			
+		and:
+		    logoutResponse.status==200
 	}
 }
