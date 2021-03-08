@@ -35,7 +35,6 @@ class LoginSpec extends Specification {
 		    def response = client.post(path:"login",
 		                               requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 									   contentType: MediaType.APPLICATION_JSON,
-									   headers: ['Authorization':"hello world"],
 		                               body: user)
 			
 			def token = response.getData().toString()
