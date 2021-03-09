@@ -8,7 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import ntua.softeng28.evcharge.energy_provider.EnergyProvider;
 
 import java.util.List;
 
@@ -24,7 +28,6 @@ public class CarController {
 
 	@Autowired
 	BrandRepository brandRepository;
-
 
 	@GetMapping(path = baseURL + "/cars")
 	public ResponseEntity<List<Car>> allCars() {
@@ -51,20 +54,18 @@ public class CarController {
 	public ResponseEntity<Brand> getBrandbyID(@PathVariable String id) {
 
 		Brand brand = brandRepository.findById(id).orElse(null);
-		if(brand == null)
+		if (brand == null)
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
 		return new ResponseEntity<>(brand, HttpStatus.OK);
 	}
 
-
 	@DeleteMapping(path = baseURL + "admin/cars/{id}")
 	public ResponseEntity deleteById(@PathVariable String id) {
-		try{
+		try {
 			carRepository.deleteById(id);
 			return new ResponseEntity(HttpStatus.OK);
-		}
-		catch(RuntimeException e){
+		} catch (RuntimeException e) {
 			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
 	}
