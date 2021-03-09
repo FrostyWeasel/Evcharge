@@ -2,43 +2,125 @@ import React from 'react';
 import axios from 'axios';
 import $ from 'jquery';
 import './MyVehicles.css';
-
+$.DataTable =require('datatables.net');
 
 class MyVehicles extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { user: props.user };
-    }
+        this.deleteVehicle= this.deleteVehicle.bind(this);
+        this.state = {
+          data: [],
+        };
+      }
+      deleteVehicle = (ev) => () => {
+        const requestOptions = {
+          method: 'DELETE',
+          headers: { 
+            'Content-Type': 'application/json', 
+            'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
+        },   
+          body: JSON.stringify({ title: 'NewVehicle' })
+        }
+         fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + ev.currentTarget.id, requestOptions)
+          .then((response) => {
+            window.location.reload();
+          })
+          .catch(error => {
+            console.error(error);
+          })
+      }
+      componentDidMount() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json', 
+              'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+            }
+          }
+           fetch('//localhost:8765/evcharge/api/UserCars/' + localStorage.getItem("username"), requestOptions)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              var table = $(this.refs.main).DataTable({
+                // dom: '<"data-table-wrapper"t>',
+                data: data,
+                columns:[
+                    {
+                    title: 'Brand',
+                    width: "15%",
+                    data: 'brand.name'
+                },
+                {
+                    title: 'Type',
+                    width: "15%",
+                    data: 'type'
+                },
+                {
+                  title: 'Model',
+                  width: "15%" ,
+                  data: 'model'
+              },
+              {
+                  title: 'Release year',
+                  width: "15%",
+                  data: 'release_year'
+              },
+              {
+                title: 'Battery size',
+                width: "15%",
+                data: 'usable_battery_size'
+            },
+            {
+              title: 'Action',
+              width: "25%",
+              data: 'id',
+              'render' : function(id){
+                return(
+                '<a className="btk" class="deleteBtn" id="'+ id + '" ><i type="button">Delete</i></a>'
+                )}
+          }
+
+            ],
+                ordering: false
+             });
+
+             $(".deleteBtn").on('click',function(ev){
+              const requestOptions = {
+                method: 'DELETE',
+                headers: { 
+                  'Content-Type': 'application/json', 
+                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
+              },   
+                body: JSON.stringify({ title: 'NewVehicle' })
+              }
+               fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + ev.currentTarget.id, requestOptions)
+                .then((response) => {
+                  window.location.reload();
+                })
+                .catch(error => {
+                  console.error(error);
+                })
+             })
+
+            })
+            .catch(error => {
+              console.error(error);
+            })
+        }
     render() {
         return (
             <html>
-                <body>
-                    <meta name="viewport" content="width=device-width, initial-scale=1" />
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-                    <div className="body1">
-                        <h2><i className="fa fa-car"></i>Your Vehicle</h2>
-                        <div className="container">
-                            <form action="/action_page.php">
-                                <div className="row">
-                                    <div className="col-50">
-                                        <h3> Vehicle 1</h3>
-                                        <label for="brand"> Brand</label>
-                                        <input type="text" id="brand" name="brand" placeholder="Audi" />
-                                        <label for="type"> Type</label>
-                                        <input type="text" id="type" name="type" placeholder="bev" />
-                                        <label for="model"> Model</label>
-                                        <input type="text" id="model" name="model" placeholder="e-tron 55" />
-                                        <label for="release_year"> Release year</label>
-                                        <input type="text" id="release_year" name="release_year" placeholder="2019" />
-                                        <label for="battery_size">Battery size</label>
-                                        <input type="text" id="battery_size" name="battery_size" placeholder="86,5" />
-                                    </div>
-                                    <input type="button" onClick={this.vechile_data} value="Login" className="btn" />
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </body>
+            <body className="stations-body">
+              <meta charSet="UTF-8" />
+              <title>MyVehicles</title>
+            <div>
+                <h2>MyVehicles</h2>
+
+                <table ref="main" />
+                
+            </div>
+            </body>
             </html>
         )
     }

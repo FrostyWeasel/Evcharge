@@ -5,7 +5,10 @@ import $ from 'jquery';
 import { Router, Link, browserHistory } from 'react-router';
 import { Route, Redirect, Switch, BrowserRouter } from "react-router-dom";
 import './index.css';
+import './Login.css';
 import Login from './Login';
+
+import './global';
 import MyVehicles from './MyVehicles';
 import AddNewVehicle from './AddNewVehicle';
 import Charge from './Charge';
@@ -18,10 +21,64 @@ import { Button, Colors, Grid, Cell } from 'react-foundation';
 
 const user = localStorage.getItem('user');
 
-var loggedIn= true;
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+}
+  handleSubmit() {
+    var x = document.forms["login"]["userid"].value;
+    var y = document.forms["login"]["pswrd"].value;
+    if (x == ""|| y== "") {
+      alert("Username and password must be filled out");
+      return false;
+    }
+    var bodyFormData = new FormData();
+    bodyFormData.append('username', $('#username').val());
+    bodyFormData.append('password', $('#password').val());
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(bodyFormData)
+    }
+     fetch('//localhost:8765/evcharge/api/login', requestOptions)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', x );
+        localStorage.setItem("logged", true);
+        window.location = "/localhost:3000/stations"
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }
+  Logout() {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', 
+        'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+      },
+      body: JSON.stringify({ title: 'Logout' })
+    }
+     fetch('//localhost:8765/evcharge/api/logout', requestOptions)
+      .then(()=> {
+        localStorage.setItem('token', null);
+        localStorage.setItem('logged', false);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }
+  // componentDidMount() {
+  //   localStorage.setItem('token', null);
+  //   localStorage.setItem('logged', false);
+  // }
   render() {
-    if (loggedIn) {
+    if (localStorage.getItem("logged") == "true") {
       return (
         <html>
           <head>
@@ -49,7 +106,7 @@ class App extends React.Component {
                 </div> 
               <a href="/history"><i className="fa fa-history" aria-hidden="true"></i> Chargings history</a>
               <div className="topnav-right">
-                <a href="/logout"><i className="fa fa-fw fa-user"></i>Logout</a>
+                <a><i type="button" onClick={this.Logout.bind(this)} className="fa fa-fw fa-user"></i>Logout</a>
               </div>
             </div>
             <Switch>
@@ -57,8 +114,7 @@ class App extends React.Component {
               <Route path="/AddNewVehicle" component={AddNewVehicle} />
               <Route path="/history" component={History} />
               <Route path="/stations" component={Stations} />
-              {/* <Redirect from="/" exact to="/home" />
-            <Redirect to="/not-found" /> */}
+              <Route path="/" component={Stations} />
             </Switch>
             <script src="/node_modules/foundation-sites/dist/js/foundation.min.js"></script>
           </body>
@@ -67,29 +123,28 @@ class App extends React.Component {
     } else {
       return (
         <html>
-          <body>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-            <title>Stations</title>
-            <div className="body"></div>
-            <div className="grad"></div>
-            <div className="header">
-              <a href="/">
+        <body className="login-body">
+          <meta charSet="UTF-8" />
+          <title>Login</title>
+
+          <Grid className="body-login dispay">
+          <Cell large={ 10 } medium={ 10 }>
+          <div className="header-login">
+          <a href="/">
                 <div>Vehicle<span>Charging</span></div>
               </a>
-            </div>
-            <div className="topnav">
-              <a href="/Stations"><i className="icon-station"></i> Stations</a>
-              <div className="topnav-right">
-                <a href="/login"><i className="fa fa-fw fa-user"></i>Login</a>
-              </div>
-            </div>
-            <Switch>
-              {<Route path="/login" component={Login} />
-          }
-            </Switch>
-          </body>
-        </html>
+          </div>
+          <form name="login" action="/action_page.php" classNameonsubmit="return validateForm()" method="post">
+            <div className="login">
+              <input id="username" type="text" placeholder="Username" name="userid" required/>
+              <input id="password" type="password" placeholder="Password" name="pswrd" required/>
+              <input type="button" onClick={this.handleSubmit.bind(this)} value="Login"/>
+            </div>  
+          </form>
+          </Cell>
+          </Grid>
+        </body>
+      </html>
         
 
       )

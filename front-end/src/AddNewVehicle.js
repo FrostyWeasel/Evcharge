@@ -7,8 +7,55 @@ import './MyVehicles.css';
 class AddNewVehicle extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { user: props.user };
+        this.state = { listItems: [] , vehicles: []};
     }
+    componentDidMount() {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json', 
+              'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+            }
+          }
+           fetch('//localhost:8765/evcharge/api/cars', requestOptions)
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              var initial = data;
+              var cars = [];
+               data.forEach(function(item){
+                  return cars.push(item.brand);
+              });
+              cars = cars.reduce((unique, o) => {
+                if(!unique.some(obj => obj.id === o.id)) {
+                  unique.push(o);
+                }
+                return unique;
+            },[]);
+              this.setState({listItems: cars, vehicles: initial});
+            })
+            .catch(error => {
+              console.error(error);
+            })
+    }
+    NewVehicle(){
+    const requestOptions = {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
+    },   
+      body: JSON.stringify({ title: 'NewVehicle' })
+    }
+     fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + localStorage.getItem("carid"), requestOptions)
+      .then((response) => {
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }
     render() {
         return (
             <html>
@@ -22,33 +69,27 @@ class AddNewVehicle extends React.Component {
                                 <div className="row">
                                     <div className="col-50">
                                         <h3>New Vehicle</h3>
-                                        <h4>Brand</h4>
+                                        <label for="brand"> Brand</label>
+                                        <select id="brand" onChange={this.getBrandData.bind(this)}>
+                                            <option value="no" selected="selected">Choose an option</option>
+                                            {this.state.listItems.map(listItem => ( 
+                                                <option value={listItem.id}>{listItem.name}</option>
+                                            ))}
+                                        </select>
                                         <label for="type"> Type</label>
-                                        <select id="type" onChange={this.chooseType}>
-                                            <option value="AUDI">Audi</option>
-                                            <option value="OPEL">Opel</option>
-                                            <option value="VOLVO">Volvo</option>
+                                        <select disabled id="type" onChange={this.chooseType.bind(this)}>
                                         </select>
                                         <label for="model"> Model</label>
-                                        <select disabled id="model" name="model" onChange={this.chooseModel}>
-                                            <option value="AUDI">Audi</option>
-                                            <option value="OPEL">Opel</option>
-                                            <option value="VOLVO">Volvo</option>
+                                        <select disabled id="model" name="model" onChange={this.chooseModel.bind(this)}>
                                         </select>
                                         <label for="release_year"> Release year</label>
-                                        <select disabled id="release_year" name="release_year" onChange={this.chooseReleaseYear}>
-                                            <option value="1999">1999</option>
-                                            <option value="2000">2000</option>
-                                            <option value="1998">1998</option>
+                                        <select disabled id="release_year" name="release_year" onChange={this.chooseReleaseYear.bind(this)}>
                                         </select>
                                         <label for="battery_size">Battery size</label>
-                                        <select disabled id="battery_size" name="battery_size" >
-                                            <option value="80">80</option>
-                                            <option value="70">70</option>
-                                            <option value="90">90</option>
-                                        </select>
+                                        <select disabled id="battery_size" name="battery_size" onChange={this.chooseAddNewVehicle.bind(this)}>
+                                       </select>
                                     </div>
-                                    <input type="button" onClick={this.vechile_data} value="Add new vehicle" className="btn" />
+                                    <a disabled id="AddNewVehicle" className="btn"><i type="button" onClick={this.NewVehicle.bind(this)}>Add new vehicle</i></a>
                                 </div>
                             </form>
                         </div>
@@ -56,17 +97,107 @@ class AddNewVehicle extends React.Component {
                 </body>
             </html>
         )
+    // })
+    }
+    getBrandData(ev){
+        var types = [];
+        this.state.vehicles.forEach(function(item){
+            if(item.brand.id == ev.currentTarget.value){
+                types.push(item.type);
+                localStorage.setItem('carbrand', item.brand.id);
+            }
+        })
+    
+         var list = types.filter(function(el, index, arr) {
+            return index === types.indexOf(el);
+        });
+    
+        $("#type").html("").removeClass("disabled").attr("disabled", false);
+        $("#type").append('<option value="no" selected="selected">Choose an option</option>');
+        list.forEach(function(item){
+            $("#type").append(
+                    "<option value=" + item + ">" + item + "</option>"
+                    )
+        })
+    }
+    chooseType(ev) {
+        var types = [];
+        this.state.vehicles.forEach(function(item){
+            if(item.type === ev.currentTarget.value && localStorage.getItem("carbrand")== item.brand.id){
+                types.push(item.model);
+                localStorage.setItem('cartype', item.type);
+            }
+        })
+    
+        var models = types.filter(function(el, index, arr) {
+            return index === types.indexOf(el);
+        });
+    
+        $("#model").html("").removeClass("disabled").attr("disabled", false);
+        $("#model").append('<option value="no" selected="selected">Choose an option</option>');
+        models.forEach(function(item){
+            $("#model").append(
+                    "<option value=" + encodeURIComponent(item) + ">" + item + "</option>"
+                    )
+        })
+    }
+    chooseModel(ev) {
+        var types = [];
+        this.state.vehicles.forEach(function(item){
+            if(item.model === decodeURIComponent(ev.currentTarget.value) && localStorage.getItem("carbrand")== item.brand.id && localStorage.getItem("cartype")== item.type){
+                types.push(item.release_year);
+                localStorage.setItem('carmodel', item.model);
+            }
+        })
+    
+        var releaseyear = types.filter(function(el, index, arr) {
+            return index === types.indexOf(el);
+        });
+    
+        $("#release_year").html("").removeClass("disabled").attr("disabled", false);
+        $("#release_year").append('<option value="no" selected="selected">Choose an option</option>');
+        releaseyear.forEach(function(item){
+            $("#release_year").append(
+                    "<option value=" + item + ">" + item + "</option>"
+                    )
+        })
+    }
+    chooseReleaseYear(ev) {
+        var types = [];
+        this.state.vehicles.forEach(function(item){
+            var foo = item.release_year;
+        var bar = '' + foo;
+            if(bar === ev.currentTarget.value && localStorage.getItem("carbrand")== item.brand.id && localStorage.getItem("cartype")== item.type && localStorage.getItem("carmodel")== item.model){
+                types.push(item.usable_battery_size);
+                localStorage.setItem('carrelease_year', bar);
+            }
+        })
+    
+        var batterysize = types.filter(function(el, index, arr) {
+            return index === types.indexOf(el);
+        });
+    
+        $("#battery_size").html("").removeClass("disabled").attr("disabled", false);
+        $("#battery_size").append('<option value="no" selected="selected">Choose an option</option>');
+        batterysize.forEach(function(item){
+            $("#battery_size").append(
+                    "<option value=" + item + ">" + item + "</option>"
+                    )
+        })
+    }
+    chooseAddNewVehicle(ev) {//?
+        this.state.vehicles.forEach(function(item){
+            var foo = item.usable_battery_size;
+        var bar = '' + foo;
+            if( bar === ev.currentTarget.value && localStorage.getItem("carbrand")== item.brand.id && localStorage.getItem("cartype")== item.type && localStorage.getItem("carmodel")== item.model && localStorage.getItem("carrelease_year")== item.release_year){
+                localStorage.setItem('carusable_battery_size', bar);
+                localStorage.setItem('carid', item.id);
+            }
+        })
+        // $("#AddNewVehicle").html("").removeClass("disabled").attr("disabled", false);
     }
 
-    chooseType() {
-    $("#model").attr("disabled", false);
-    }
-    chooseModel() {
-        $("#release_year").attr("disabled", false);
-    }
-    chooseReleaseYear() {
-            $("#battery_size").attr("disabled", false);
-    }
+
 }
 
 export default AddNewVehicle;

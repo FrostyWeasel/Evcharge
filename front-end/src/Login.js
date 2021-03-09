@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React, { Component ,useState,useEffect}  from 'react';
 import axios from 'axios';
 import $ from 'jquery';
 import './Login.css';
@@ -6,16 +6,20 @@ import { withRouter,useHistory } from 'react-router-dom';
 
 import 'foundation-sites/dist/css/foundation.min.css';
 import { Button, Colors, Grid, Cell } from 'react-foundation';
-global={}
-global.loggedIn = false;
+
+import './global';
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { user: props.user };
-  }
+
+    // this.state = {
+    //     token: null
+    // };
+}
+
 
   handleSubmit() {
-    // var params = 
     var x = document.forms["login"]["userid"].value;
     var y = document.forms["login"]["pswrd"].value;
     if (x == ""|| y== "") {
@@ -33,18 +37,14 @@ class Login extends React.Component {
      fetch('//localhost:8765/evcharge/api/login', requestOptions)
       .then((response) => {
         return response.json();
-        // console.log(res)
       })
-      .then((response) => {
-        this.props.history.push("/stations");
-        
+      .then((data) => {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', x );
+        localStorage.setItem("logged", true);
+        window.location = "/localhost:3000/stations"
       })
       .catch(error => {
-        //handle error
-        // if(res.status==400){
-        // alert("Username or password is wrong");
-        // }
-        
         console.error(error);
       })
   }
@@ -67,8 +67,8 @@ class Login extends React.Component {
             <div className="login">
               <input id="username" type="text" placeholder="Username" name="userid" required/>
               <input id="password" type="password" placeholder="Password" name="pswrd" required/>
-              <input type="button" onClick={this.handleSubmit} value="Login"/>
-            </div>
+              <input type="button" onClick={this.handleSubmit.bind(this)} value="Login"/>
+            </div>  
           </form>
           </Cell>
           </Grid>
@@ -78,4 +78,4 @@ class Login extends React.Component {
   }
 }
 
-export default withRouter(Login);
+export default Login;
