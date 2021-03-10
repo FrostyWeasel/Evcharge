@@ -1,23 +1,34 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import datepickerFactory from 'jquery-datepicker';
+import datepickerJAFactory from 'jquery-datepicker/i18n/jquery.ui.datepicker-ja';
 // import Dialog from 'react-bootstrap-dialog'
 import { Router, Link, browserHistory } from 'react-router';
 import { Route, Redirect, Switch, BrowserRouter } from "react-router-dom";
 import './index.css';
 import './Login.css';
-import Login from './Login';
+import Logout from './Logout';
 
 import './global';
 import MyVehicles from './MyVehicles';
 import AddNewVehicle from './AddNewVehicle';
 import Charge from './Charge';
-//import ChangePassword from './ChangePassword';
-import History from './History';
+
+import SessionsPerPoint from './SessionsPerPoint';
+import SessionsPerProvider from './SessionsPerProvider';
+import SessionsPerVehicle from './SessionsPerVehicle';
+import SessionsPerStation from './SessionsPerStation';
 import Stations from './Stations';
 
 import 'foundation-sites/dist/css/foundation.min.css';
 import { Button, Colors, Grid, Cell } from 'react-foundation';
+import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import es from 'date-fns/locale/es';
+registerLocale('es', es)
+
 
 const user = localStorage.getItem('user');
 
@@ -48,9 +59,10 @@ class App extends React.Component {
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', x );
         localStorage.setItem("logged", true);
-        window.location = "/localhost:3000/stations"
+        window.location = "/"
       })
       .catch(error => {
+        alert('Wrong username or password');
         console.error(error);
       })
   }
@@ -73,10 +85,6 @@ class App extends React.Component {
         console.error(error);
       })
   }
-  // componentDidMount() {
-  //   localStorage.setItem('token', null);
-  //   localStorage.setItem('logged', false);
-  // }
   render() {
     if (localStorage.getItem("logged") == "true") {
       return (
@@ -92,7 +100,7 @@ class App extends React.Component {
             <div className="grad"></div>
             <div className="header">
               <a href="/">
-                <div>Vehicle<span>Charging</span></div>
+                <div>Electro<span>Wheeler</span></div>
               </a>
             </div>
             <div className="topnav">
@@ -104,16 +112,29 @@ class App extends React.Component {
                     <a href="/ManageMyVehicles">Manage my vehicles</a>
                   </div>
                 </div> 
-              <a href="/history"><i className="fa fa-history" aria-hidden="true"></i> Chargings history</a>
+                <div className="dropdown">
+                  <button className="dropbtn"><i className="fa fa-history" aria-hidden="true"></i>Data of sessions</button>      
+                  <div className="dropdown-content">
+                    <a href="/SessionsPerPoint">Sessions per point</a>
+                    <a href="/SessionsPerStation">Sessions per station</a>
+                    <a href="/SessionsPerVehicle">Sessions per vehicle</a>
+                    <a href="/SessionsPerProvider">Sessions per povider</a>
+                  </div>
+                </div> 
               <div className="topnav-right">
-                <a><i type="button" onClick={this.Logout.bind(this)} className="fa fa-fw fa-user"></i>Logout</a>
+                {/* <a><i type="button" onClick={this.Logout.bind(this)} className="fa fa-fw fa-user"></i>Logout</a> */}
+                <a href="/Logout"><i className="fa fa-fw fa-user"></i>Logout</a>
               </div>
             </div>
             <Switch>
               <Route path="/ManageMyVehicles" component={MyVehicles} />
               <Route path="/AddNewVehicle" component={AddNewVehicle} />
-              <Route path="/history" component={History} />
               <Route path="/stations" component={Stations} />
+              <Route path="/SessionsPerPoint" component={SessionsPerPoint} />
+              <Route path="/SessionsPerStation" component={SessionsPerStation} />
+              <Route path="/SessionsPerVehicle" component={SessionsPerVehicle} />
+              <Route path="/SessionsPerProvider" component={SessionsPerProvider} />
+              <Route path="/Logout" component={Logout} />
               <Route path="/" component={Stations} />
             </Switch>
             <script src="/node_modules/foundation-sites/dist/js/foundation.min.js"></script>
@@ -131,7 +152,7 @@ class App extends React.Component {
           <Cell large={ 10 } medium={ 10 }>
           <div className="header-login">
           <a href="/">
-                <div>Vehicle<span>Charging</span></div>
+                <div>Electro<span>Wheeler</span></div>
               </a>
           </div>
           <form name="login" action="/action_page.php" classNameonsubmit="return validateForm()" method="post">

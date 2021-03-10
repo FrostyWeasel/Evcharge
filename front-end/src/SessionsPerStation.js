@@ -1,19 +1,16 @@
-import React, { useState }  from 'react';
+import React from 'react';
 import axios from 'axios';
 import $ from 'jquery';
-import { ModalContent, ModalFooter, ModalButton, useDialog } from 'react-st-modal';
 import './MyVehicles.css';
-import { render } from 'react-dom';
-import charge from './Modal';
 
-class Stations extends React.Component {
+
+class SessionsPerStation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          data: [], ChargingPoints: [], modalIsOpen: false
+          data: []
         };
       }
-      
       componentDidMount() {
         const requestOptions = {
             method: 'GET',
@@ -22,7 +19,7 @@ class Stations extends React.Component {
               'X-OBSERVATORY-AUTH': localStorage.getItem("token")
             }
           }
-           fetch('//localhost:8765/evcharge/api/chargingStations', requestOptions)
+           fetch('//localhost:8765/evcharge/api/admin/chargingStations', requestOptions)
             .then((response) => {
               return response.json();
             })
@@ -48,25 +45,57 @@ class Stations extends React.Component {
                   width: "15%" ,
                   data: 'address.Country.Title'
               },
+              
+              {
+                title: 'From',
+                width: "25%",
+                data: 'id',
+                'render' : function(id){
+                  return(
+                  '<input className="btk" class="FromBtn" type="text" placeholder="yyyymmdd" id="'+ id + '" ></input>'
+                  )}
+              },
+              
+                  {
+                    title: 'Action',
+                    width: "25%",
+                    data: 'id',
+                    'render' : function(id){
+                      return(
+                      '<input className="btk" class="toBtn" placeholder="yyyymmdd" type="text" id="'+ id + '" ></input>'
+                      )}
+                  },
+              
             {
               title: 'Action',
               width: "25%",
               data: 'id',
               'render' : function(id){
                 return(
-                '<a className="btk" class="makechargeBtn" id="'+ id + '" ><i type="button">charge</i></a>'
+                '<a className="btk" class="SessionsBtn" id="'+ id + '" ><i type="button">See sessions</i></a>'
                 )}
           }
 
             ],
                 ordering: false
              });
-             $(".makechargeBtn").on('click',function(ev){
-              this.refs.setState({modalIsOpen: true})
-              
-                      
-            })
-            
+             $(".SessionsBtn").on('click',function(ev){
+              const requestOptions = {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json', 
+                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
+              },   
+                body: JSON.stringify({ title: 'SeeSessions' })
+              }
+               fetch('//localhost:8765/evcharge/api/SessionsPerStation/:yyyymmdd_from/:yyyymmdd_to'+ localStorage.getItem("sttionID")+ '/:' + localStorage.getItem("dateFrom")+ '_from/:'+ localStorage.getItem("dateTo")+ '_to/:', requestOptions)
+                .then((response) => {
+                  window.location.reload();
+                })
+                .catch(error => {
+                  console.error(error);
+                })
+             })
             })
             .catch(error => {
               console.error(error);
@@ -90,4 +119,4 @@ class Stations extends React.Component {
     }
 }
 
-export default Stations;
+export default SessionsPerStation;

@@ -1,19 +1,15 @@
-import React, { useState }  from 'react';
+import React from 'react';
 import axios from 'axios';
 import $ from 'jquery';
-import { ModalContent, ModalFooter, ModalButton, useDialog } from 'react-st-modal';
-import './MyVehicles.css';
-import { render } from 'react-dom';
-import charge from './Modal';
 
-class Stations extends React.Component {
+
+class SessionsPerPoint extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          data: [], ChargingPoints: [], modalIsOpen: false
+          data: [],
         };
       }
-      
       componentDidMount() {
         const requestOptions = {
             method: 'GET',
@@ -22,51 +18,57 @@ class Stations extends React.Component {
               'X-OBSERVATORY-AUTH': localStorage.getItem("token")
             }
           }
-           fetch('//localhost:8765/evcharge/api/chargingStations', requestOptions)
+           fetch('//localhost:8765/evcharge/api/chargingPoints/', requestOptions)
             .then((response) => {
               return response.json();
             })
             .then((data) => {
-                var initial = data;
-                this.setState({ChargingPoints: initial});
               $(this.refs.main).DataTable({
                 // dom: '<"data-table-wrapper"t>',
                 data: data,
                 columns:[
-                  {
-                    title: 'Town',
+                    {
+                    title: 'Charging point id',
                     width: "15%",
-                    data: 'address.Town'
+                    data: 'id'
                 },
                 {
-                    title: 'Address',
+                    title: 'Operator name',
                     width: "15%",
-                    data: 'address.AddressLine1'
+                    data: 'operator.Title'
                 },
-                {
-                  title: 'Country',
-                  width: "15%" ,
-                  data: 'address.Country.Title'
-              },
             {
-              title: 'Action',
+              title: 'From',
               width: "25%",
               data: 'id',
               'render' : function(id){
                 return(
-                '<a className="btk" class="makechargeBtn" id="'+ id + '" ><i type="button">charge</i></a>'
+                '<input className="btk" class="FromBtn" type="text" placeholder="yyyymmdd" id="'+ id + '" ></input>'
+                )}
+            },
+            
+                {
+                  title: 'Action',
+                  width: "25%",
+                  data: 'id',
+                  'render' : function(id){
+                    return(
+                    '<input className="btk" class="toBtn" placeholder="yyyymmdd" type="text" id="'+ id + '" ></input>'
+                    )}
+                },
+            {
+              title: 'Action',
+              width: "25%",
+              data: 'id',
+              render(id){
+                return(
+                '<a class="pointsessions" className="btk"><i type="button">See sessions</i></a>'
                 )}
           }
 
             ],
                 ordering: false
              });
-             $(".makechargeBtn").on('click',function(ev){
-              this.refs.setState({modalIsOpen: true})
-              
-                      
-            })
-            
             })
             .catch(error => {
               console.error(error);
@@ -77,9 +79,9 @@ class Stations extends React.Component {
             <html>
             <body className="stations-body">
               <meta charSet="UTF-8" />
-              <title>Stations</title>
+              <title>Sessions Per Point</title>
             <div>
-                <h2>Stations</h2>
+                <h2>Sessions Per Point</h2>
 
                 <table ref="main" />
                 
@@ -90,4 +92,4 @@ class Stations extends React.Component {
     }
 }
 
-export default Stations;
+export default SessionsPerPoint;
