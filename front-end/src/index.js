@@ -11,12 +11,10 @@ import { Route, Redirect, Switch, BrowserRouter } from "react-router-dom";
 import './index.css';
 import './Login.css';
 import Logout from './Logout';
-
-import './global';
 import MyVehicles from './MyVehicles';
 import AddNewVehicle from './AddNewVehicle';
 import Charge from './Charge';
-
+import ChooseCar from './ChooseCar';
 import SessionsPerPoint from './SessionsPerPoint';
 import SessionsPerProvider from './SessionsPerProvider';
 import SessionsPerVehicle from './SessionsPerVehicle';
@@ -135,6 +133,8 @@ class App extends React.Component {
               <Route path="/SessionsPerVehicle" component={SessionsPerVehicle} />
               <Route path="/SessionsPerProvider" component={SessionsPerProvider} />
               <Route path="/Logout" component={Logout} />
+              <Route path="/ChooseCar" component={ChooseCar} />
+              <Route path="/Charge" component={Charge} />
               <Route path="/" component={Stations} />
             </Switch>
             <script src="/node_modules/foundation-sites/dist/js/foundation.min.js"></script>
@@ -179,14 +179,3 @@ ReactDOM.render(
   </BrowserRouter>,
   document.getElementById("root")
 );
-
-// ReactDOM.render(
-//   <React.StrictMode>
-//     {/* <Login user={user} /> */}
-//     {/* < MyVehicles user={user} /> */}
-//     < Charge user={user} />
-//     {/* < ChangePassword user={user} /> */}
-//     {/* < History user={user} /> */}
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// );

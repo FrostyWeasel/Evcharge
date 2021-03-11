@@ -4,13 +4,13 @@ import $ from 'jquery';
 import './MyVehicles.css';
 $.DataTable =require('datatables.net');
 
-class MyVehicles extends React.Component {
+class ChooseCar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
           data: [],
         };
-      }
+    }
       componentDidMount() {
         const requestOptions = {
             method: 'GET',
@@ -59,7 +59,7 @@ class MyVehicles extends React.Component {
               data: 'id',
               'render' : function(id){
                 return(
-                '<a className="btk" class="deleteBtn" id="'+ id + '" ><i type="button">Delete</i></a>'
+                '<a className="btk" class="ChooseCarBtn" id="'+ id + '" ><i type="button">Choose</i></a>'
                 )}
           }
 
@@ -67,25 +67,11 @@ class MyVehicles extends React.Component {
                 ordering: false
              });
 
-             $(".deleteBtn").on('click',function(ev){
-              const requestOptions = {
-                method: 'DELETE',
-                headers: { 
-                  'Content-Type': 'application/json', 
-                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
-              },   
-                body: JSON.stringify({ title: 'DeleteVehicle' })
-              }
-               fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + ev.currentTarget.id, requestOptions)
-                .then((response) => {
-                  window.location.reload();
-                })
-                .catch(error => {
-                  console.error(error);
-                })
-             })
-
+             $(".ChooseCarBtn").on('click',function(ev){
+              localStorage.setItem("carid", ev.currentTarget.id);
+              window.location = "http://localhost:3000/Charge";
             })
+        })
             .catch(error => {
               console.error(error);
             })
@@ -95,9 +81,9 @@ class MyVehicles extends React.Component {
             <html>
             <body className="stations-body">
               <meta charSet="UTF-8" />
-              <title>MyVehicles</title>
+              <title>Choose vehicle for session</title>
             <div>
-                <h2>MyVehicles</h2>
+                <h2>Choose vehicle for session</h2>
 
                 <table ref="main" />
                 
@@ -108,4 +94,4 @@ class MyVehicles extends React.Component {
     }
 }
 
-export default MyVehicles;
+export default ChooseCar;

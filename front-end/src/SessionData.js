@@ -4,7 +4,7 @@ import $ from 'jquery';
 import './MyVehicles.css';
 
 
-class SessionsPerProvider extends React.Component {
+class SessionData extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -12,6 +12,7 @@ class SessionsPerProvider extends React.Component {
         };
       }
       componentDidMount() {
+        //SessionsPerProvider
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -31,41 +32,23 @@ class SessionsPerProvider extends React.Component {
                 data: data,
                 columns:[
                   {
-                    title: 'Provider name',
+                    title: 'Time',
                     width: "15%",
-                    data: 'brandName',
+                    data: 'RequestTimestamp',
                     sortable: true
                 }, 
-            {
-              title: 'Action',
-              width: "25%",
-              data: 'id',
-              'render' : function(id){
-                return(
-                '<a className="btk" class="SessionsBtn" id="'+ id + '" ><i type="button">See sessions</i></a>'
-                )}
-          }
+                {
+                  title: 'Time',
+                  width: "15%",
+                  data: 'RequestTimestamp',
+                  sortable: true
+              }, 
 
             ],
                 ordering: false
              });
-             $(".SessionsBtn").on('click',function(ev){
-              const requestOptions = {
-                method: 'DELETE',
-                headers: { 
-                  'Content-Type': 'application/json', 
-                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
-              },   
-                body: JSON.stringify({ title: 'NewVehicle' })
-              }
-               fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + ev.currentTarget.id, requestOptions)
-                .then((response) => {
-                  window.location.reload();
-                })
-                .catch(error => {
-                  console.error(error);
-                })
-             })
+  
+            
             })
             .catch(error => {
               console.error(error);
@@ -76,9 +59,9 @@ class SessionsPerProvider extends React.Component {
             <html>
             <body className="stations-body">
               <meta charSet="UTF-8" />
-              <title>Sessions per provider</title>
+              <title>Stations</title>
             <div>
-                <h2>Sessions per provider</h2>
+                <h2>Stations</h2>
 
                 <table ref="main" />
                 
@@ -89,4 +72,4 @@ class SessionsPerProvider extends React.Component {
     }
 }
 
-export default SessionsPerProvider;
+export default SessionData;
