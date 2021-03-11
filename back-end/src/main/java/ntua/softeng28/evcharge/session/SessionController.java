@@ -28,7 +28,7 @@ public class SessionController {
 
 	private final String baseURL = "/evcharge/api";
 
-    Logger logger = LoggerFactory.getLogger(SessionController.class);
+	Logger logger = LoggerFactory.getLogger(SessionController.class);
 
 	@Autowired
 	CarRepository carRepository;
@@ -44,19 +44,26 @@ public class SessionController {
 
 	@Autowired
 	UserRepository userRepository;
-    
-    @GetMapping(path = baseURL + "/sessions")
-    public ResponseEntity<List<Session>> all() {
-        return new ResponseEntity<>(sessionRepository.findAll(), HttpStatus.OK);
-    }
+
+	@GetMapping(path = baseURL + "/sessions")
+	public ResponseEntity<List<Session>> all() {
+		return new ResponseEntity<>(sessionRepository.findAll(), HttpStatus.OK);
+	}
 
 	@PostMapping(path = baseURL + "/sessions")
 	public ResponseEntity<Session> createSession(@RequestBody SessionDataRequest sessionDataRequest) {
-		try{
-			Car car = carRepository.findById(sessionDataRequest.getVehicleID()).orElseThrow(() -> new RuntimeException(String.format("VehicleID: %s not found in DB", sessionDataRequest.getVehicleID())));
-			ChargingPoint chargingPoint = chargingPointRepository.findById(sessionDataRequest.getChargingPointID()).orElseThrow(() -> new RuntimeException(String.format("ChargingPointID: %d not found in DB", sessionDataRequest.getChargingPointID())));
-			EnergyProvider energyProvider = energyProviderRepository.findById(sessionDataRequest.getEnergyProviderID()).orElseThrow(() -> new RuntimeException(String.format("EnergyProviderID: %d not found in DB", sessionDataRequest.getEnergyProviderID())));
-			User user = userRepository.findByUsername(sessionDataRequest.getUsername()).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", sessionDataRequest.getUsername())));
+		try {
+			Car car = carRepository.findById(sessionDataRequest.getVehicleID()).orElseThrow(() -> new RuntimeException(
+					String.format("VehicleID: %s not found in DB", sessionDataRequest.getVehicleID())));
+			ChargingPoint chargingPoint = chargingPointRepository.findById(sessionDataRequest.getChargingPointID())
+					.orElseThrow(() -> new RuntimeException(String.format("ChargingPointID: %d not found in DB",
+							sessionDataRequest.getChargingPointID())));
+			EnergyProvider energyProvider = energyProviderRepository.findById(sessionDataRequest.getEnergyProviderID())
+					.orElseThrow(() -> new RuntimeException(String.format("EnergyProviderID: %d not found in DB",
+							sessionDataRequest.getEnergyProviderID())));
+			User user = userRepository.findByUsername(sessionDataRequest.getUsername())
+					.orElseThrow(() -> new RuntimeException(
+							String.format("Username: %s not found in DB", sessionDataRequest.getUsername())));
 
 			Session session = new Session();
 
@@ -69,11 +76,11 @@ public class SessionController {
 			session.setEnergyProvider(energyProvider);
 			session.setUser(user);
 
-			if(sessionDataRequest.getCost() == 0 || sessionDataRequest.getCost() == null){
+			if (sessionDataRequest.getCost() == 0 || sessionDataRequest.getCost() == null) {
 				Float energyRemaining = sessionDataRequest.getEnergyDelivered();
 				Float totalCost = Float.valueOf(0);
 
-				if(sessionDataRequest.getEnergyDelivered() >= energyProvider.getMidtoHighLimit()) {
+				if (sessionDataRequest.getEnergyDelivered() >= energyProvider.getMidtoHighLimit()) {
 					totalCost += energyProvider.getLowtoMidLimit() * energyProvider.getLowPrice();
 					totalCost += (energyProvider.getMidtoHighLimit() - energyProvider.getLowtoMidLimit())
 							* energyProvider.getMidPrice();
@@ -91,15 +98,13 @@ public class SessionController {
 					}
 				}
 				session.setCost(totalCost);
-			}
-			else
+			} else
 				session.setCost(sessionDataRequest.getCost());
 
-			session.setPayment("card"); //!Change if we add more payment methods
+			session.setPayment("card"); // !Change if we add more payment methods
 
 			return new ResponseEntity<>(sessionRepository.save(session), HttpStatus.OK);
-		}
-		catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			logger.error(e.getMessage());
 			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
@@ -119,29 +124,35 @@ public class SessionController {
 
 	@DeleteMapping(path = baseURL + "/admin/sessions/{id}")
 	public ResponseEntity deleteById(@PathVariable Long id) {
-        sessionRepository.deleteById(id);
-        return new ResponseEntity(HttpStatus.OK);
+		try {
+			sessionRepository.deleteById(id);
+			return new ResponseEntity(HttpStatus.OK);
+		} catch (RuntimeException e) {
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	// @PutMapping(path = baseURL + "/sessions/{id}")
-	// public ResponseEntity<Session> updateById(@RequestBody Session newSession, @PathVariable Long id) {
+	// public ResponseEntity<Session> updateById(@RequestBody Session newSession,
+	// @PathVariable Long id) {
 
-	// 	Session sessionToUpdate = sessionRepository.findById(id).orElse(null);
+	// Session sessionToUpdate = sessionRepository.findById(id).orElse(null);
 
-	// 	if (sessionToUpdate == null) 
-	// 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-	// 	else {
+	// if (sessionToUpdate == null)
+	// return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	// else {
 
-    //         sessionToUpdate.setType(newSession.getType());
-	// 		sessionToUpdate.setTime(newSession.getTime());
-	// 		sessionToUpdate.setDescription(newSession.getDescription());
-	// 		sessionToUpdate.setCar(newSession.getCar());
-	// 		sessionToUpdate.setChargingpoint(newSession.getChargingpoint());
-	// 		sessionToUpdate.setChargingstation(newSession.getChargingstation());
+	// sessionToUpdate.setType(newSession.getType());
+	// sessionToUpdate.setTime(newSession.getTime());
+	// sessionToUpdate.setDescription(newSession.getDescription());
+	// sessionToUpdate.setCar(newSession.getCar());
+	// sessionToUpdate.setChargingpoint(newSession.getChargingpoint());
+	// sessionToUpdate.setChargingstation(newSession.getChargingstation());
 
-	// 		return new ResponseEntity<>(sessionRepository.save(sessionToUpdate), HttpStatus.OK);
-	// 	}
+	// return new ResponseEntity<>(sessionRepository.save(sessionToUpdate),
+	// HttpStatus.OK);
+	// }
 
-    // }
+	// }
 
 }
