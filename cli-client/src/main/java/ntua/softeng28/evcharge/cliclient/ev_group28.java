@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 
 @Command(name = "ev_group28", mixinStandardHelpOptions = true,
         version = "ev_group28 1.0", description = "CommandLine",
-        subcommands = {}
+        subcommands = {Login.class, HealthCheck.class, ResetSessions.class}
         )
 public class ev_group28 implements Callable<Integer>{
 
