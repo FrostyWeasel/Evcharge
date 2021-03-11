@@ -4,6 +4,12 @@ plugins {
 	id 'java'
 }
 
+bootRun {
+    if ( project.hasProperty('args') ) {
+        args project.args.split('\\s+')
+    }
+}
+
 group = 'ntua.softeng28.evcharge'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -15,6 +21,15 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+	//picocli dependency
+	implementation 'info.picocli:picocli:4.5.2'
+
+	implementation 'org.json:json:20171018'
+
 }
 
 test {
