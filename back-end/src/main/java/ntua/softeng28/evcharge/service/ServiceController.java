@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -74,6 +76,11 @@ public class ServiceController {
 	@Autowired
 	UserRepository userRepository;
 
+	private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+												.appendPattern("yyyy-MM-dd hh:mm:ss")
+												.toFormatter()
+												.withZone(ZoneOffset.UTC);
+
 	@GetMapping(path = baseURL + "/SessionsPerPoint/{pointID}/{date_from}/{date_to}")
 	public ResponseEntity getSessionsPerPoint(@PathVariable("pointID") Long pointID,
 	@PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date, @RequestParam(required = false) String format) throws IOException {
@@ -99,17 +106,17 @@ public class ServiceController {
 
 				if (chargingStation == null) {
 					sessionsPerPointResponse = new SessionsPerPointResponse(pointID.toString(), null,
-							java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-							date_to.toInstant().toString(), Long.valueOf(sessions.size()), sessions);
+					formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+					formatter.format(date_to.toInstant()).toString(), Long.valueOf(sessions.size()), sessions);
 				} else {
 					if (chargingStation.getOperator() == null) {
 						sessionsPerPointResponse = new SessionsPerPointResponse(pointID.toString(), null,
-								java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-								date_to.toInstant().toString(), Long.valueOf(sessions.size()), sessions);
+						formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+						formatter.format(date_to.toInstant()).toString(), Long.valueOf(sessions.size()), sessions);
 					} else {
 						sessionsPerPointResponse = new SessionsPerPointResponse(pointID.toString(),
-								chargingStation.getOperator().getName(), java.time.Clock.systemUTC().instant().toString(),
-								date_from.toInstant().toString(), date_to.toInstant().toString(),
+								chargingStation.getOperator().getName(), formatter.format(java.time.Clock.systemUTC().instant()).toString(),
+								formatter.format(date_from.toInstant()).toString(), formatter.format(date_to.toInstant()).toString(),
 								Long.valueOf(sessions.size()), sessions);
 					}
 				}
@@ -131,7 +138,7 @@ public class ServiceController {
 
 				List<SessionsPerPointCsvResponse> sessionsPerPointCsvResponses = new ArrayList<>();
 				String operatorName = null;
-				String requestTimestamp = java.time.Clock.systemUTC().instant().toString();
+				String requestTimestamp = formatter.format(java.time.Clock.systemUTC().instant()).toString();
 
 				if (chargingStation != null) {
 					if (chargingStation.getOperator() == null) {
@@ -145,11 +152,11 @@ public class ServiceController {
 
 				for(Session session: sessions){	
 					sessionsPerPointCsvResponses.add(new SessionsPerPointCsvResponse(pointID.toString(), operatorName,
-						requestTimestamp, date_from.toInstant().toString(),
-						date_to.toInstant().toString(), Long.valueOf(sessions.size()), Integer.valueOf(i), 
+						requestTimestamp, formatter.format(date_from.toInstant()).toString(),
+						formatter.format(date_to.toInstant()).toString(), Long.valueOf(sessions.size()), Integer.valueOf(i), 
 						session.getId().toString(),
-						session.getStartedOn().toInstant().toString(),
-						session.getFinishedOn().toInstant().toString(), 
+						formatter.format(session.getStartedOn().toInstant()).toString(),
+						formatter.format(session.getFinishedOn().toInstant()).toString(), 
 						session.getProtocol(), 
 						Float.valueOf(session.getEnergyDelivered()), 
 						session.getPayment(), 
@@ -218,13 +225,13 @@ public class ServiceController {
 				SessionsPerStationResponse sessionsPerStationResponse = null;
 				if (chargingStation.getOperator() == null) {
 					sessionsPerStationResponse = new SessionsPerStationResponse(stationID.toString(), null,
-							java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-							date_to.toInstant().toString(), totalStationEnergy, Long.valueOf(totalSessionCount),
+							formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+							formatter.format(date_to.toInstant()).toString(), totalStationEnergy, Long.valueOf(totalSessionCount),
 							Long.valueOf(chargingStationPoints.size()), sessionsSummaryList);
 				} else {
 					sessionsPerStationResponse = new SessionsPerStationResponse(stationID.toString(),
-							chargingStation.getOperator().getName(), java.time.Clock.systemUTC().instant().toString(),
-							date_from.toInstant().toString(), date_to.toInstant().toString(), totalStationEnergy,
+							chargingStation.getOperator().getName(), formatter.format(java.time.Clock.systemUTC().instant()).toString(),
+							formatter.format(date_from.toInstant()).toString(), formatter.format(date_to.toInstant()).toString(), totalStationEnergy,
 							Long.valueOf(totalSessionCount), Long.valueOf(chargingStationPoints.size()),
 							sessionsSummaryList);
 				}
@@ -242,7 +249,7 @@ public class ServiceController {
 				Float totalStationEnergy = Float.valueOf(0);
 				Integer totalSessionCount = Integer.valueOf(0);
 				List<SessionsPerStationCsvResponse> sessionsPerStationCsvResponses = new ArrayList<>();
-				String requestTimestamp = java.time.Clock.systemUTC().instant().toString();
+				String requestTimestamp = formatter.format(java.time.Clock.systemUTC().instant()).toString();
 
 				String operatorName = null;
 
@@ -272,8 +279,8 @@ public class ServiceController {
 
 					sessionsPerStationCsvResponses
 						.add(new SessionsPerStationCsvResponse(stationID.toString(), operatorName,
-							requestTimestamp, date_from.toInstant().toString(),
-							date_to.toInstant().toString(), totalStationEnergy, Long.valueOf(totalSessionCount),
+							requestTimestamp, formatter.format(date_from.toInstant()).toString(),
+							formatter.format(date_to.toInstant()).toString(), totalStationEnergy, Long.valueOf(totalSessionCount),
 							Long.valueOf(chargingStationPoints.size()), chargingPoint.getId(), Integer.valueOf(sessions.size()), totalEnergy));
 				}
 				
@@ -343,8 +350,8 @@ public class ServiceController {
 				}
 
 				vehicleChargingSessions.add(new VehicleChargingSession(sessionIndex, session.getId().toString(),
-						session.getEnergyProvider().getBrandName(), session.getStartedOn().toInstant().toString(),
-						session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
+						session.getEnergyProvider().getBrandName(), formatter.format(session.getStartedOn().toInstant()).toString(),
+						formatter.format(session.getFinishedOn().toInstant()).toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
 						session.getCost()));
 
 				totalEnergyConsumed += session.getEnergyDelivered();
@@ -352,8 +359,8 @@ public class ServiceController {
 			}
 
 			SessionsPerEVResponse sessionsPerEVResponse = new SessionsPerEVResponse(vehicleID,
-					java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-					date_to.toInstant().toString(), totalEnergyConsumed, numberOfVisitedPoints,
+					formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+					formatter.format(date_to.toInstant()).toString(), totalEnergyConsumed, numberOfVisitedPoints,
 					numberOfVehicleChargingSessions, vehicleChargingSessions.toArray(new VehicleChargingSession[0]));
 
 			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(sessionsPerEVResponse);
@@ -369,7 +376,7 @@ public class ServiceController {
 			Float totalEnergyConsumed = Float.valueOf(0);
 			Set<Long> chargingPoints = new HashSet<>();
 			List<SessionsPerEVCsvResponse> sessionsPerEVCsvResponses = new ArrayList<>();
-			String requestTimestamp = java.time.Clock.systemUTC().instant().toString();
+			String requestTimestamp = formatter.format(java.time.Clock.systemUTC().instant()).toString();
 
 			Integer sessionIndex = Integer.valueOf(1);
 
@@ -397,11 +404,11 @@ public class ServiceController {
 				}
 
 				sessionsPerEVCsvResponses.add(new SessionsPerEVCsvResponse(vehicleID,
-					requestTimestamp, date_from.toInstant().toString(),
-					date_to.toInstant().toString(), totalEnergyConsumed, numberOfVisitedPoints,
+					requestTimestamp, formatter.format(date_from.toInstant()).toString(),
+					formatter.format(date_to.toInstant()).toString(), totalEnergyConsumed, numberOfVisitedPoints,
 					numberOfVehicleChargingSessions, sessionIndex, session.getId().toString(),
-						session.getEnergyProvider().getBrandName(), session.getStartedOn().toInstant().toString(),
-						session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
+						session.getEnergyProvider().getBrandName(), formatter.format(session.getStartedOn().toInstant()).toString(),
+						formatter.format(session.getFinishedOn().toInstant()).toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
 						session.getCost()));
 
 					sessionIndex++;
@@ -465,7 +472,7 @@ public class ServiceController {
 						stationId = chargingStation.getId().toString();
 
 					sessionsPerProviderResponses.add(new SessionsPerProviderResponse(providerID.toString(), energyProvider.getBrandName(), stationId, session.getId(),
-						session.getCar().getId(), session.getStartedOn().toInstant().toString(), session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef,
+						session.getCar().getId(), formatter.format(session.getStartedOn().toInstant()).toString(), formatter.format(session.getFinishedOn().toInstant()).toString(), session.getEnergyDelivered(), pricePolicyRef,
 						costPerKWh, session.getCost()));
 				}
 
@@ -501,7 +508,7 @@ public class ServiceController {
 						stationId = chargingStation.getId().toString();
 
 					sessionsPerProviderCsvResponses.add(new SessionsPerProviderCsvResponse(providerID.toString(), energyProvider.getBrandName(), stationId, session.getId(),
-						session.getCar().getId(), session.getStartedOn().toInstant().toString(), session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef,
+						session.getCar().getId(), formatter.format(session.getStartedOn().toInstant()).toString(), formatter.format(session.getFinishedOn().toInstant()).toString(), session.getEnergyDelivered(), pricePolicyRef,
 						costPerKWh, session.getCost()));
 				}
 
@@ -585,8 +592,8 @@ public class ServiceController {
 				}
 
 				UserReportResponse userReportResponse = new UserReportResponse(username,
-						java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-						date_to.toInstant().toString(), totalCost, totalSessions,
+						formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+						formatter.format(date_to.toInstant()).toString(), totalCost, totalSessions,
 						Integer.valueOf(userCars.size()), totalEnergy, carSummaryList.toArray(new CarSummary[0]));
 
 				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userReportResponse);
@@ -633,8 +640,8 @@ public class ServiceController {
 					}
 
 					userReportCsvResponseList.add(new UserReportCsvResponse(username,
-					java.time.Clock.systemUTC().instant().toString(), date_from.toInstant().toString(),
-					date_to.toInstant().toString(), totalCost, totalSessions,
+					formatter.format(java.time.Clock.systemUTC().instant()).toString(), formatter.format(date_from.toInstant()).toString(),
+					formatter.format(date_to.toInstant()).toString(), totalCost, totalSessions,
 					Integer.valueOf(userCars.size()), totalEnergy,car.getId(), car.getBrand().getName(), car.getModel(), cost, Integer.valueOf(sessions.size()), energy));
 				}
 
