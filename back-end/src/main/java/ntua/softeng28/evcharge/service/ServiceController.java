@@ -148,8 +148,8 @@ public class ServiceController {
 						requestTimestamp, date_from.toInstant().toString(),
 						date_to.toInstant().toString(), Long.valueOf(sessions.size()), Integer.valueOf(i), 
 						session.getId().toString(),
-						session.getStartedOn().toString(),
-						session.getFinishedOn().toString(), 
+						session.getStartedOn().toInstant().toString(),
+						session.getFinishedOn().toInstant().toString(), 
 						session.getProtocol(), 
 						Float.valueOf(session.getEnergyDelivered()), 
 						session.getPayment(), 
@@ -343,8 +343,8 @@ public class ServiceController {
 				}
 
 				vehicleChargingSessions.add(new VehicleChargingSession(sessionIndex, session.getId().toString(),
-						session.getEnergyProvider().getBrandName(), session.getStartedOn().toString(),
-						session.getFinishedOn().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
+						session.getEnergyProvider().getBrandName(), session.getStartedOn().toInstant().toString(),
+						session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
 						session.getCost()));
 
 				totalEnergyConsumed += session.getEnergyDelivered();
@@ -400,8 +400,8 @@ public class ServiceController {
 					requestTimestamp, date_from.toInstant().toString(),
 					date_to.toInstant().toString(), totalEnergyConsumed, numberOfVisitedPoints,
 					numberOfVehicleChargingSessions, sessionIndex, session.getId().toString(),
-						session.getEnergyProvider().getBrandName(), session.getStartedOn().toString(),
-						session.getFinishedOn().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
+						session.getEnergyProvider().getBrandName(), session.getStartedOn().toInstant().toString(),
+						session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef, costPerKWh,
 						session.getCost()));
 
 					sessionIndex++;
@@ -465,7 +465,7 @@ public class ServiceController {
 						stationId = chargingStation.getId().toString();
 
 					sessionsPerProviderResponses.add(new SessionsPerProviderResponse(providerID.toString(), energyProvider.getBrandName(), stationId, session.getId(),
-						session.getCar().getId(), session.getStartedOn().toString(), session.getFinishedOn().toString(), session.getEnergyDelivered(), pricePolicyRef,
+						session.getCar().getId(), session.getStartedOn().toInstant().toString(), session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef,
 						costPerKWh, session.getCost()));
 				}
 
@@ -501,7 +501,7 @@ public class ServiceController {
 						stationId = chargingStation.getId().toString();
 
 					sessionsPerProviderCsvResponses.add(new SessionsPerProviderCsvResponse(providerID.toString(), energyProvider.getBrandName(), stationId, session.getId(),
-						session.getCar().getId(), session.getStartedOn().toString(), session.getFinishedOn().toString(), session.getEnergyDelivered(), pricePolicyRef,
+						session.getCar().getId(), session.getStartedOn().toInstant().toString(), session.getFinishedOn().toInstant().toString(), session.getEnergyDelivered(), pricePolicyRef,
 						costPerKWh, session.getCost()));
 				}
 
