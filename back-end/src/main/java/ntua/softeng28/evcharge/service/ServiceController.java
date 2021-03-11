@@ -3,8 +3,14 @@ package ntua.softeng28.evcharge.service;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +23,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +76,12 @@ public class ServiceController {
 
 	@GetMapping(path = baseURL + "/SessionsPerPoint/{pointID}/{date_from}/{date_to}")
 	public ResponseEntity getSessionsPerPoint(@PathVariable("pointID") Long pointID,
-			@PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to, @RequestParam(required = false) String format) throws IOException {
+	@PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date, @RequestParam(required = false) String format) throws IOException {
 		try (Writer writer = new StringWriter()) {
+
+			Timestamp date_from = Timestamp.from(date_from_Date.atStartOfDay(ZoneOffset.UTC).toInstant());
+			Timestamp date_to = Timestamp.from(date_to_Date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant());
+
 			if(format == null || format.equals("json")){
 				ChargingPoint chargingPoint = chargingPointRepository.findById(pointID)
 						.orElseThrow(() -> new RuntimeException(String.format("PointID: %d not found in DB", pointID)));
@@ -170,8 +181,12 @@ public class ServiceController {
 
 	@GetMapping(path = baseURL + "/SessionsPerStation/{stationID}/{date_from}/{date_to}")
 	public ResponseEntity getSessionsPerStation(@PathVariable("stationID") Long stationID,
-			@PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to, @RequestParam(required = false) String format) throws IOException {
+	@PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date, @RequestParam(required = false) String format) throws IOException {
 		try (Writer writer = new StringWriter()) {
+
+			Timestamp date_from = Timestamp.from(date_from_Date.atStartOfDay(ZoneOffset.UTC).toInstant());
+			Timestamp date_to = Timestamp.from(date_to_Date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant());
+
 			if(format == null || format.equals("json")){
 				ChargingStation chargingStation = chargingStationRepository.findById(stationID)
 						.orElseThrow(() -> new RuntimeException(String.format("StationID: %d not found in DB", stationID)));
@@ -284,10 +299,15 @@ public class ServiceController {
 
 	@GetMapping(path = baseURL + "/SessionsPerEV/{vehicleID}/{date_from}/{date_to}")
 	public ResponseEntity getSessionsPerEV(@PathVariable("vehicleID") String vehicleID,
-			@PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to,
+	@PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date,
 			@RequestParam(required = false) String format) throws IOException {
 				
 		try (Writer writer = new StringWriter()) {
+
+
+			Timestamp date_from = Timestamp.from(date_from_Date.atStartOfDay(ZoneOffset.UTC).toInstant());
+			Timestamp date_to = Timestamp.from(date_to_Date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant());
+
 			if(format == null || format.equals("json")){
 			
 			Car car = carRepository.findById(vehicleID)
@@ -409,8 +429,12 @@ public class ServiceController {
     }
 
 	@GetMapping(path = baseURL + "/SessionsPerProvider/{providerID}/{date_from}/{date_to}")
-    public ResponseEntity getSessionsPerProvider(@PathVariable("providerID") Long providerID, @PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to, @RequestParam(required = false) String format) throws IOException {
+    public ResponseEntity getSessionsPerProvider(@PathVariable("providerID") Long providerID, @PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date, @RequestParam(required = false) String format) throws IOException {
 		try (Writer writer = new StringWriter()) {
+
+			Timestamp date_from = Timestamp.from(date_from_Date.atStartOfDay(ZoneOffset.UTC).toInstant());
+			Timestamp date_to = Timestamp.from(date_to_Date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant());
+
 			if(format == null || format.equals("json")){
 				EnergyProvider energyProvider = energyProviderRepository.findById(providerID).orElseThrow(() -> new RuntimeException(String.format("providerID: %d not found in DB", providerID)));
 				List<Session> sessions = sessionRepository.findByEnergyProviderAndStartedOnBetween(energyProvider, date_from, date_to);
@@ -524,8 +548,12 @@ public class ServiceController {
 	}
 
 	@GetMapping(path = baseURL + "/UserReport/{username}/{date_from}/{date_to}")
-	public ResponseEntity getUserReport(@PathVariable("username") String username, @PathVariable("date_from") Timestamp date_from, @PathVariable("date_to") Timestamp date_to, @RequestParam(required = false) String format) throws IOException {
+	public ResponseEntity getUserReport(@PathVariable("username") String username, @PathVariable("date_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_from_Date, @PathVariable("date_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date_to_Date, @RequestParam(required = false) String format) throws IOException {
 		try(Writer writer = new StringWriter()){
+
+			Timestamp date_from = Timestamp.from(date_from_Date.atStartOfDay(ZoneOffset.UTC).toInstant());
+			Timestamp date_to = Timestamp.from(date_to_Date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant());
+
 			if(format == null || format.equals("json")){
 				User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("Username: %s not found in DB", username)));
 				Set<Car> userCars = user.getCars();

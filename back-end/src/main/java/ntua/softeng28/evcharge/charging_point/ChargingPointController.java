@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class ChargingPointController {
 
-    private final String baseURL = "/evcharge/api/admin";
+    private final String baseURL = "/evcharge/api";
 
     @Autowired
 	ChargingPointRepository chargingPointRepository;
