@@ -29,12 +29,12 @@ class ShowDataVehicle extends React.Component {
         })
         .then((data) => {
           $(this.refs.main).DataTable({
-            data: data,
+            data: data.VehicleChargingSessionsList,
             columns:[
               {
                 title: 'Energy provider',
                 width: "15%",
-                data: 'ProviderName'
+                data: 'EnergyProvider'
             },
             {
                 title: 'Started on',
@@ -49,7 +49,7 @@ class ShowDataVehicle extends React.Component {
             {
               title: 'Energy delivered',
               width: "15%" ,
-              data: 'EnergyDelivered'
+              data: 'ΕnergyDelivered'
           },
           {
             title: 'Cost per KWh',

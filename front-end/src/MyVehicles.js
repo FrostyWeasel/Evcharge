@@ -67,7 +67,7 @@ class MyVehicles extends React.Component {
                 ordering: false
              });
 
-             $(".deleteBtn").on('click',function(ev){
+             $(this.refs.main).on("click",".deleteBtn",function(ev){
               const requestOptions = {
                 method: 'DELETE',
                 headers: { 

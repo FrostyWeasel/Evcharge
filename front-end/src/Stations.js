@@ -61,7 +61,7 @@ class Stations extends React.Component {
             ],
                 ordering: false
              });
-             $(".makechargeBtn").on('click',function(ev){
+             $(this.refs.main).on("click",".makechargeBtn",function(ev){
               localStorage.setItem('OperatorId',ev.currentTarget.id);
               window.location = "http://localhost:3000/ChooseCar";
         })

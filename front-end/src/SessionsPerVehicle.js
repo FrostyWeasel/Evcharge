@@ -71,7 +71,7 @@ class SessionsPerVehicle extends React.Component {
             ],
                 ordering: false
              });
-             $(".SessionsBtn").on('click',function(ev){
+             $(this.refs.main).on("click",".SessionsBtn",function(ev){
               localStorage.setItem('VehicledataId',ev.currentTarget.id);
               localStorage.setItem("value", "vehicle");
               window.location = "http://localhost:3000/ChooseDate";
@@ -81,109 +81,6 @@ class SessionsPerVehicle extends React.Component {
             console.error(error);
           })
       }
-  //             const requestOptions = {
-  //               method: 'GET',
-  //               headers: { 
-  //                 'Content-Type': 'application/json', 
-  //                 'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
-  //             }
-  //             }
-  //              fetch('//localhost:8765/evcharge/api/SessionsPerEV/'+ ev.currentTarget.id+ '/:' + localStorage.getItem("dateFrom")+ '_from/:'+ localStorage.getItem("dateTo")+ '_to/:', requestOptions)
-  //                   .then((response) => {
-  //                       return response.json();
-  //                     })
-  //                     .then((data) => {
-  //                       $(this.refs.main).DataTable({
-  //                         data: data,
-  //                         columns:[
-  //                           {
-  //                             title: 'The date/time of the call',
-  //                             width: "7%",
-  //                             data: 'RequestTimestamp'
-  //                         },
-  //                         {
-  //                             title: 'Period from',
-  //                             width: "7%",
-  //                             data: 'PeriodFrom'
-  //                         },
-  //                         {
-  //                           title: 'Period to',
-  //                           width: "7%" ,
-  //                           data: 'PeriodTo'
-  //                       },
-  //                         {
-  //                           title: 'Total energy consumed',
-  //                           width: "7%" ,
-  //                           data: 'TotalEnergyConsumed'
-  //                       },
-  //                       {
-  //                         title: 'Number of visited points',
-  //                         width: "7%" ,
-  //                         data: 'NumberOfVisitedPoints'
-  //                     }, 
-  //                     {
-  //                       title: 'Number of vehicle charging sessions',
-  //                       width: "7%" ,
-  //                       data: 'NumberOfVehicleChargingSessions'
-  //                   },
-  //                   {
-  //                     title: 'Vehicle charging sessions',
-  //                     width: "7%" ,
-  //                     data: 'VehicleChargingSessionsList:'
-  //                 }, 
-  //                 {
-  //                   title: 'Session index',
-  //                   width: "7%" ,
-  //                   data: 'SessionIndex'
-  //               },
-  //               {
-  //                 title: 'Energy provider',
-  //                 width: "7%" ,
-  //                 data: 'EnergyProvider'
-  //             },
-  //             {
-  //               title: 'Started on',
-  //               width: "7%" ,
-  //               data: 'StartedOn'
-  //           },
-  //           {
-  //             title: 'Finished on',
-  //             width: "7%" ,
-  //             data: 'FinishedOn'
-  //         },
-  //         {
-  //           title: 'Εnergy delivered',
-  //           width: "7%" ,
-  //           data: 'ΕnergyDelivered'
-  //       },
-  //       {
-  //         title: 'Price policy',
-  //         width: "7%" ,
-  //         data: 'PricePolicyRef'
-  //     },
-  //     {
-  //       title: 'Cost per KWh',
-  //       width: "7%" ,
-  //       data: 'CostPerKWh'
-  //   },
-  //   {
-  //     title: 'Session cost',
-  //     width: "7%" ,
-  //     data: 'SessionCost'
-  // }
-                      // ],
-                     // ordering: false
-                //        });
-                // })
-                // .catch(error => {
-                //   console.error(error);
-                // })
-        //      })
-        //     })
-        //     .catch(error => {
-        //       console.error(error);
-        //     })
-        // }
     render() {
         return (
             <html>

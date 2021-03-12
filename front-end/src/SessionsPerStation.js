@@ -58,7 +58,7 @@ class SessionsPerStation extends React.Component {
             ],
                 ordering: false
              });
-             $(".SessionsBtn").on('click',function(ev){
+             $(this.refs.main).on("click",".SessionsBtn",function(ev){
               localStorage.setItem("value", "station");
               localStorage.setItem('StationDataId',ev.currentTarget.id);
               window.location = "http://localhost:3000/ChooseDate";
