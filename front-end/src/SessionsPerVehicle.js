@@ -4,6 +4,7 @@ import $ from 'jquery';
 import './MyVehicles.css';
 
 
+
 class SessionsPerVehicle extends React.Component {
     constructor(props) {
         super(props);
@@ -34,7 +35,8 @@ class SessionsPerVehicle extends React.Component {
                   {
                     title: 'Brand',
                     width: "10%",
-                    data: 'brand.name'
+                    data: 'brand.name',
+                    sortable: true
                 },
                 {
                     title: 'Type',
@@ -56,29 +58,6 @@ class SessionsPerVehicle extends React.Component {
                 width: "10%" ,
                 data: 'usable_battery_size'
             },
-
-
-              
-              {
-                title: 'From',
-                width: "15%",
-                data: 'id',
-                'render' : function(id){
-                  return(
-                  '<input class="FromBtn" className="btk"  type="text" name="FromBtn" placeholder="yyyymmdd" required/>'
-                  )}
-              },
-              
-                  {
-                    title: 'Action',
-                    width: "15%",
-                    data: 'id',
-                    'render' : function(id){
-                      return(
-                      '<input class="ToBtn" className="btk" name="toBtn" placeholder="yyyymmdd" type="text" required/>'
-                      )}
-                  },
-              
             {
               title: 'Action',
               width: "17,5%",
@@ -96,6 +75,7 @@ class SessionsPerVehicle extends React.Component {
              localStorage.setItem('dateFrom',)
             })
              $(".SessionsBtn").on('click',function(ev){
+              window.location = "/";
               const requestOptions = {
                 method: 'GET',
                 headers: { 
@@ -204,9 +184,9 @@ class SessionsPerVehicle extends React.Component {
             <html>
             <body className="stations-body">
               <meta charSet="UTF-8" />
-              <title>Stations</title>
+              <title>Sessions per vehicle</title>
             <div>
-                <h2>Stations</h2>
+                <h2>Sessions per vehicle</h2>
 
                 <table ref="main" />
                 

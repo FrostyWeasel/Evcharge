@@ -3,14 +3,15 @@ import axios from 'axios';
 import $ from 'jquery';
 import { ModalContent, ModalFooter, ModalButton, useDialog } from 'react-st-modal';
 import './MyVehicles.css';
+import ChooseCar from './ChooseCar';
+import { Route, Redirect, Switch, BrowserRouter } from "react-router-dom";
 import { render } from 'react-dom';
-import charge from './Modal';
 
 class Stations extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          data: [], ChargingPoints: [], modalIsOpen: false
+          data: [], ChargingPoints: []
         };
       }
       
@@ -27,8 +28,7 @@ class Stations extends React.Component {
               return response.json();
             })
             .then((data) => {
-                var initial = data;
-                this.setState({ChargingPoints: initial});
+              const states={data};
               $(this.refs.main).DataTable({
                 // dom: '<"data-table-wrapper"t>',
                 data: data,
@@ -51,7 +51,7 @@ class Stations extends React.Component {
             {
               title: 'Action',
               width: "25%",
-              data: 'id',
+              data: 'operator.ID',
               'render' : function(id){
                 return(
                 '<a className="btk" class="makechargeBtn" id="'+ id + '" ><i type="button">charge</i></a>'
@@ -62,16 +62,11 @@ class Stations extends React.Component {
                 ordering: false
              });
              $(".makechargeBtn").on('click',function(ev){
-              this.refs.setState({modalIsOpen: true})
-              
-                      
-            })
-            
-            })
-            .catch(error => {
-              console.error(error);
-            })
-        }
+              localStorage.setItem('OperatorId',ev.currentTarget.id);
+              window.location = "http://localhost:3000/ChooseCar";
+        })
+      })
+      }
     render() {
         return (
             <html>

@@ -194,7 +194,6 @@ class AddNewVehicle extends React.Component {
                 localStorage.setItem('carid', item.id);
             }
         })
-        // $("#AddNewVehicle").html("").removeClass("disabled").attr("disabled", false);
     }
 
 

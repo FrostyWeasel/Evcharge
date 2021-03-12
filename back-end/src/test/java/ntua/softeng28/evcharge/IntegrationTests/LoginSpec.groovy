@@ -57,8 +57,9 @@ class LoginSpec extends Specification {
 		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 		contentType: MediaType.APPLICATION_JSON,
 		body: user)
-		
+
 		then:
-		thrown(HttpResponseException)
+		HttpResponseException e = thrown()
+		e.statusCode == 400
 	}
 }

@@ -38,25 +38,6 @@ class SessionsPerPoint extends React.Component {
                     data: 'operator.Title'
                 },
             {
-              title: 'From',
-              width: "25%",
-              data: 'id',
-              'render' : function(id){
-                return(
-                '<input className="btk" class="FromBtn" type="text" placeholder="yyyymmdd" id="'+ id + '" ></input>'
-                )}
-            },
-            
-                {
-                  title: 'Action',
-                  width: "25%",
-                  data: 'id',
-                  'render' : function(id){
-                    return(
-                    '<input className="btk" class="toBtn" placeholder="yyyymmdd" type="text" id="'+ id + '" ></input>'
-                    )}
-                },
-            {
               title: 'Action',
               width: "25%",
               data: 'id',

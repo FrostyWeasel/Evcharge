@@ -19,7 +19,7 @@ class SessionsPerStation extends React.Component {
               'X-OBSERVATORY-AUTH': localStorage.getItem("token")
             }
           }
-           fetch('//localhost:8765/evcharge/api/admin/chargingStations', requestOptions)
+           fetch('//localhost:8765/evcharge/api/chargingStations', requestOptions)
             .then((response) => {
               return response.json();
             })
@@ -45,27 +45,6 @@ class SessionsPerStation extends React.Component {
                   width: "15%" ,
                   data: 'address.Country.Title'
               },
-              
-              {
-                title: 'From',
-                width: "25%",
-                data: 'id',
-                'render' : function(id){
-                  return(
-                  '<input className="btk" class="FromBtn" type="text" placeholder="yyyymmdd" id="'+ id + '" ></input>'
-                  )}
-              },
-              
-                  {
-                    title: 'Action',
-                    width: "25%",
-                    data: 'id',
-                    'render' : function(id){
-                      return(
-                      '<input className="btk" class="toBtn" placeholder="yyyymmdd" type="text" id="'+ id + '" ></input>'
-                      )}
-                  },
-              
             {
               title: 'Action',
               width: "25%",
@@ -106,9 +85,9 @@ class SessionsPerStation extends React.Component {
             <html>
             <body className="stations-body">
               <meta charSet="UTF-8" />
-              <title>Stations</title>
+              <title>Sessions per station</title>
             <div>
-                <h2>Stations</h2>
+                <h2>Sessions per station</h2>
 
                 <table ref="main" />
                 
