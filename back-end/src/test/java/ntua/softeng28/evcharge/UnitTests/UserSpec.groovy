@@ -80,7 +80,9 @@ class UserSpec extends Specification{
 		def List<User> usersfromdb = userrepo.findAll()
 		
 		then:
-		saveduser !== savedupdateduser
+		usersfromdb[0].getUsername() == "Kobe Bryant"
+		usersfromdb[0].getPassword() == "2010 Champion"
+		usersfromdb[0].getRole() == "Retired"
 		
 		and:
 		usersfromdb.size() == 1
