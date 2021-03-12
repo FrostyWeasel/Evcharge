@@ -12,15 +12,15 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 @Stepwise
-@SpringBootTest(webEnvironment=DEFINED_PORT)
+@SpringBootTest(webEnvironment = DEFINED_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
-class ChargingPointSpec extends Specification{
+class ChargingStationControllerSpec extends Specification {
 
 	private final static int EXPECTED_PORT = 8765
 
 	def baseurl = "http://localhost:8765/evcharge/api/"
 
-	def "checking if a get all points request returns 200"(){
+	def "checking if a get all stations request returns 200"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -39,7 +39,7 @@ class ChargingPointSpec extends Specification{
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"chargingPoints",
+		def getResponse = client.get(path:"chargingStations",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
@@ -67,7 +67,7 @@ class ChargingPointSpec extends Specification{
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"chargingPoints/1",
+		def getResponse = client.get(path:"chargingPoints/13",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
