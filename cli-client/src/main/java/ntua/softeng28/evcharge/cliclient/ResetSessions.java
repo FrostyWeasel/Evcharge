@@ -2,13 +2,11 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import okhttp3.*;
+
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
@@ -18,9 +16,7 @@ import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
 import java.util.List;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
+
 
 @Command(name = "--resetsessions", description = "Reset System's Sessions")
 public class ResetSessions implements Callable<Integer> {
@@ -32,31 +28,21 @@ public class ResetSessions implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException{
-        String url = baseURL;
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("text/plain");
+        RequestBody body = RequestBody.create("", mediaType);
+        Request request = new Request.Builder()
+            .url(baseURL)
+            .method("POST", body)
+            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+            .build();
+        Response response = client.newCall(request).execute();
 
-        String urlParameters = "";
-        byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-        int postDataLength = postData.length;
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-        conn.setRequestProperty("X-OBSERVATORY-AUTH", this.getToken(login_token));
-        int responseCode = conn.getResponseCode();
-        if(responseCode == 200){
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+        String responseBody = response.body().string();
+        JSONObject jObj = new JSONObject(responseBody);
+        System.out.println(jObj.toString(4));
 
-            JSONObject json = new JSONObject(response.toString());
-            System.out.println(json.toString(4));
-        }
         return 0;
     }
 

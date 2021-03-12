@@ -40,7 +40,7 @@ public class Logout implements Callable<Integer> {
                 .build();
             Response response = client.newCall(request).execute();
 
-            System.out.println("Goodbye " + this.getUserName(login_token) + "!" + "Logout Successful!");
+            System.out.println("Goodbye " + this.getUserName(login_token) + "!\n" + "Logout Successful!");
             login_token.delete();
         }
         else

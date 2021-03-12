@@ -2,13 +2,11 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import okhttp3.*;
+
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
@@ -18,9 +16,6 @@ import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
 import java.util.List;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
 
 @Command(name = "--usermod", description = "Create new user or modify existing")
 public class Usermod implements Callable<Integer> {
@@ -46,24 +41,18 @@ public class Usermod implements Callable<Integer> {
     public Integer call() throws IOException {
 
         String url = baseURL + username + "/" + passw;
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("text/plain");
+        RequestBody body = RequestBody.create("", mediaType);
+        Request request = new Request.Builder()
+            .url(url)
+            .method("POST", body)
+            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+            .build();
+        Response response = client.newCall(request).execute();
 
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-
-        String urlParameters = "";
-        byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-        int postDataLength = postData.length;
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-        conn.setRequestProperty("X-OBSERVATORY-AUTH", this.getToken(login_token));
-
-        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
-            wr.write(postData);
-        }
-
-        int responseCode = conn.getResponseCode();
-
+        String responseBody = response.body().string();
+        System.out.println(responseBody);
         return 0;
     }
 
