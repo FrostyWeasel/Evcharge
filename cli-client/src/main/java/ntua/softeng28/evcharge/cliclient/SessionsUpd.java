@@ -2,29 +2,20 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
 import okhttp3.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
 import java.util.List;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
 
 @Command(name = "--sessionsupd", description = "Create new user or modify existing")
 public class SessionsUpd implements Callable<Integer> {
@@ -47,20 +38,18 @@ public class SessionsUpd implements Callable<Integer> {
     public Integer call() throws IOException {
 
         String url = baseURL;
-        OkHttpClient client = new OkHttpClient().newBuilder()
-        .build();
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-        .addFormDataPart("file","sessions.csv",
-        RequestBody.create(MediaType.parse("application/octet-stream"),
-        new File(filename)))
-        .build();
+            .addFormDataPart("file","sessions.csv",
+            RequestBody.create(new File(filename), MediaType.parse("application/octet-stream")))
+            .build();
 
         Request request = new Request.Builder()
-        .url(url)
-        .method("POST", body)
-        .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-        .build();
+            .url(url)
+            .method("POST", body)
+            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+            .build();
         Response response = client.newCall(request).execute();
 
         return 0;

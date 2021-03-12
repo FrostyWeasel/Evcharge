@@ -2,14 +2,11 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
+import okhttp3.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
@@ -19,9 +16,6 @@ import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
 import java.util.List;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
 
 @Command(name = "login", description = "User login")
 public class Login implements Callable<Integer> {
@@ -55,29 +49,23 @@ public class Login implements Callable<Integer> {
 
     public String getToken() throws IOException{
 
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create("username=" + username +"&password=" + passw, mediaType);
+        Request request = new Request.Builder()
+            .url(baseURL)
+            .method("POST", body)
+            .addHeader("Content-Type", "application/x-www-form-urlencoded")
+            .build();
+        Response response = client.newCall(request).execute();
 
-        HttpURLConnection conn = (HttpURLConnection) new URL(baseURL).openConnection();
-
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        String urlParameters = "username=" + username + "&password=" + passw;
-        byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-        int postDataLength = postData.length;
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-
-        DataOutputStream writer = new DataOutputStream(conn.getOutputStream());
-        writer.write(postData);
-        int responseCode = conn.getResponseCode();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-        String json = reader.readLine();
-        JSONObject jObj = new JSONObject(json);
+        String responseBody = response.body().string();
+        JSONObject jObj = new JSONObject(responseBody);
         String token = jObj.getString("token");
         return token;
-
     }
 
     public static void main(String[] args) {
+
     }
 }

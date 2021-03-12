@@ -2,13 +2,11 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import okhttp3.*;
+
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
@@ -18,9 +16,6 @@ import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
 import java.util.List;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
 
 @Command(name = "logout", description = "User login")
 public class Logout implements Callable<Integer> {
@@ -34,23 +29,18 @@ public class Logout implements Callable<Integer> {
     public Integer call() throws IOException {
 
         if(login_token.exists()){
-            String url = baseURL;
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
-            conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+            RequestBody body = RequestBody.create("", mediaType);
+            Request request = new Request.Builder()
+                .url(baseURL)
+                .method("POST", body)
+                .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+                .build();
+            Response response = client.newCall(request).execute();
 
-            String urlParameters = "";
-            byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-            int postDataLength = postData.length;
-            conn.setRequestProperty("charset", "utf-8");
-            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            conn.setRequestProperty("X-OBSERVATORY-AUTH", this.getToken(login_token));
-
-            DataOutputStream writer = new DataOutputStream(conn.getOutputStream());
-            writer.write(postData);
-
-            System.out.println("Goodbye " + this.getUserName(login_token) + "\nLogout Successful!");
+            System.out.println("Goodbye " + this.getUserName(login_token) + "!" + "Logout Successful!");
             login_token.delete();
         }
         else
