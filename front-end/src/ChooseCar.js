@@ -69,6 +69,14 @@ class ChooseCar extends React.Component {
 
              $(".ChooseCarBtn").on('click',function(ev){
               localStorage.setItem("carid", ev.currentTarget.id);
+              localStorage.setItem("chargingpointid", " ");
+              localStorage.setItem("energyproviderid", " ");
+              localStorage.setItem("startedon", " ");
+              localStorage.setItem("finishedon", " ");
+              localStorage.setItem("protocol", " ");
+              localStorage.setItem("payment", " ");
+              localStorage.setItem("cost", " ");
+              localStorage.setItem("energydelivered", " ");
               window.location = "http://localhost:3000/Charge";
             })
         })

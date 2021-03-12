@@ -19,6 +19,11 @@ import SessionsPerPoint from './SessionsPerPoint';
 import SessionsPerProvider from './SessionsPerProvider';
 import SessionsPerVehicle from './SessionsPerVehicle';
 import SessionsPerStation from './SessionsPerStation';
+import ShowDataPoint from './ShowDataPoint';
+import ShowDataProvider from './ShowDataProvider';
+import ShowDataVehicle from './ShowDataVehicle';
+import ShowDataStation from './ShowDataStation';
+import ChooseDate from './ChooseDate';
 import Stations from './Stations';
 
 import 'foundation-sites/dist/css/foundation.min.css';
@@ -35,6 +40,7 @@ class App extends React.Component {
     super(props);
 }
   handleSubmit() {
+    localStorage.setItem("value", 0);
     var x = document.forms["login"]["userid"].value;
     var y = document.forms["login"]["pswrd"].value;
     if (x == ""|| y== "") {
@@ -120,7 +126,6 @@ class App extends React.Component {
                   </div>
                 </div> 
               <div className="topnav-right">
-                {/* <a><i type="button" onClick={this.Logout.bind(this)} className="fa fa-fw fa-user"></i>Logout</a> */}
                 <a href="/Logout"><i className="fa fa-fw fa-user"></i>Logout</a>
               </div>
             </div>
@@ -135,6 +140,11 @@ class App extends React.Component {
               <Route path="/Logout" component={Logout} />
               <Route path="/ChooseCar" component={ChooseCar} />
               <Route path="/Charge" component={Charge} />
+              <Route path="/ChooseDate" component={ChooseDate} />
+              <Route path="/ShowDataProvider" component={ShowDataProvider} />
+              <Route path="/ShowDataVehicle" component={ShowDataVehicle} />
+              <Route path="/ShowDataStation" component={ShowDataStation} />
+              <Route path="/ShowDataPoint" component={ShowDataPoint} />
               <Route path="/" component={Stations} />
             </Switch>
             <script src="/node_modules/foundation-sites/dist/js/foundation.min.js"></script>

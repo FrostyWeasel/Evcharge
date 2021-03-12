@@ -43,14 +43,19 @@ class SessionsPerPoint extends React.Component {
               data: 'id',
               render(id){
                 return(
-                '<a class="pointsessions" className="btk"><i type="button">See sessions</i></a>'
+                '<a class="pointsessions" className="btk" id="'+ id + '" ><i type="button">See sessions</i></a>'
                 )}
           }
 
             ],
                 ordering: false
              });
+             $(".pointsessions").on('click',function(ev){
+              localStorage.setItem('PointDataId',ev.currentTarget.id);
+              localStorage.setItem("value", "point");
+              window.location = "http://localhost:3000/ChooseDate";
             })
+          })
             .catch(error => {
               console.error(error);
             })

@@ -42,29 +42,17 @@ class SessionsPerProvider extends React.Component {
               data: 'id',
               'render' : function(id){
                 return(
-                '<a className="btk" class="SessionsBtn" id="'+ id + '" ><i type="button">See sessions</i></a>'
+                '<a className="btk" class="SessionsProviderBtn" id="'+ id + '" ><i type="button">See sessions</i></a>'
                 )}
           }
 
             ],
                 ordering: false
              });
-             $(".SessionsBtn").on('click',function(ev){
-              const requestOptions = {
-                method: 'DELETE',
-                headers: { 
-                  'Content-Type': 'application/json', 
-                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
-              },   
-                body: JSON.stringify({ title: 'NewVehicle' })
-              }
-               fetch('//localhost:8765/evcharge/api/UserCars/'+ localStorage.getItem("username")+ '/' + ev.currentTarget.id, requestOptions)
-                .then((response) => {
-                  window.location.reload();
-                })
-                .catch(error => {
-                  console.error(error);
-                })
+             $(".SessionsProviderBtn").on('click',function(ev){
+              localStorage.setItem('ProviderDataId',ev.currentTarget.id);
+              localStorage.setItem("value", "provider");
+              window.location = "http://localhost:3000/ChooseDate";
              })
             })
             .catch(error => {

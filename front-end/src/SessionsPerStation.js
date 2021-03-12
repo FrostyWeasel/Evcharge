@@ -59,21 +59,9 @@ class SessionsPerStation extends React.Component {
                 ordering: false
              });
              $(".SessionsBtn").on('click',function(ev){
-              const requestOptions = {
-                method: 'GET',
-                headers: { 
-                  'Content-Type': 'application/json', 
-                  'X-OBSERVATORY-AUTH': localStorage.getItem("token") 
-              },   
-                body: JSON.stringify({ title: 'SeeSessions' })
-              }
-               fetch('//localhost:8765/evcharge/api/SessionsPerStation/:yyyymmdd_from/:yyyymmdd_to'+ localStorage.getItem("sttionID")+ '/:' + localStorage.getItem("dateFrom")+ '_from/:'+ localStorage.getItem("dateTo")+ '_to/:', requestOptions)
-                .then((response) => {
-                  window.location.reload();
-                })
-                .catch(error => {
-                  console.error(error);
-                })
+              localStorage.setItem("value", "station");
+              localStorage.setItem('StationDataId',ev.currentTarget.id);
+              window.location = "http://localhost:3000/ChooseDate";
              })
             })
             .catch(error => {
