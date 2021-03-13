@@ -1,13 +1,11 @@
-package ntua.softeng28.evcharge
+package ntua.softeng28.evcharge.IntegrationTests
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestPropertySource
 import org.springframework.http.MediaType
-import org.springframework.http.HttpStatus
+import org.springframework.test.context.TestPropertySource
 
-import groovy.json.JsonOutput
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import spock.lang.Specification
@@ -16,13 +14,13 @@ import spock.lang.Stepwise
 @Stepwise
 @SpringBootTest(webEnvironment=DEFINED_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
-class CarControllerSpec extends Specification {
+class ServiceControllerSpec extends Specification{
 
 	private final static int EXPECTED_PORT = 8765
 
 	def baseurl = "http://localhost:8765/evcharge/api/"
 
-	def "checking get all cars functionality"() {
+	def "a sessionsperpoint request to an empty DB should return 400 status code"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -41,45 +39,19 @@ class CarControllerSpec extends Specification {
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"cars",
-		requestContentType: MediaType.APPLICATION_JSON,
-		contentType: MediaType.APPLICATION_JSON,
-		headers: header)
-
-		then:
-		getResponse.status==200
-	}
-
-	def "checking if a get by id to an empty repository throws 402"(){
-		given:
-		def client = new RESTClient(baseurl)
-
-		Map<String, Object> user = new HashMap<>();
-		user.put("username", "admin");
-		user.put("password", "petrol4ever");
-
-		when:
-		def loginResponse = client.post(path:"login",
-		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-		contentType: MediaType.APPLICATION_JSON,
-		body: user)
-
-		def token = loginResponse.getData().toString()
-		token = token.substring(7,token.length()-1)
-
-		def header=["X-OBSERVATORY-AUTH":token]
-
-		def getResponse = client.get(path:"cars/1",
+		def getResponse = client.get(path:"SessionsPerPoint/100/20200930/20210930",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
 
 		then:
 		HttpResponseException e = thrown()
-		e.statusCode == 402
+
+		and:
+		e.statusCode==400
 	}
 
-	def "checking get all brands functionallity"(){
+	def "a sessionsperstation request to an empty DB should return 400 status code"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -98,45 +70,19 @@ class CarControllerSpec extends Specification {
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"cars/brands",
-		requestContentType: MediaType.APPLICATION_JSON,
-		contentType: MediaType.APPLICATION_JSON,
-		headers: header)
-
-		then:
-		getResponse.status == 200
-	}
-
-	def "checking if get by id to an empty brands repo throws bad request exception"(){
-		given:
-		def client = new RESTClient(baseurl)
-
-		Map<String, Object> user = new HashMap<>();
-		user.put("username", "admin");
-		user.put("password", "petrol4ever");
-
-		when:
-		def loginResponse = client.post(path:"login",
-		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-		contentType: MediaType.APPLICATION_JSON,
-		body: user)
-
-		def token = loginResponse.getData().toString()
-		token = token.substring(7,token.length()-1)
-
-		def header=["X-OBSERVATORY-AUTH":token]
-
-		def getResponse = client.get(path:"cars/brands/1",
+		def getResponse = client.get(path:"SessionsPerStation/100/20200930/20210930",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
 
 		then:
 		HttpResponseException e = thrown()
-		e.statusCode == 400
+
+		and:
+		e.statusCode==400
 	}
 
-	def "checking if a try to delete an empty car repo throws a bad request exception"(){
+	def "a SessionsPerEv request to an empty DB should return 400 status code"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -155,13 +101,108 @@ class CarControllerSpec extends Specification {
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.delete(path:"admin/cars/1",
+		def getResponse = client.get(path:"SessionsPerEV/100/20200930/20210930",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
 
 		then:
 		HttpResponseException e = thrown()
-		e.statusCode == 400
+
+		and:
+		e.statusCode==400
+	}
+
+	def "a sessionsPerProvider request to an empty DB should return 400 status code"(){
+		given:
+		def client = new RESTClient(baseurl)
+
+		Map<String, Object> user = new HashMap<>();
+		user.put("username", "admin");
+		user.put("password", "petrol4ever");
+
+		when:
+		def loginResponse = client.post(path:"login",
+		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+		contentType: MediaType.APPLICATION_JSON,
+		body: user)
+
+		def token = loginResponse.getData().toString()
+		token = token.substring(7,token.length()-1)
+
+		def header=["X-OBSERVATORY-AUTH":token]
+
+		def getResponse = client.get(path:"SessionsPerProvider/100/20200930/20210930",
+		requestContentType: MediaType.APPLICATION_JSON,
+		contentType: MediaType.APPLICATION_JSON,
+		headers: header)
+
+		then:
+		HttpResponseException e = thrown()
+
+		and:
+		e.statusCode==400
+	}
+
+	def "a get all cars from brand request to an empty DB should return 400 status code"(){
+		given:
+		def client = new RESTClient(baseurl)
+
+		Map<String, Object> user = new HashMap<>();
+		user.put("username", "admin");
+		user.put("password", "petrol4ever");
+
+		when:
+		def loginResponse = client.post(path:"login",
+		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+		contentType: MediaType.APPLICATION_JSON,
+		body: user)
+
+		def token = loginResponse.getData().toString()
+		token = token.substring(7,token.length()-1)
+
+		def header=["X-OBSERVATORY-AUTH":token]
+
+		def getResponse = client.get(path:"CarsByBrand/125",
+		requestContentType: MediaType.APPLICATION_JSON,
+		contentType: MediaType.APPLICATION_JSON,
+		headers: header)
+
+		then:
+		HttpResponseException e = thrown()
+
+		and:
+		e.statusCode==400
+	}
+
+	def "a get userreport request to an empty DB should return 400 status code"(){
+		given:
+		def client = new RESTClient(baseurl)
+
+		Map<String, Object> user = new HashMap<>();
+		user.put("username", "admin");
+		user.put("password", "petrol4ever");
+
+		when:
+		def loginResponse = client.post(path:"login",
+		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+		contentType: MediaType.APPLICATION_JSON,
+		body: user)
+
+		def token = loginResponse.getData().toString()
+		token = token.substring(7,token.length()-1)
+
+		def header=["X-OBSERVATORY-AUTH":token]
+
+		def getResponse = client.get(path:"UserReport/randomuser/20200909/20201010",
+		requestContentType: MediaType.APPLICATION_JSON,
+		contentType: MediaType.APPLICATION_JSON,
+		headers: header)
+
+		then:
+		HttpResponseException e = thrown()
+
+		and:
+		e.statusCode==400
 	}
 }

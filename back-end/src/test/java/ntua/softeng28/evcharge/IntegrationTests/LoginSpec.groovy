@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge
+package ntua.softeng28.evcharge.IntegrationTests
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 
@@ -39,7 +39,6 @@ class LoginSpec extends Specification {
 		headers:["X-OBSERVATORY-AUTH":token])
 		then:
 		loginResponse.status==200
-		println(loginResponse.getData().toString())
 
 		and:
 		logoutResponse.status==200
