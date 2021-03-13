@@ -2,6 +2,8 @@ package ntua.softeng28.evcharge.UnitTests
 
 import java.sql.Timestamp
 
+import javax.transaction.Transactional
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.TestPropertySource
@@ -31,6 +33,7 @@ import ntua.softeng28.evcharge.user.UserRepository
 import spock.lang.Specification
 import spock.lang.Stepwise
 
+@Transactional
 @Stepwise
 @DataJpaTest
 @TestPropertySource(locations="classpath:application-test.properties")
@@ -125,7 +128,6 @@ class SessionSpec extends Specification{
 		session.setUser(user)
 
 		when:
-		def savedsession=sessionrepo.save(session)
 		def savedaccharger=acchargerrepo.save(accharger)
 		def savedbrand=brandrepo.save(brand)
 		def savedcurvepoint=curverepo.save(curvepoint)
@@ -135,6 +137,7 @@ class SessionSpec extends Specification{
 		def savedchargingpoint=chargingpointrepo.save(chargingpoint)
 		def savedenergyprovider=providerrepo.save(energyprovider)
 		def saveduser=userrepo.save(user)
+		def savedsession=sessionrepo.save(session)
 
 		def List<Session> sessionsfromdb = sessionrepo.findAll()
 
