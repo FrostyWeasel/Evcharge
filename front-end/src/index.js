@@ -1,19 +1,16 @@
-import React, { useState }  from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import datepickerFactory from 'jquery-datepicker';
-import datepickerJAFactory from 'jquery-datepicker/i18n/jquery.ui.datepicker-ja';
-// import Dialog from 'react-bootstrap-dialog'
-import { Router, Link, browserHistory } from 'react-router';
-import { Route, Redirect, Switch, BrowserRouter } from "react-router-dom";
+
+import { Route, Switch, BrowserRouter } from "react-router-dom";
 import './index.css';
 import './Login.css';
 import Logout from './Logout';
 import MyVehicles from './MyVehicles';
 import AddNewVehicle from './AddNewVehicle';
 import Charge from './Charge';
+import UserReport from './UserReport';
 import ChooseCar from './ChooseCar';
 import SessionsPerPoint from './SessionsPerPoint';
 import SessionsPerProvider from './SessionsPerProvider';
@@ -25,10 +22,11 @@ import ShowDataVehicle from './ShowDataVehicle';
 import ShowDataStation from './ShowDataStation';
 import ChooseDate from './ChooseDate';
 import Stations from './Stations';
+import ChooseDateReport from './ChooseDateReport';
 
 import 'foundation-sites/dist/css/foundation.min.css';
-import { Button, Colors, Grid, Cell } from 'react-foundation';
-import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import { Grid, Cell } from 'react-foundation';
+import { registerLocale } from "react-datepicker";
 import es from 'date-fns/locale/es';
 registerLocale('es', es)
 
@@ -38,13 +36,14 @@ const user = localStorage.getItem('user');
 class App extends React.Component {
   constructor(props) {
     super(props);
-}
+  }
   handleSubmit() {
-    localStorage.setItem("value", 0);
+    localStorage.setItem("value", "admin");
     var x = document.forms["login"]["userid"].value;
     var y = document.forms["login"]["pswrd"].value;
-    if (x == ""|| y== "") {
-      alert("Username and password must be filled out");
+    if (x == "" || y == "") {
+      alert("Username and password can not be empty");
+      window.location = "/"
       return false;
     }
     var bodyFormData = new FormData();
@@ -55,18 +54,19 @@ class App extends React.Component {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(bodyFormData)
     }
-     fetch('//localhost:8765/evcharge/api/login', requestOptions)
+    fetch('//localhost:8765/evcharge/api/login', requestOptions)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('username', x );
+        localStorage.setItem('username', x);
         localStorage.setItem("logged", true);
         window.location = "/"
       })
       .catch(error => {
         alert('Wrong username or password');
+        window.location = "/"
         console.error(error);
       })
   }
@@ -74,13 +74,13 @@ class App extends React.Component {
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', 
+        'Content-Type': 'application/json',
         'X-OBSERVATORY-AUTH': localStorage.getItem("token")
       },
       body: JSON.stringify({ title: 'Logout' })
     }
-     fetch('//localhost:8765/evcharge/api/logout', requestOptions)
-      .then(()=> {
+    fetch('//localhost:8765/evcharge/api/logout', requestOptions)
+      .then(() => {
         localStorage.setItem('token', null);
         localStorage.setItem('logged', false);
         window.location.reload();
@@ -94,7 +94,7 @@ class App extends React.Component {
       return (
         <html>
           <head>
-          <link rel="stylesheet" href="/node_modules/foundation-sites/dist/css/foundation.min.css"/>
+            <link rel="stylesheet" href="/node_modules/foundation-sites/dist/css/foundation.min.css" />
           </head>
           <body>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -110,21 +110,23 @@ class App extends React.Component {
             <div className="topnav">
               <a href="/Stations"><i className="fa fa-plug"></i> Stations</a>
               <div className="dropdown">
-                  <button className="dropbtn"><i className="fa fa-fw fa-car"></i> My vehicles</button>      
-                  <div className="dropdown-content">
-                    <a href="/AddNewVehicle">Add new vehicle</a>
-                    <a href="/ManageMyVehicles">Manage my vehicles</a>
-                  </div>
-                </div> 
-                <div className="dropdown">
-                  <button className="dropbtn"><i className="fa fa-history" aria-hidden="true"></i>Data of sessions</button>      
-                  <div className="dropdown-content">
-                    <a href="/SessionsPerPoint">Sessions per point</a>
-                    <a href="/SessionsPerStation">Sessions per station</a>
-                    <a href="/SessionsPerVehicle">Sessions per vehicle</a>
-                    <a href="/SessionsPerProvider">Sessions per povider</a>
-                  </div>
-                </div> 
+                <button className="dropbtn"><i className="fa fa-fw fa-car"></i> My vehicles</button>
+                <div className="dropdown-content">
+                  <a href="/AddNewVehicle">Add new vehicle</a>
+                  <a href="/ManageMyVehicles">Manage my vehicles</a>
+                </div>
+              </div>
+
+              <div className="dropdown">
+                <button className="dropbtn"><i className="fa fa-history" aria-hidden="true"></i> Data of sessions</button>
+                <div className="dropdown-content">
+                  <a href="/SessionsPerPoint">Sessions per point</a>
+                  <a href="/SessionsPerStation">Sessions per station</a>
+                  <a href="/SessionsPerVehicle">Sessions per vehicle</a>
+                  <a href="/SessionsPerProvider">Sessions per povider</a>
+                </div>
+              </div>
+              <a href="/ChooseDateReport"><i className="fa fa-newspaper-o"></i> {localStorage.getItem("username")}'s report</a>
               <div className="topnav-right">
                 <a href="/Logout"><i className="fa fa-fw fa-user"></i>Logout</a>
               </div>
@@ -140,6 +142,8 @@ class App extends React.Component {
               <Route path="/Logout" component={Logout} />
               <Route path="/ChooseCar" component={ChooseCar} />
               <Route path="/Charge" component={Charge} />
+              <Route path="/UserReport" component={UserReport} />
+              <Route path="/ChooseDateReport" component={ChooseDateReport} />
               <Route path="/ChooseDate" component={ChooseDate} />
               <Route path="/ShowDataProvider" component={ShowDataProvider} />
               <Route path="/ShowDataVehicle" component={ShowDataVehicle} />
@@ -154,29 +158,29 @@ class App extends React.Component {
     } else {
       return (
         <html>
-        <body className="login-body">
-          <meta charSet="UTF-8" />
-          <title>Login</title>
+          <body className="login-body">
+            <meta charSet="UTF-8" />
+            <title>Login</title>
 
-          <Grid className="body-login dispay">
-          <Cell large={ 10 } medium={ 10 }>
-          <div className="header-login">
-          <a href="/">
-                <div>Electro<span>Wheeler</span></div>
-              </a>
-          </div>
-          <form name="login" action="/action_page.php" classNameonsubmit="return validateForm()" method="post">
-            <div className="login">
-              <input id="username" type="text" placeholder="Username" name="userid" required/>
-              <input id="password" type="password" placeholder="Password" name="pswrd" required/>
-              <input type="button" onClick={this.handleSubmit.bind(this)} value="Login"/>
-            </div>  
-          </form>
-          </Cell>
-          </Grid>
-        </body>
-      </html>
-        
+            <Grid className="body-login dispay">
+              <Cell large={10} medium={10}>
+                <div className="header-login">
+                  <a href="/">
+                    <div>Electro<span>Wheeler</span></div>
+                  </a>
+                </div>
+                <form name="login" action="/action_page.php" classNameonsubmit="return validateForm()" method="post">
+                  <div className="login">
+                    <input id="username" type="text" placeholder="Username" name="userid" required />
+                    <input id="password" type="password" placeholder="Password" name="pswrd" required />
+                    <input type="button" onClick={this.handleSubmit.bind(this)} value="Login" />
+                  </div>
+                </form>
+              </Cell>
+            </Grid>
+          </body>
+        </html>
+
 
       )
     }

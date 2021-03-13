@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,26 +27,110 @@ class ChooseDate extends React.Component {
       startDate1: date
     })
   }
-  chooseDate(ev){
+  chooseDate(ev) {
     ev.preventDefault();
     const format = "yyyy-MM-DD"
     var dateTime = moment(this.state.startDate).format(format);
     localStorage.setItem("fromdate", dateTime);
     var dateTime1 = moment(this.state.startDate1).format(format);
     localStorage.setItem("todate", dateTime1);
-  if(localStorage.getItem("value")=="vehicle"){
-    window.location = "//localhost:3000/ShowDataVehicle";
+    if (dateTime <= dateTime1) {
+      if (localStorage.getItem("value") == "vehicle") {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+          }
+        }
+        fetch('//localhost:8765/evcharge/api/SessionsPerEV/' + localStorage.getItem('VehicledataId') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            localStorage.setItem("NumberOfVisitedPoints", data.NumberOfVisitedPoints);
+            localStorage.setItem("TotalEnergyConsumed", data.TotalEnergyConsumed);
+            window.location = "//localhost:3000/ShowDataVehicle";
+          })
+          .catch(error => {
+            alert("No sessions for this vehicle these days");
+            window.location = "//localhost:3000/SessionsPerVehicle";
+            console.error(error);
+          })
+      }
+      if (localStorage.getItem("value") == "station") {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+          }
+        }
+        fetch('//localhost:8765/evcharge/api/SessionsPerStation/' + localStorage.getItem('StationDataId') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            localStorage.setItem("NumberOfChargingSessions", data.NumberOfChargingSessions);
+            localStorage.setItem("TotalEnergyDelivered", data.TotalEnergyDelivered);
+            window.location = "//localhost:3000/ShowDataStation";
+          })
+          .catch(error => {
+            alert("No sessions for this station these days");
+            window.location = "//localhost:3000/SessionsPerStation";
+            console.error(error);
+          })
+      }
+      if (localStorage.getItem("value") == "point") {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+          }
+        }
+        fetch('//localhost:8765/evcharge/api/SessionsPerPoint/' + localStorage.getItem('PointDataId') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            localStorage.setItem("Operatortitle", " ");
+            localStorage.setItem("Operatortitle", data.PointOperator);
+            window.location = "//localhost:3000/ShowDataPoint";
+          })
+          .catch(error => {
+            alert("No sessions for this point these days");
+            window.location = "//localhost:3000/SessionsPerPoint";
+            console.error(error);
+          })
+      }
+      if (localStorage.getItem("value") == "provider") {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+          }
+        }
+        fetch('//localhost:8765/evcharge/api/SessionsPerProvider/' + localStorage.getItem('ProviderDataId') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            window.location = "//localhost:3000/ShowDataProvider";
+          })
+          .catch(error => {
+            alert("No sessions for this provider these days");
+            window.location = "//localhost:3000/SessionsPerProvider";
+            console.error(error);
+          })
+      }
+    }
+    else {
+      alert("It can not be the date from after the date to");
+      window.location = "//localhost:3000/ChooseDate";
+    }
   }
-  if(localStorage.getItem("value")=="station"){
-    window.location = "//localhost:3000/ShowDataStation";
-  }
-  if(localStorage.getItem("value")=="point"){
-    window.location = "//localhost:3000/ShowDataPoint";
-  }
-  if(localStorage.getItem("value")=="provider"){
-    window.location = "//localhost:3000/ShowDataProvider";
-  }
-   }
 
   render() {
     return (

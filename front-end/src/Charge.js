@@ -101,52 +101,68 @@ class Charge extends React.Component {
 
 
     }
-    makeSession() {
-        var date = new Date();
-        const format1 = "yyyy-MM-DDThh:mm:ss"
-        var dateTime1 = moment(date).format(format1);
-        localStorage.setItem("startedon", dateTime1);
-        localStorage.setItem("finishedon", dateTime1);
-        var car = localStorage.getItem("carid");
-        var chargingPoint = parseInt(localStorage.getItem("chargingpointid"));
-        var energyProvider = parseInt(localStorage.getItem("energyproviderid"));
-        var username = localStorage.getItem("username");
-        var startedOn = localStorage.getItem("startedon");
-        var finishedOn = localStorage.getItem("finishedon");
-        var protocol = localStorage.getItem("protocol");
-        var payment = localStorage.getItem("payment");
-        var cost = parseFloat(localStorage.getItem("cost"));
-        var energyDelivered = parseFloat(localStorage.getItem("energydelivered"));
-        let formData = {
-            VehicleID: car,
-            ChargingPointID: chargingPoint,
-            EnergyProviderID: energyProvider,
-            Username: username,
-            StartedOn: startedOn,
-            FinishedOn: finishedOn,
-            Protocol: protocol,
-            Payment: payment,
-            Cost: cost,
-            EnergyDelivered: energyDelivered
-        };
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-OBSERVATORY-AUTH': localStorage.getItem("token")
-            },
-            body: JSON.stringify(formData)
+    makeSession(ev) {
+        var value = parseFloat(localStorage.getItem("energydelivered"));
+        if (value <= localStorage.getItem("UsableBatterySizeforcharge") && value > 0) {
+            var date = new Date();
+            const format1 = "yyyy-MM-DDThh:mm:ss"
+            var dateTime1 = moment(date).format(format1);
+            localStorage.setItem("startedon", dateTime1);
+            var milliseconds = new Date().getTime() + (1 * 60 * 60 * 1000);
+            var later = new Date(milliseconds);
+            var dateTime2 = moment(later).format(format1);
+            localStorage.setItem("finishedon", dateTime2);
+            var car = localStorage.getItem("carid");
+            var chargingPoint = parseInt(localStorage.getItem("chargingpointid"));
+            var energyProvider = parseInt(localStorage.getItem("energyproviderid"));
+            var username = localStorage.getItem("username");
+            var startedOn = localStorage.getItem("startedon");
+            var finishedOn = localStorage.getItem("finishedon");
+            var protocol = localStorage.getItem("protocol");
+            var payment = localStorage.getItem("payment");
+            var cost = parseFloat(localStorage.getItem("cost"));
+            var energyDelivered = parseFloat(localStorage.getItem("energydelivered"));
+            let formData = {
+                VehicleID: car,
+                ChargingPointID: chargingPoint,
+                EnergyProviderID: energyProvider,
+                Username: username,
+                StartedOn: startedOn,
+                FinishedOn: finishedOn,
+                Protocol: protocol,
+                Payment: payment,
+                Cost: cost,
+                EnergyDelivered: energyDelivered
+            };
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+                },
+                body: JSON.stringify(formData)
+            }
+            fetch('//localhost:8765/evcharge/api/sessions', requestOptions)
+                .then(() => {
+                    window.location = "/";
+                })
+                .catch(error => {
+                    console.error(error);
+                })
         }
-        fetch('//localhost:8765/evcharge/api/sessions', requestOptions)
-            .then(() => {
-                window.location = "/";
-            })
-            .catch(error => {
-                console.error(error);
-            })
+        if (value > localStorage.getItem("UsableBatterySizeforcharge")) {
+            ev.preventDefault();
+            alert("Usable battery size of your car is less than the kw you filled in");
+            window.location.reload();
+        }
+        if (value <= 0) {
+            ev.preventDefault();
+            alert("Kw can not be <=0");
+            window.location.reload();
+        }
     }
     Protocol(ev) {
-        localStorage.setItem("protocol",ev.currentTarget.value);
+        localStorage.setItem("protocol", ev.currentTarget.value);
         $("#payment").html("").removeClass("disabled").attr("disabled", false);
         $("#payment").append('<option value="no" selected="selected">Choose an option</option>');
         $("#payment").append(

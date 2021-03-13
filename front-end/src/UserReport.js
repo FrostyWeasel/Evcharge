@@ -2,7 +2,7 @@ import React from 'react';
 import $ from 'jquery';
 import './MyVehicles.css';
 
-class ShowDataVehicle extends React.Component {
+class UserReport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,48 +18,38 @@ class ShowDataVehicle extends React.Component {
         'X-OBSERVATORY-AUTH': localStorage.getItem("token")
       }
     }
-    fetch('//localhost:8765/evcharge/api/SessionsPerEV/' + localStorage.getItem('VehicledataId') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
+    fetch('//localhost:8765/evcharge/api/UserReport/' + localStorage.getItem('username') + '/' + localStorage.getItem("fromdate") + '/' + localStorage.getItem("todate"), requestOptions)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         $(this.refs.main).DataTable({
-          data: data.VehicleChargingSessionsList,
+          data: data.CarSummary,
           columns: [
             {
-              title: 'Energy provider',
+              title: 'Brand name',
               width: "15%",
-              data: 'EnergyProvider'
+              data: 'BrandName'
             },
             {
-              title: 'Started on',
+              title: 'Model',
               width: "15%",
-              data: 'StartedOn'
+              data: 'Model'
             },
             {
-              title: 'Finished on',
+              title: 'Cost',
               width: "15%",
-              data: 'FinishedOn'
+              data: 'Cost'
             },
             {
               title: 'Energy delivered',
               width: "15%",
-              data: 'ΕnergyDelivered'
+              data: 'EnergyDelivered'
             },
             {
-              title: 'Cost per KWh',
+              title: 'Sessions',
               width: "15%",
-              data: 'CostPerKWh'
-            },
-            {
-              title: 'Price policy',
-              width: "15%",
-              data: 'PricePolicyRef'
-            },
-            {
-              title: 'Session cost',
-              width: "15%",
-              data: 'SessionCost'
+              data: 'Sessions'
             }
           ],
           ordering: false
@@ -74,12 +64,13 @@ class ShowDataVehicle extends React.Component {
       <html>
         <body className="stations-body">
           <meta charSet="UTF-8" />
-          <title>Show session data </title>
+          <title>{localStorage.getItem("username")}'s report </title>
           <div>
-            <h4>Show session data </h4>
+            <h4>{localStorage.getItem("username")}'s report </h4>
             <h4>Date from {localStorage.getItem("fromdate")} to {localStorage.getItem("todate")}</h4>
-            <h4>Number of visited points: {localStorage.getItem("NumberOfVisitedPoints")}</h4>
-            <h4>Total energy consumed: {localStorage.getItem("TotalEnergyConsumed")}</h4>
+            <h4>Total cost {localStorage.getItem("TotalCost")}</h4>
+            <h4>Total energy {localStorage.getItem("TotalEnergy")}</h4>
+            <h4>Total sessions {localStorage.getItem("TotalSessions")}</h4>
             <table ref="main" />
 
           </div>
@@ -89,4 +80,4 @@ class ShowDataVehicle extends React.Component {
   }
 }
 
-export default ShowDataVehicle;
+export default UserReport;
