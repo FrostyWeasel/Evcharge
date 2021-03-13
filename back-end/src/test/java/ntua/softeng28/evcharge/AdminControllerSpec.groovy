@@ -7,6 +7,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.TestPropertySource
 
 import groovy.json.JsonOutput
+import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import ntua.softeng28.evcharge.admin.BrandData
 import ntua.softeng28.evcharge.admin.CarData
@@ -160,17 +161,17 @@ class AdminControllerSpec extends Specification{
 		cardata.setRelease_year(2015)
 		cardata.setUsable_battery_size(100)
 		cardata.setVariant("Variant")
-		
+
 		def accharger = new AcCharger()					//creating an ac charger for the car
 		def powerperpoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11.0,16.0,22.0,43.0) // every ac charger needs power per point
-		String[] ports = ["1","2","3"]
+		String[] ports = ["1", "2", "3"]
 		accharger.setMax_power(1000)
 		accharger.setPorts(ports)
 		accharger.setUsable_phases(3)
 		accharger.setPower_per_charging_point(powerperpoint)
-		
+
 		cardata.setAc_charger(accharger)
-		
+
 		def dccharger=new DcChargerRequest()				//creating a dc charger
 		def curvepoint = new ChargingCurvePoint(100,1000)   //it requires a curvepoint
 		ChargingCurvePoint[] curvepoints = [curvepoint]
@@ -178,22 +179,22 @@ class AdminControllerSpec extends Specification{
 		dccharger.setIs_default_charging_curve(true)
 		dccharger.setMax_power(10000)
 		dccharger.setPorts(ports)
-		
+
 		cardata.setDc_charger(dccharger)
-		
+
 		def consumption = new EnergyConsumption(87)
-		
+
 		cardata.setEnergyConsumption(consumption)
-		
-		CarData[] datacar = [cardata] //array of cardata for cardatarequest
-		
+
+		CarData[] datacar = [
+			cardata] //array of cardata for cardatarequest
 		def branddata=new BrandData("1","Something")
-		BrandData[] databrand= [branddata]				//array of branddata
-		
+		BrandData[] databrand= [
+			branddata]				//array of branddata
 		def metadata=new MetaData("something","Random")
-		
+
 		def request = new CarDataRequest(datacar,databrand,metadata)
-		def requestinjson=JsonOutput.toJson(request)		
+		def requestinjson=JsonOutput.toJson(request)
 
 		when:
 		def loginResponse = client.post(path:"login",
@@ -214,6 +215,36 @@ class AdminControllerSpec extends Specification{
 
 		then:
 		postResponse.status == 200
+	}
+
+	def "testing if a bad csv file request throws bad request exception"(){
+		given:
+		def client = new RESTClient(baseurl)
+
+		Map<String, Object> user = new HashMap<>();
+		user.put("username", "admin");
+		user.put("password", "petrol4ever");
+
+		when:
+		def loginResponse = client.post(path:"login",
+		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+		contentType: MediaType.APPLICATION_JSON,
+		body: user)
+
+		def token = loginResponse.getData().toString()
+		token = token.substring(7,token.length()-1)
+
+		def header=["X-OBSERVATORY-AUTH":token]
+
+		def postResponse = client.post(path:"admin/system/sessionsupd",
+		requestContentType: MediaType.MULTIPART_FORM_DATA,
+		contentType: MediaType.APPLICATION_JSON,
+		headers: header,
+		body: ['file', null])
+
+		then:
+		HttpResponseException e = thrown()
+		println(e.statusCode)
 	}
 
 	def "testing the creation of a provider"(){
