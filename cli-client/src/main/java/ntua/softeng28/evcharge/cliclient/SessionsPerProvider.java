@@ -9,7 +9,8 @@ import okhttp3.*;
 import picocli.CommandLine.*;
 
 import java.io.*;
-import java.lang.*;
+import java.lang.Object.*;
+import java.lang.String.*;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -32,7 +33,7 @@ public class SessionsPerProvider implements Callable<Integer> {
     @Option(names = "--to", required = true, description = "End Date")
     private String dateTo;
 
-    @Option(names = "--format", required = true, description = "File format")
+    @Option(names = "--format", required = true, defaultValue = "json", description = "File format")
     private String format;
 
     @Option(names = "--apikey", required = true, description = "API key")
@@ -43,32 +44,47 @@ public class SessionsPerProvider implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException {
-
         if(isValid(dateFrom) && isValid(dateTo)){
-            String url = baseURL + providerID + "/" + dateFrom + "/" + dateTo;
-
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
-            Request request = new Request.Builder()
-                .url(url)
-                .method("GET", null)
-                .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-                .build();
-            Response response = client.newCall(request).execute();
-            int responseCode = response.code();
-            String responseBody = response.body().string();
-            if(responseCode == 200){
-                JSONObject jObj = new JSONObject(responseBody);
-                System.out.println(jObj.toString(4));
+            String url = new String();
+            if(format.equals("csv")){
+                url = baseURL + providerID + "/" + dateFrom + "/" + dateTo + "?format=" + format;
+                this.httpRequest(url, format);
             }
-            else{
-                System.out.println("Please select a valid session!");
-                System.out.println("For your convenience please check the Provider ID and the appropriate dates.");
+            else if(format.equals("json")){
+                url = baseURL + providerID + "/" + dateFrom + "/" + dateTo;
+                this.httpRequest(url, format);
             }
-        }
+            else
+                System.out.println("Please select a valid format: json or csv");
+            }
         else
             System.out.println("Please try again with a valid date.\nNote that the appropriate date format is YYYY-MM-DD.");
 
         return 0;
+    }
+
+    public void httpRequest(String url, String format) throws IOException{
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        Request request = new Request.Builder()
+            .url(url)
+            .method("GET", null)
+            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+            .build();
+        Response response = client.newCall(request).execute();
+        int responseCode = response.code();
+        String responseBody = response.body().string();
+        if(responseCode == 200){
+            if(format.equals("json")){
+                JSONArray jsonArray = new JSONArray(responseBody);
+                System.out.println(jsonArray.toString(4));
+            }
+            else
+                System.out.println(responseBody);
+        }
+        else{
+            System.out.println("Please select a valid session!");
+            System.out.println("For your convenience please check the Energy Provider ID and the appropriate dates.");
+        }
     }
 
     public String getToken(File file) throws IOException{
