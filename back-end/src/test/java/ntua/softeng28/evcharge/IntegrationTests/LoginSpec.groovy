@@ -39,7 +39,6 @@ class LoginSpec extends Specification {
 		headers:["X-OBSERVATORY-AUTH":token])
 		then:
 		loginResponse.status==200
-		println(loginResponse.getData().toString())
 
 		and:
 		logoutResponse.status==200

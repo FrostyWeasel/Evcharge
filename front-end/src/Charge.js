@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import $ from 'jquery';
 import './Charge.css';
 import moment from 'moment';
@@ -8,12 +7,55 @@ import moment from 'moment';
 class Charge extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { ChargingPoints: [], Providers: [], cost: [], kw: '' };
+        this.state = { ChargingPoints: [], Providers: [], kw: '' };
         this.updateInput = this.updateInput.bind(this);
     }
     updateInput(event) {
         this.setState({ kw: event.target.value });
         localStorage.setItem("energydelivered", event.target.value);
+        var cost;
+        var kw1;
+        $("#Provider").html("").removeClass("disabled").attr("disabled", false);
+        $("#Provider").append('<option value="no" selected="selected">Choose an option</option>');
+        this.state.Providers.forEach(function (item) {
+            if (item.lowtoMidLimit == 0) {
+                cost = item.lowPrice * localStorage.getItem("energydelivered");
+                cost = cost.toFixed(2);
+                $("#Provider").append(
+                    "<option value=" + item.id + ">" + item.brandName + " " + cost + "</option>"
+                )
+            }
+            else {
+                if (item.lowtoMidLimit >= localStorage.getItem("energydelivered")) {
+                    cost = item.lowPrice * localStorage.getItem("energydelivered");
+                    cost = cost.toFixed(2);
+                    $("#Provider").append(
+                        "<option value=" + item.id + ">" + item.brandName + " " + cost + "</option>"
+                    )
+                }
+                if (item.lowtoMidLimit < localStorage.getItem("energydelivered")) {
+                    if (item.midtoHighLimit >= localStorage.getItem("energydelivered")) {
+                        cost = item.lowPrice * item.lowtoMidLimit;
+                        kw1 = localStorage.getItem("energydelivered") - item.lowtoMidLimit;
+                        cost = cost + (kw1 * item.midPrice);
+                        cost = cost.toFixed(2);
+                        $("#Provider").append(
+                            "<option value=" + item.id + ">" + item.brandName + " " + cost + "</option>"
+                        )
+                    }
+                    if (item.midtoHighLimit < localStorage.getItem("energydelivered")) {
+                        cost = item.lowPrice * item.lowtoMidLimit;
+                        cost = cost + ((item.midtoHighLimit - item.lowtoMidLimit) * item.midPrice);
+                        kw1 = localStorage.getItem("energydelivered") - item.midtoHighLimit;
+                        cost = cost + kw1 * item.highPrice;
+                        cost = cost.toFixed(2);
+                        $("#Provider").append(
+                            "<option value=" + item.id + ">" + item.brandName + " " + cost + "</option>"
+                        )
+                    }
+                }
+            }
+        })
     }
     componentDidMount() {
         const requestOptions = {
@@ -59,69 +101,76 @@ class Charge extends React.Component {
 
 
     }
-    makeSession() {
-        var date = new Date();
-        const format1 = "YYYY-MM-DD HH:mm:ss"
-        var dateTime1 = moment(date).format(format1);
-        localStorage.setItem("startedon", dateTime1);
-        localStorage.setItem("finishedon", dateTime1);
-        let formData ={
-            VehicleID: localStorage.getItem("carid"),
-            ChargingPointID: localStorage.getItem("chargingpointid"),
-            EnergyProviderID: localStorage.getItem("energyproviderid"),
-            Username: localStorage.getItem("username"),
-            StartedOn: localStorage.getItem("startedon"),
-            FinishedOn: localStorage.getItem("finishedon"),
-            Protocol: localStorage.getItem("protocol"),
-            Payment: localStorage.getItem("payment"),
-            Cost: localStorage.getItem("cost"),
-            EnergyDelivered: localStorage.getItem("energydelivered")
+    makeSession(ev) {
+        var value = parseFloat(localStorage.getItem("energydelivered"));
+        if (value <= localStorage.getItem("UsableBatterySizeforcharge") && value > 0) {
+            var date = new Date();
+            const format1 = "yyyy-MM-DDThh:mm:ss"
+            var dateTime1 = moment(date).format(format1);
+            localStorage.setItem("startedon", dateTime1);
+            var milliseconds = new Date().getTime() + (1 * 60 * 60 * 1000);
+            var later = new Date(milliseconds);
+            var dateTime2 = moment(later).format(format1);
+            localStorage.setItem("finishedon", dateTime2);
+            var car = localStorage.getItem("carid");
+            var chargingPoint = parseInt(localStorage.getItem("chargingpointid"));
+            var energyProvider = parseInt(localStorage.getItem("energyproviderid"));
+            var username = localStorage.getItem("username");
+            var startedOn = localStorage.getItem("startedon");
+            var finishedOn = localStorage.getItem("finishedon");
+            var protocol = localStorage.getItem("protocol");
+            var payment = localStorage.getItem("payment");
+            var cost = parseFloat(localStorage.getItem("cost"));
+            var energyDelivered = parseFloat(localStorage.getItem("energydelivered"));
+            let formData = {
+                VehicleID: car,
+                ChargingPointID: chargingPoint,
+                EnergyProviderID: energyProvider,
+                Username: username,
+                StartedOn: startedOn,
+                FinishedOn: finishedOn,
+                Protocol: protocol,
+                Payment: payment,
+                Cost: cost,
+                EnergyDelivered: energyDelivered
+            };
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-OBSERVATORY-AUTH': localStorage.getItem("token")
+                },
+                body: JSON.stringify(formData)
+            }
+            fetch('//localhost:8765/evcharge/api/sessions', requestOptions)
+                .then(() => {
+                    window.location = "/";
+                })
+                .catch(error => {
+                    console.error(error);
+                })
         }
-        // let formData = new FormData();
-        // formData.append('VehicleID', 'localStorage.getItem("carid")');
-        // formData.append('ChargingPointID', 'localStorage.getItem("chargingpointid")');
-        // formData.append('EnergyProviderID', 'localStorage.getItem("energyproviderid")');
-        // formData.append('Username', 'localStorage.getItem("username")');
-        // formData.append('StartedOn', 'localStorage.getItem("startedon")');
-        // formData.append('FinishedOn', 'localStorage.getItem("finishedon")');
-        // formData.append('Protocol', 'localStorage.getItem("protocol")');
-        // formData.append('Payment', 'localStorage.getItem("payment")');
-        // formData.append('Cost', 'localStorage.getItem("cost")');
-        // formData.append('EnergyDelivered', 'localStorage.getItem("energydelivered")');
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-OBSERVATORY-AUTH': localStorage.getItem("token")
-            },
-            body: JSON.stringify({"car": localStorage.getItem("carid"),
-            "chargingPoint": localStorage.getItem("chargingpointid"),
-            "energyProvider": localStorage.getItem("energyproviderid"),
-            "username": localStorage.getItem("username"),
-            "startedOn": localStorage.getItem("startedon"),
-            "finishedOn": localStorage.getItem("finishedon"),
-            "protocol": localStorage.getItem("protocol"),
-            "payment": localStorage.getItem("payment"),
-            "cost": localStorage.getItem("cost"),
-            "energyDelivered": localStorage.getItem("energydelivered")})
+        if (value > localStorage.getItem("UsableBatterySizeforcharge")) {
+            ev.preventDefault();
+            alert("Usable battery size of your car is less than the kw you filled in");
+            window.location.reload();
         }
-        fetch('//localhost:8765/evcharge/api/sessions', requestOptions)
-            .then(() => {
-                window.location = "/";
-            })
-            .catch(error => {
-                console.error(error);
-            })
+        if (value <= 0) {
+            ev.preventDefault();
+            alert("Kw can not be <=0");
+            window.location.reload();
+        }
     }
     Protocol(ev) {
-        if (ev.currentTarget.value == "fast") {
-            localStorage.setItem("protocol", "fast");
-            localStorage.setItem("cost", localStorage.getItem("costhigh"));
-        }
-        else if (ev.currentTarget.value == "slow") {
-            localStorage.setItem("protocol", "slow");
-            localStorage.setItem("cost", localStorage.getItem("costlow"));
-        }
+        localStorage.setItem("protocol", ev.currentTarget.value);
+        $("#payment").html("").removeClass("disabled").attr("disabled", false);
+        $("#payment").append('<option value="no" selected="selected">Choose an option</option>');
+        $("#payment").append(
+            "<option value=" + "card" + ">" + "card" + "</option>"
+        )
+        $("#payment").append(
+            "<option value=" + "cash" + ">" + "cash" + "</option>"
+        )
     }
     Payment(ev) {
         localStorage.setItem("payment", ev.currentTarget.value);
@@ -131,31 +180,49 @@ class Charge extends React.Component {
     }
     EnergyProviderId(ev) {
         localStorage.setItem("energyproviderid", ev.currentTarget.value);
-        var y;
-        var z;
-        var x = localStorage.getItem("energydelivered");
+        var cost;
+        var kw1;
         this.state.Providers.forEach(function (item) {
-            if (localStorage.getItem("energyproviderid") == item.id) {
-                y = item.highPrice;
-                z = item.lowPrice;
+            if (item.id == localStorage.getItem("energyproviderid")) {
+                if (item.lowtoMidLimit == 0) {
+                    cost = item.lowPrice * localStorage.getItem("energydelivered");
+                    cost = cost.toFixed(2);
+                    localStorage.setItem("cost", cost);
+                }
+                else {
+                    if (item.lowtoMidLimit >= localStorage.getItem("energydelivered")) {
+                        cost = item.lowPrice * localStorage.getItem("energydelivered");
+                        cost = cost.toFixed(2);
+                        localStorage.setItem("cost", cost);
+                    }
+                    if (item.lowtoMidLimit < localStorage.getItem("energydelivered")) {
+                        if (item.midtoHighLimit >= localStorage.getItem("energydelivered")) {
+                            cost = item.lowPrice * item.lowtoMidLimit;
+                            kw1 = localStorage.getItem("energydelivered") - item.lowtoMidLimit;
+                            cost = cost + (kw1 * item.midPrice);
+                            cost = cost.toFixed(2);
+                            localStorage.setItem("cost", cost);
+                        }
+                        if (item.midtoHighLimit < localStorage.getItem("energydelivered")) {
+                            cost = item.lowPrice * item.lowtoMidLimit;
+                            cost = cost + ((item.midtoHighLimit - item.lowtoMidLimit) * item.midPrice);
+                            kw1 = localStorage.getItem("energydelivered") - item.midtoHighLimit;
+                            cost = cost + kw1 * item.highPrice;
+                            cost = cost.toFixed(2);
+                            localStorage.setItem("cost", cost);
+                        }
+                    }
+                }
             }
         })
-
-        var Costlow = x * z;
-        Costlow = Costlow.toFixed(2);
-        var Costhigh = x * y;
-        Costhigh = Costhigh.toFixed(2);
-
-        localStorage.setItem("costlow", Costlow);
-        localStorage.setItem("costhigh", Costhigh);
 
         $("#protocol").html("").removeClass("disabled").attr("disabled", false);
         $("#protocol").append('<option value="no" selected="selected">Choose an option</option>');
         $("#protocol").append(
-            "<option value=" + "fast" + ">" + "fast " + localStorage.getItem("costhigh") + "</option>"
+            "<option value=" + "accharger" + ">" + "ac charger" + "</option>"
         )
         $("#protocol").append(
-            "<option value=" + "slow" + ">" + "slow " + localStorage.getItem("costlow") + "</option>"
+            "<option value=" + "dccharger" + ">" + "dc charger" + "</option>"
         )
     }
     render() {
@@ -179,25 +246,17 @@ class Charge extends React.Component {
                                         <label for="energy"><i className="fa fa-bolt"></i> KW</label>
                                         <input type="text" id="energy" onChange={this.updateInput.bind(this)} name="energy" placeholder="30,02" />
                                         <label for="Provider"> Energy provider</label>
-                                        <select id="Provider" onChange={this.EnergyProviderId.bind(this)}>
-                                            <option value="no" selected="selected">Choose an option</option>
-                                            {this.state.Providers.map(Providers => (
-                                                <option value={Providers.id}>{Providers.brandName}</option>
-                                            ))}
+                                        <select disabled id="Provider" onChange={this.EnergyProviderId.bind(this)}>
                                         </select>
                                         <label for="protocol"> Protocol</label>
                                         <select disabled id="protocol" onChange={this.Protocol.bind(this)}>
-
                                         </select>
                                         <label for="payment"> Payment</label>
-                                        <select id="payment" onChange={this.Payment.bind(this)}>
-                                            <option value="no" selected="selected">Choose an option</option>
-                                            <option value="card">card</option>
-                                            <option value="cash">cash</option>
+                                        <select disabled id="payment" onChange={this.Payment.bind(this)}>
                                         </select>
                                     </div>
                                 </div>
-                                <a disabled id="Makecharge" className="btn"><i type="button" onClick={this.makeSession.bind(this)}>Make the charging</i></a>
+                                <button id="Makecharge" className="btn" onClick={this.makeSession.bind(this)}>Make the charging</button>
                             </form>
                         </div>
                     </div>

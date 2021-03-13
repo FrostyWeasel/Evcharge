@@ -15,7 +15,7 @@ import ntua.softeng28.evcharge.charging_point.ChargingPoint;
 
 @Entity
 public class ChargingStation {
-	
+
 	private @Id @GeneratedValue(strategy = GenerationType.AUTO) Long id;
 
 	@ManyToOne
@@ -26,7 +26,7 @@ public class ChargingStation {
 
 	@OneToMany
 	private Set<ChargingPoint> chargingPoints;
-	
+
 	public ChargingStation() {
 	}
 
@@ -68,5 +68,4 @@ public class ChargingStation {
 				+ ", operator=" + operator + "]";
 	}
 
-	
 }
