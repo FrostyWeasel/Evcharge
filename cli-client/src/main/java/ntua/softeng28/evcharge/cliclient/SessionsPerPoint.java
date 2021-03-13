@@ -2,29 +2,21 @@ package ntua.softeng28.evcharge.cliclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.*;
 import org.json.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.*;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import picocli.CommandLine.*;
 
 import java.io.*;
 import java.lang.*;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Callable;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.List;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.net.HttpURLConnection;
-import javax.net.ssl.HttpsURLConnection;
 
 @Command(name = "SessionsPerPoint", description = "Session Information Per Charging Point")
 public class SessionsPerPoint implements Callable<Integer> {
@@ -34,10 +26,10 @@ public class SessionsPerPoint implements Callable<Integer> {
     @Option(names = "--point", required = true, description = "Charging Point ID")
     private String pointID;
 
-    @Option(names = "--datefrom", required = true, description = "Start Date")
+    @Option(names = "--from", required = true, description = "Start Date")
     private String dateFrom;
 
-    @Option(names = "--dateto", required = true, description = "End Date")
+    @Option(names = "--to", required = true, description = "End Date")
     private String dateTo;
 
     @Option(names = "--format", required = true, description = "File format")
@@ -51,32 +43,30 @@ public class SessionsPerPoint implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException {
+        if(isValid(dateFrom) && isValid(dateTo)){
+            String url = baseURL + pointID + "/" + dateFrom + "/" + dateTo;
 
-        String url = baseURL + pointID + "/" + dateFrom + "/" + dateTo;
-        HttpURLConnection conn = (HttpURLConnection) new URL(url.replaceAll(" ", "%20")).openConnection();
-
-        conn.setDoOutput(true);
-        conn.setRequestMethod("GET");
-        String urlParameters = "";
-        byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-        int postDataLength = postData.length;
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-        conn.setRequestProperty("X-OBSERVATORY-AUTH", this.getToken(login_token));
-
-        int responseCode = conn.getResponseCode();
-        if(responseCode == 200){
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-            JSONObject json = new JSONObject(response.toString());
-            System.out.println(json.toString(4));
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                .url(url)
+                .method("GET", null)
+                .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+                .build();
+            Response response = client.newCall(request).execute();
+            int responseCode = response.code();
+            String responseBody = response.body().string();
+            if(responseCode == 200){
+                JSONObject jObj = new JSONObject(responseBody);
+                System.out.println(jObj.toString(4));
+            }
+            else{
+                System.out.println("Please select a valid session!");
+                System.out.println("For your convenience please check the Charging Point ID and the appropriate dates.");
+            }
         }
+        else
+            System.out.println("Please try again with a valid date.\nNote that the appropriate date format is YYYY-MM-DD.");
+
         return 0;
     }
 
@@ -89,6 +79,12 @@ public class SessionsPerPoint implements Callable<Integer> {
             token = tokens[1];
         }
         return token;
+    }
+
+    public boolean isValid(String dateStr) {
+        Pattern pattern = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}");
+        return pattern.matcher(dateStr).matches();
+
     }
 
     public static void main(String[] args){
