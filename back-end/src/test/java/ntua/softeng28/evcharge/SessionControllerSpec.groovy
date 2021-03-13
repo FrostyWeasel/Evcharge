@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.IntegrationTests
+package ntua.softeng28.evcharge
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 

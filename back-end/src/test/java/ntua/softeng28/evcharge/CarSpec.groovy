@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.UnitTests
+package ntua.softeng28.evcharge
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
