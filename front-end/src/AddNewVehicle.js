@@ -225,7 +225,7 @@ class AddNewVehicle extends React.Component {
             )
         })
     }
-    chooseAddNewVehicle(ev) {//?
+    chooseAddNewVehicle(ev) {
         this.state.vehicles.forEach(function (item) {
             var foo = item.usable_battery_size;
             var bar = '' + foo;

@@ -52,7 +52,7 @@ class SessionsPerProvider extends React.Component {
         $(".SessionsProviderBtn").on('click', function (ev) {
           localStorage.setItem('ProviderDataId', ev.currentTarget.id);
           localStorage.setItem("value", "provider");
-          window.location = "http://localhost:3000/ChooseDate";
+          window.location = "//localhost:3000/ChooseDate";
         })
       })
       .catch(error => {
