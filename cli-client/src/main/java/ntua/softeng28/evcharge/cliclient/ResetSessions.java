@@ -6,12 +6,13 @@ import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
-
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 @Command(name = "--resetsessions", description = "Reset System's Sessions")
 public class ResetSessions implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/admin/resetsessions";
+    public final String baseURL = "https://localhost:8765/evcharge/api/admin/resetsessions";
 
     @Option(names = "--format", required = true, defaultValue = "json", description = "File format")
     private String format;
@@ -25,7 +26,14 @@ public class ResetSessions implements Callable<Integer> {
         if(!(format.equals("json")) && !(format.equals("csv")))
             System.out.println("Please enter a valid format: json or csv.");
         else{
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient.Builder()
+               .hostnameVerifier(new HostnameVerifier() {
+                   @Override
+                   public boolean verify(String hostname, SSLSession session) {
+                       return true;
+                   }
+               })
+               .build();
             MediaType mediaType = MediaType.parse("text/plain");
             RequestBody body = RequestBody.create("", mediaType);
             Request request = new Request.Builder()

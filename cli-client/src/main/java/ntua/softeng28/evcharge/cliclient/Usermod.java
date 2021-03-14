@@ -1,15 +1,19 @@
 package ntua.softeng28.evcharge.cliclient;
 
+import org.json.*;
 import okhttp3.*;
 import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 @Command(name = "--usermod", description = "Create new user or modify existing")
 public class Usermod implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/admin/usermod/";
+    public final String baseURL = "https://localhost:8765/evcharge/api/admin/usermod/";
 
     @Option(names = "--username", required = true, description = "Username")
     private String username;
@@ -32,7 +36,14 @@ public class Usermod implements Callable<Integer> {
             System.out.println("Please enter a valid format: json or csv.");
         else{
             String url = baseURL + username + "/" + passw;
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient.Builder()
+               .hostnameVerifier(new HostnameVerifier() {
+                   @Override
+                   public boolean verify(String hostname, SSLSession session) {
+                       return true;
+                   }
+               })
+               .build();
             MediaType mediaType = MediaType.parse("text/plain");
             RequestBody body = RequestBody.create("", mediaType);
             Request request = new Request.Builder()
@@ -42,7 +53,7 @@ public class Usermod implements Callable<Integer> {
                 .build();
             Response response = client.newCall(request).execute();
             if(response.code() == 200)
-                System.out.println("Changes to user" + username + "were added successfully!");
+                System.out.println("Changes to user " + username + " were added successfully!");
             else if(response.code() == 401)
                 System.out.println("Unauthorized access. Please log in first as the administrator.");
             else

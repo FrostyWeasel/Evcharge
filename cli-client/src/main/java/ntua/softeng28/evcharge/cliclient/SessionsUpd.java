@@ -1,16 +1,20 @@
 package ntua.softeng28.evcharge.cliclient;
 
+import org.json.*;
 import okhttp3.*;
 import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 
 @Command(name = "--sessionsupd", description = "Create new user or modify existing")
 public class SessionsUpd implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/admin/system/sessionsupd/";
+    public final String baseURL = "https://localhost:8765/evcharge/api/admin/system/sessionsupd/";
 
     @Option(names = "--source", required = true, description = "Source File for updating the system's sessions")
     private String filename;
@@ -30,7 +34,14 @@ public class SessionsUpd implements Callable<Integer> {
             System.out.println("Please enter a valid format: json or csv.");
         else{
             String url = baseURL;
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient.Builder()
+               .hostnameVerifier(new HostnameVerifier() {
+                   @Override
+                   public boolean verify(String hostname, SSLSession session) {
+                       return true;
+                   }
+               })
+               .build();
             MediaType mediaType = MediaType.parse("text/plain");
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("file","sessions.csv",
@@ -43,8 +54,17 @@ public class SessionsUpd implements Callable<Integer> {
                 .addHeader("X-OBSERVATORY-AUTH", apikey)
                 .build();
             Response response = client.newCall(request).execute();
-            if(response.code() == 200)
+
+            if(response.code() == 200){
+                String responseBody = response.body().string();
+                JSONObject jObj = new JSONObject(responseBody);
+                System.out.println("Reading sessions in file...");
+                System.out.println("File contains " + jObj.getInt("SessionsInUploadedFile") + " sessions.");
+                System.out.println("Updating sessions in database...");
                 System.out.println("Sessions were updated successfully!");
+                System.out.println(jObj.getInt("SessionsImported") + " sessions were imported.");
+                System.out.println("Total sessions in database: " + jObj.getInt("TotalSessionsInDatabase"));
+            }
             else if(response.code() == 401)
                 System.out.println("Unauthorized access. Please log in first as the administrator.");
             else

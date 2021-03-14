@@ -6,7 +6,9 @@ import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
-
+import java.util.regex.Pattern;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 @Command(name = "admin", description = "Administrator functions",
         subcommands = {Usermod.class, SessionsPerPoint.class,
@@ -15,7 +17,7 @@ import java.util.concurrent.Callable;
         )
 public class Admin implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api";
+    public final String baseURL = "https://localhost:8765/evcharge/api/admin";
 
     @Option(names = "--users", required = false, description = "File format")
     private String users;
@@ -35,7 +37,14 @@ public class Admin implements Callable<Integer> {
             System.out.println("Please enter a valid format: json or csv.");
         else{
             String url = baseURL + "/users/" + users;
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient.Builder()
+               .hostnameVerifier(new HostnameVerifier() {
+                   @Override
+                   public boolean verify(String hostname, SSLSession session) {
+                       return true;
+                   }
+               })
+               .build();
             Request request = new Request.Builder()
                 .url(url)
                 .method("GET", null)
@@ -56,7 +65,7 @@ public class Admin implements Callable<Integer> {
                 System.out.println("Unauthorized access. Please log in first as the administrator.");
             else
                 System.out.println("Something went wrong. Please check the apikey, otherwise contact the software administrators.");
-            
+
         }
         return 0;
     }

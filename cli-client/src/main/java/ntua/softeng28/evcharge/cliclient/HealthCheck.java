@@ -7,11 +7,14 @@ import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 
 @Command(name = "--healthcheck", description = "System's Healthcheck")
 public class HealthCheck implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/admin/healthcheck";
+    public final String baseURL = "https://localhost:8765/evcharge/api/admin/healthcheck";
 
     @Option(names = "--format", required = true, defaultValue = "json", description = "File format")
     private String format;
@@ -29,7 +32,14 @@ public class HealthCheck implements Callable<Integer> {
         if(!(format.equals("json")) && !(format.equals("csv")))
             System.out.println("Please enter a valid format: json or csv.");
         else{
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            OkHttpClient client = new OkHttpClient.Builder()
+               .hostnameVerifier(new HostnameVerifier() {
+                   @Override
+                   public boolean verify(String hostname, SSLSession session) {
+                       return true;
+                   }
+               })
+               .build();
             Request request = new Request.Builder()
                 .url(baseURL)
                 .method("GET", null)
@@ -62,7 +72,7 @@ public class HealthCheck implements Callable<Integer> {
         reader.close();
         return token;
     }
-        
+
     public String getUserName(File file) throws IOException{
         String line;
         String delims = "[:]";

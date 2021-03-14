@@ -7,11 +7,14 @@ import picocli.CommandLine.*;
 import java.io.*;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 
 @Command(name = "SessionsPerStation", description = "Session Information Per Charging Station")
 public class SessionsPerStation implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/SessionsPerStation/";
+    public final String baseURL = "https://localhost:8765/evcharge/api/SessionsPerStation/";
 
     @Option(names = "--station", required = true, description = "Charging Station ID")
     private String stationID;
@@ -53,7 +56,14 @@ public class SessionsPerStation implements Callable<Integer> {
     }
 
     public void httpRequest(String url) throws IOException{
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        OkHttpClient client = new OkHttpClient.Builder()
+           .hostnameVerifier(new HostnameVerifier() {
+               @Override
+               public boolean verify(String hostname, SSLSession session) {
+                   return true;
+               }
+           })
+           .build();
         Request request = new Request.Builder()
             .url(url)
             .method("GET", null)
