@@ -70,8 +70,10 @@ class AdminCarServiceSpec extends Specification{
 		cardata.setUsable_battery_size(120)
 		cardata.setVariant("something")
 		
-		CarData[] carRequest=[cardata]
-		BrandData[] brandRequest=[branddata]
+		CarData[] carRequest=new CarData[1]
+		carRequest[0]=cardata
+		BrandData[] brandRequest=new BrandData[1]
+		brandRequest[0]=branddata
 		
 		cardatarequest.setBrandData(brandRequest)
 		cardatarequest.setCarData(carRequest)
