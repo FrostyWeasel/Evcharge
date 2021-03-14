@@ -1,8 +1,6 @@
-package ntua.softeng28.evcharge.UnitTests
+package UnitTests
 
 import java.sql.Timestamp
-
-import javax.transaction.Transactional
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -33,17 +31,10 @@ import ntua.softeng28.evcharge.user.UserRepository
 import spock.lang.Specification
 import spock.lang.Stepwise
 
-@Transactional
 @Stepwise
 @DataJpaTest
 @TestPropertySource(locations="classpath:application-test.properties")
 class SessionSpec extends Specification{
-
-	@Autowired
-	SessionRepository sessionrepo
-
-	@Autowired
-	UserRepository userrepo
 
 	@Autowired
 	AcChargerRepository acrepo
@@ -61,71 +52,78 @@ class SessionSpec extends Specification{
 	DcChargerRepository dcrepo
 
 	@Autowired
-	EnergyProviderRepository providerrepo
-
-	@Autowired
-	ChargingPointRepository chargingpointrepo
-
+	ChargingPointRepository chargingPointRepo
+	
 	@Autowired
 	OperatorRepository operatorrepo
 
-	def "testing saving and reading operation"() {
+    @Autowired
+	EnergyProviderRepository energyproviderrepo
+
+    @Autowired
+	private UserRepository userrepo
+
+    @Autowired
+	SessionRepository sessionrepo
+
+	def "testing a saving operation"(){
 		given:
-		def timestamp = new Timestamp(System.currentTimeMillis())
-		def date = new Date()
-
-		def session = new Session()
-		session.setStartedOn(timestamp)
-		session.setFinishedOn(new Timestamp(date.getTime()))
-		session.setProtocol("some protocol")
-		session.setPayment("Card")
-		session.setEnergyDelivered(1234.0F)
-		session.setCost(100.0F)
-
+        def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
 		def acCharger = new AcCharger()
-		def powerperchargingpoint = new PowerPerChargingPoint(2.0, 2.3, 3.7, 7.4, 11, 16, 22, 43)
-
 		acCharger.setUsable_phases(3)
-		String [] ports = ["1", "2", "3"]
+		acCharger.setMax_power(1000.0F)
+		acCharger.setPower_per_charging_point(powerPerPoint)
+		String[] ports = ["1", "2", "3"]
 		acCharger.setPorts(ports)
-		acCharger.setMax_power(1234.5F)
-		acCharger.setPower_per_charging_point(powerperchargingpoint)
 
-		def brand = new Brand("1","Volvo")
+		def brand = new Brand()
+		brand.setId("1")
+		brand.setName("Volvo")
 
-		def curvePoint = new ChargingCurvePoint(57,124)
+		def curvePoint = new ChargingCurvePoint()
+		curvePoint.setPercentage(75)
+		curvePoint.setPower(645)
+		def curvePointSet = new HashSet()
+		curvePointSet.add(curvePoint)
 
 		def dcCharger = new DcCharger()
 		dcCharger.setPorts(ports)
-		dcCharger.setMax_power(1234.5F)
-		def curvepointsset = new HashSet<ChargingCurvePoint>()
-		curvepointsset.add(curvePoint)
-		dcCharger.setCharging_curve(curvepointsset)
+		dcCharger.setCharging_curve(curvePointSet)
+		dcCharger.setMax_power(12345)
 		dcCharger.setIs_default_charging_curve(true)
 
-		def averageconsumption = new EnergyConsumption(100)
+		def consumption = new EnergyConsumption()
+		consumption.setAverage_consumption(34)
 
-		def car = new Car("1","electric",brand,"some model",2010,"some variant",10.5F,acCharger,dcCharger,averageconsumption)
+		def car = new Car()
+		car.setAc_charger(acCharger)
+		car.setBrand(brand)
+		car.setDc_charger(dcCharger)
+		car.setEnergy_consumption(consumption)
+		car.setId("1")
+		car.setModel("who knows")
+		car.setRelease_year(2015)
+		car.setType("dunno")
+		car.setUsable_battery_size(123)
+		car.setVariant("who cares")
 
-		session.setCar(car)
+        def operator = new Operator("Kobe Bryant")
+		def chargingpoint=new ChargingPoint(operator)
 
-		def operator = new Operator("Some Operator")
-		def chargingpoint = new ChargingPoint(operator)
-		session.setChargingPoint(chargingpoint)
+        def provider = new EnergyProvider("Energy",100,200,300,150,250)
 
-		def energyprovider = new EnergyProvider("Protergia",100,200,300,150,250)
-		session.setEnergyProvider(energyprovider)
-
-		def user = new User()
-		user.setUsername("random")
-		user.setPassword("empty")
-		user.setRole("user")
+        def user = new User()
+		user.setUsername("Lebron James")
+		user.setPassword("2020 Champion")
 		user.setLoggedIn(false)
-		def carset = new HashSet<Car>()
-		carset.add(car)
-		user.setCars(carset)
+		user.setRole("Basketball Player")
+        def userCars = new HashSet<Car>()
+		userCars.add(car)
+		user.setCars(userCars)
 
-		session.setUser(user)
+		Timestamp ts1 = Timestamp.valueOf("2018-09-01")
+		Timestamp ts2 = Timestamp.valueOf("2019-09-01")
+		def session = new Session(1L,ts1,ts2,"random","card",124.4F,45,car,chargingpoint,provider,user)
 
 		when:
 		def savedAcCharger=acrepo.save(acCharger)
@@ -133,24 +131,16 @@ class SessionSpec extends Specification{
 		def savedCurvePoint=curvepointrepo.save(curvePoint)
 		def savedDcCharger=dcrepo.save(dcCharger)
 		def savedCar=carrepo.save(car)
+        def savedUser=userrepo.save(user)
 		def savedoperator=operatorrepo.save(operator)
-		def savedchargingpoint=chargingpointrepo.save(chargingpoint)
-		def savedenergyprovider=providerrepo.save(energyprovider)
-		def saveduser=userrepo.save(user)
-		def savedsession=sessionrepo.save(session)
+		def savedchargingpoint=chargingPointRepo.save(chargingpoint)
+        def savedprovider=energyproviderrepo.save(provider)
+		def savedSession=sessionrepo.save(session)
 
-		def List<Session> sessionsfromdb = sessionrepo.findAll()
+		def List<Session> sessionsfromDB=sessionrepo.findAll()
 
-/*		then:
-		sessionsfromdb.size() == 1
-
-		and:
-		sessionsfromdb[0].getStartedOn()==savedsession.getStartedOn()
-		sessionsfromdb[0].getFinishedOn()==savedsession.getFinishedOn()
-		sessionsfromdb[0].getProtocol()==savedsession.getProtocol()
-*/
 		then:
-		Exception e = thrown()
-		println(e.getMessage())		
-	}	
+		sessionsfromDB.size() == 1
+	}
+
 }

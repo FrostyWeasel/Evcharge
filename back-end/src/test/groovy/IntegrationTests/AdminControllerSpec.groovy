@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.IntegrationTests
+package IntegrationTests
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 
@@ -217,7 +217,7 @@ class AdminControllerSpec extends Specification{
 		postResponse.status == 200
 	}
 
-	def "testing if a bad csv file request throws bad request exception"(){
+/*	def "testing if a bad csv file request throws bad request exception"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -246,7 +246,7 @@ class AdminControllerSpec extends Specification{
 		Exception e = thrown()
 		println(e.getMessage())
 	}
-
+*/
 	def "testing the creation of a provider"(){
 		given:
 		def client = new RESTClient(baseurl)
@@ -255,8 +255,9 @@ class AdminControllerSpec extends Specification{
 		user.put("username", "admin");
 		user.put("password", "petrol4ever");
 
-		def providerdata = new ProviderData("Energy",100,200,300,150,250)
-		ProviderData[] data = [providerdata]
+		def providerdata_1 = new ProviderData("Energy",1,2,3,4,5)
+		def providerdata_2 = new ProviderData("DEH",2,4,6,8,10)
+		ProviderData[] data = [providerdata_1,providerdata_2]
 		def request = new ProviderDataRequest()
 		request.setProviderData(data)
 
@@ -280,8 +281,6 @@ class AdminControllerSpec extends Specification{
 		body: requestinjson)
 
 		then:
-		//postResponse.status == 200
-		Exception e=thrown()
-		println(e.getMessage())
+		postResponse.status == 200				
 	}
 }

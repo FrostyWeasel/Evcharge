@@ -1,4 +1,4 @@
-package ntua.softeng28.evcharge.UnitTests
+package UnitTests
 
 import javax.annotation.sql.DataSourceDefinition
 
