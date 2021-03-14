@@ -46,7 +46,7 @@ class SessionSpec extends Specification{
 	UserRepository userrepo
 
 	@Autowired
-	AcChargerRepository acchargerrepo
+	AcChargerRepository acrepo
 
 	@Autowired
 	BrandRepository brandrepo
@@ -55,10 +55,10 @@ class SessionSpec extends Specification{
 	CarRepository carrepo
 
 	@Autowired
-	ChargingCurvePointRepository curverepo
+	ChargingCurvePointRepository curvepointrepo
 
 	@Autowired
-	DcChargerRepository dcchargerrepo
+	DcChargerRepository dcrepo
 
 	@Autowired
 	EnergyProviderRepository providerrepo
@@ -82,30 +82,30 @@ class SessionSpec extends Specification{
 		session.setEnergyDelivered(1234.0F)
 		session.setCost(100.0F)
 
-		def accharger = new AcCharger()
+		def acCharger = new AcCharger()
 		def powerperchargingpoint = new PowerPerChargingPoint(2.0, 2.3, 3.7, 7.4, 11, 16, 22, 43)
 
-		accharger.setUsable_phases(3)
+		acCharger.setUsable_phases(3)
 		String [] ports = ["1", "2", "3"]
-		accharger.setPorts(ports)
-		accharger.setMax_power(1234.5F)
-		accharger.setPower_per_charging_point(powerperchargingpoint)
+		acCharger.setPorts(ports)
+		acCharger.setMax_power(1234.5F)
+		acCharger.setPower_per_charging_point(powerperchargingpoint)
 
 		def brand = new Brand("1","Volvo")
 
-		def curvepoint = new ChargingCurvePoint(57,124)
+		def curvePoint = new ChargingCurvePoint(57,124)
 
-		def dccharger = new DcCharger()
-		dccharger.setPorts(ports)
-		dccharger.setMax_power(1234.5F)
+		def dcCharger = new DcCharger()
+		dcCharger.setPorts(ports)
+		dcCharger.setMax_power(1234.5F)
 		def curvepointsset = new HashSet<ChargingCurvePoint>()
-		curvepointsset.add(curvepoint)
-		dccharger.setCharging_curve(curvepointsset)
-		dccharger.setIs_default_charging_curve(true)
+		curvepointsset.add(curvePoint)
+		dcCharger.setCharging_curve(curvepointsset)
+		dcCharger.setIs_default_charging_curve(true)
 
 		def averageconsumption = new EnergyConsumption(100)
 
-		def car = new Car("1","electric",brand,"some model",2010,"some variant",10.5F,accharger,dccharger,averageconsumption)
+		def car = new Car("1","electric",brand,"some model",2010,"some variant",10.5F,acCharger,dcCharger,averageconsumption)
 
 		session.setCar(car)
 
@@ -128,11 +128,11 @@ class SessionSpec extends Specification{
 		session.setUser(user)
 
 		when:
-		def savedaccharger=acchargerrepo.save(accharger)
-		def savedbrand=brandrepo.save(brand)
-		def savedcurvepoint=curverepo.save(curvepoint)
-		def saveddccharger=dcchargerrepo.save(dccharger)
-		def savedcar=carrepo.save(car)
+		def savedAcCharger=acrepo.save(acCharger)
+		def savedBrand=brandrepo.save(brand)
+		def savedCurvePoint=curvepointrepo.save(curvePoint)
+		def savedDcCharger=dcrepo.save(dcCharger)
+		def savedCar=carrepo.save(car)
 		def savedoperator=operatorrepo.save(operator)
 		def savedchargingpoint=chargingpointrepo.save(chargingpoint)
 		def savedenergyprovider=providerrepo.save(energyprovider)

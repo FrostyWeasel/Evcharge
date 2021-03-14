@@ -14,7 +14,7 @@ import spock.lang.Stepwise
 @Stepwise
 @SpringBootTest(webEnvironment=DEFINED_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
-class UserCarsControllerSpec extends Specification{
+class ServiceUserCarsControllerSpec extends Specification{
 
 	private final static int EXPECTED_PORT = 8765
 
