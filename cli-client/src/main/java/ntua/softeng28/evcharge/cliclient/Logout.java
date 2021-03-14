@@ -10,8 +10,14 @@ import java.util.concurrent.Callable;
 public class Logout implements Callable<Integer> {
 
     public final String baseURL = "http://localhost:8765/evcharge/api/logout";
-    String token;
-    String username;
+
+    @Option(names = "--format", required = true, description = "File format")
+    private String format;
+
+    @Option(names = "--apikey", required = true, description = "API key")
+    private String apikey;
+
+    
     File login_token = new File("softeng20bAPI.token");
 
     @Override
@@ -25,45 +31,21 @@ public class Logout implements Callable<Integer> {
             Request request = new Request.Builder()
                 .url(baseURL)
                 .method("POST", body)
-                .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+                .addHeader("X-OBSERVATORY-AUTH", apikey)
                 .build();
             Response response = client.newCall(request).execute();
             if(response.code() == 200){
-            System.out.println("Goodbye " + this.getUserName(login_token) + "!\n" + "Logout Successful!");
-            login_token.delete();
+                System.out.println("Goodbye!\n" + "Logout Successful!");
+                login_token.delete();
             }
-            else{
-                System.out.println("Something went wrong. Log out unsuccesfull, please try again.");
-            }
+            else
+                System.out.println("Something went wrong. Log out unsuccesful, please try again.");
+
         }
         else
             System.out.println("Please login first!");
 
         return 0;
-    }
-
-    public String getToken(File file) throws IOException{
-        String line;
-        String delims = "[:]";
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        while((line = reader.readLine()) != null){
-            String[] tokens = line.split(delims);
-            token = tokens[1];
-        }
-        reader.close();
-        return token;
-    }
-
-    public String getUserName(File file) throws IOException{
-        String line;
-        String delims = "[:]";
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        while((line = reader.readLine()) != null){
-            String[] tokens = line.split(delims);
-            username = tokens[0];
-        }
-        reader.close();
-        return username;
     }
 
     public static void main(String[] args) {

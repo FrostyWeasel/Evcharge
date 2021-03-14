@@ -22,38 +22,44 @@ public class Login implements Callable<Integer> {
     @Option(names = "--format", required = true, description = "File format")
     private String format;
 
+    /*
     @Option(names = "--apikey", required = true, description = "API key")
     private String apikey;
+    */
 
     File login_token = new File("softeng20bAPI.token");
 
     @Override
     public Integer call() throws IOException {
+        
+        if(!(format.equals("json")) && !(format.equals("csv")))
+            System.out.println("Please enter a valid format: json or csv.");
+        else{
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+            RequestBody body = RequestBody.create("username=" + username +"&password=" + passw, mediaType);
+            Request request = new Request.Builder()
+                .url(baseURL)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+            Response response = client.newCall(request).execute();
+            if(response.code() == 200){
+                System.out.println("Welcome " + username + "!");
+                String responseBody = response.body().string();
+                JSONObject jObj = new JSONObject(responseBody);
+                String token = jObj.getString("token");
+                BufferedWriter writer = new BufferedWriter(new FileWriter(login_token));
+                writer.write(token);
+                writer.close();
+            }
+            else{
+                System.out.println("Something went wrong. Please check make sure that you entered a valid username and password, otherwise contact the software administrators.");
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(login_token));
-        writer.write(username + ":");
-        writer.write(this.getToken());
-        writer.write("\n");
-        writer.close();
+            }
+        }
+        
         return 0;
-    }
-
-    public String getToken() throws IOException{
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create("username=" + username +"&password=" + passw, mediaType);
-        Request request = new Request.Builder()
-            .url(baseURL)
-            .method("POST", body)
-            .addHeader("Content-Type", "application/x-www-form-urlencoded")
-            .build();
-        Response response = client.newCall(request).execute();
-
-        String responseBody = response.body().string();
-        JSONObject jObj = new JSONObject(responseBody);
-        String token = jObj.getString("token");
-        return token;
     }
 
     public static void main(String[] args) {

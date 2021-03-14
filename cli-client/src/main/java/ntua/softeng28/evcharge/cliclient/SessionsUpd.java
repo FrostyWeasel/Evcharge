@@ -26,26 +26,30 @@ public class SessionsUpd implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException {
+        if(!(format.equals("json")) && !(format.equals("csv")))
+            System.out.println("Please enter a valid format: json or csv.");
+        else{
+            String url = baseURL;
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("file","sessions.csv",
+                RequestBody.create(new File(filename), MediaType.parse("application/octet-stream")))
+                .build();
 
-        String url = baseURL;
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("file","sessions.csv",
-            RequestBody.create(new File(filename), MediaType.parse("application/octet-stream")))
-            .build();
-
-        Request request = new Request.Builder()
-            .url(url)
-            .method("POST", body)
-            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-            .build();
-        Response response = client.newCall(request).execute();
-        if(response.code() == 200)
-            System.out.println("Sessions were updated succesfully!");
-        else
-            System.out.println("Something went wrong, please try again.");
-
+            Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("X-OBSERVATORY-AUTH", apikey)
+                .build();
+            Response response = client.newCall(request).execute();
+            if(response.code() == 200)
+                System.out.println("Sessions were updated successfully!");
+            else if(response.code() == 401)
+                System.out.println("Unauthorized access. Please log in first as the administrator.");
+            else
+                System.out.println("Something went wrong. Please check the apikey and the file name & path, otherwise contact the software administrators.");
+        }
         return 0;
     }
 

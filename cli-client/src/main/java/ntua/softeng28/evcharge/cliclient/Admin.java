@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
         )
 public class Admin implements Callable<Integer> {
 
-    public final String baseURL = "http://localhost:8765/evcharge/api/admin";
+    public final String baseURL = "http://localhost:8765/evcharge/api";
 
     @Option(names = "--users", required = false, description = "File format")
     private String users;
@@ -31,19 +31,33 @@ public class Admin implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException{
+        if(!(format.equals("json")) && !(format.equals("csv")))
+            System.out.println("Please enter a valid format: json or csv.");
+        else{
+            String url = baseURL + "/users/" + users;
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                .url(url)
+                .method("GET", null)
+                .addHeader("X-OBSERVATORY-AUTH", apikey)
+                .build();
+            Response response = client.newCall(request).execute();
+            if(response.code() == 200){
+                String responseBody = response.body().string();
+                if(format.equals("json")){
+                    JSONObject jObj = new JSONObject(responseBody);
+                    System.out.println(jObj.toString(4));
+                }
+                else
+                    System.out.println(responseBody);
 
-        String url = baseURL + "/users/" + users;
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        Request request = new Request.Builder()
-            .url(url)
-            .method("GET", null)
-            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-            .build();
-        Response response = client.newCall(request).execute();
-
-        String responseBody = response.body().string();
-        JSONObject jObj = new JSONObject(responseBody);
-        System.out.println(jObj.toString(4));
+            }
+            else if(response.code() == 401)
+                System.out.println("Unauthorized access. Please log in first as the administrator.");
+            else
+                System.out.println("Something went wrong. Please check the apikey, otherwise contact the software administrators.");
+            
+        }
         return 0;
     }
 

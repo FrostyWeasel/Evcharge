@@ -28,20 +28,26 @@ public class Usermod implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException {
-
-        String url = baseURL + username + "/" + passw;
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create("", mediaType);
-        Request request = new Request.Builder()
-            .url(url)
-            .method("POST", body)
-            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-            .build();
-        Response response = client.newCall(request).execute();
-
-        String responseBody = response.body().string();
-        System.out.println(responseBody);
+        if(!(format.equals("json")) && !(format.equals("csv")))
+            System.out.println("Please enter a valid format: json or csv.");
+        else{
+            String url = baseURL + username + "/" + passw;
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create("", mediaType);
+            Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("X-OBSERVATORY-AUTH", apikey)
+                .build();
+            Response response = client.newCall(request).execute();
+            if(response.code() == 200)
+                System.out.println("Changes to user" + username + "were added successfully!");
+            else if(response.code() == 401)
+                System.out.println("Unauthorized access. Please log in first as the administrator.");
+            else
+                System.out.println("Something went wrong. Please check the apikey, otherwise contact the software administrators.");
+        }
         return 0;
     }
 

@@ -38,14 +38,14 @@ public class SessionsPerEV implements Callable<Integer> {
             String url = new String();
             if(format.equals("csv")){
                 url = baseURL + vehicleID + "/" + dateFrom + "/" + dateTo + "?format=" + format;
-                this.httpRequest(url, format);
+                this.httpRequest(url);
             }
             else if(format.equals("json")){
                 url = baseURL + vehicleID + "/" + dateFrom + "/" + dateTo;
-                this.httpRequest(url, format);
+                this.httpRequest(url);
             }
             else
-                System.out.println("Please select a valid format: json or csv");
+                System.out.println("Please select a valid format: json or csv.");
             }
         else
             System.out.println("Please try again with a valid date.\nNote that the appropriate date format is YYYY-MM-DD.");
@@ -53,12 +53,12 @@ public class SessionsPerEV implements Callable<Integer> {
         return 0;
     }
 
-    public void httpRequest(String url, String format) throws IOException{
+    public void httpRequest(String url) throws IOException{
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
             .url(url)
             .method("GET", null)
-            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
+            .addHeader("X-OBSERVATORY-AUTH", apikey)
             .build();
         Response response = client.newCall(request).execute();
         int responseCode = response.code();
@@ -71,7 +71,9 @@ public class SessionsPerEV implements Callable<Integer> {
             else
                 System.out.println(responseBody);
         }
-        else{
+        else if (response.code() == 401)
+            System.out.println("Unauthorized access!");
+        else {
             System.out.println("Please select a valid session!");
             System.out.println("For your convenience please check the Vehicle ID and the appropriate dates.");
         }

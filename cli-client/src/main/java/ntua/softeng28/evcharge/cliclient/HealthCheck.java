@@ -1,7 +1,7 @@
 package ntua.softeng28.evcharge.cliclient;
 
 
-import org.json.*;
+//import org.json.*;
 import okhttp3.*;
 import picocli.CommandLine.*;
 
@@ -13,23 +13,41 @@ public class HealthCheck implements Callable<Integer> {
 
     public final String baseURL = "http://localhost:8765/evcharge/api/admin/healthcheck";
 
+    @Option(names = "--format", required = true, defaultValue = "json", description = "File format")
+    private String format;
+
+    @Option(names = "--apikey", required = true, description = "API key")
+    private String apikey;
+
+    String username;
     String token;
     File login_token = new File("softeng20bAPI.token");
 
+
     @Override
     public Integer call() throws IOException{
-
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        Request request = new Request.Builder()
-            .url(baseURL)
-            .method("GET", null)
-            .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
-            .build();
-        Response response = client.newCall(request).execute();
-
-        String responseBody = response.body().string();
-        JSONObject jObj = new JSONObject(responseBody);
-        System.out.println(jObj.toString(4));
+        if(!(format.equals("json")) && !(format.equals("csv")))
+            System.out.println("Please enter a valid format: json or csv.");
+        else{
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                .url(baseURL)
+                .method("GET", null)
+                .addHeader("X-OBSERVATORY-AUTH", apikey)
+                .build();
+            Response response = client.newCall(request).execute();
+            if(response.code() == 200)
+                System.out.println("All systems are up and running!");
+            else if(response.code() == 401)
+                System.out.println("Unauthorized access. Please log in first as the administrator.");
+            else
+                System.out.println("Something went wrong. Please check the apikey, otherwise contact the software administrators.");
+            /*
+            String responseBody = response.body().string();
+            JSONObject jObj = new JSONObject(responseBody);
+            System.out.println(jObj.toString(4));
+            */
+        }
         return 0;
     }
 
@@ -43,6 +61,18 @@ public class HealthCheck implements Callable<Integer> {
         }
         reader.close();
         return token;
+    }
+        
+    public String getUserName(File file) throws IOException{
+        String line;
+        String delims = "[:]";
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        while((line = reader.readLine()) != null){
+            String[] tokens = line.split(delims);
+            username = tokens[0];
+        }
+        reader.close();
+        return username;
     }
 
     public static void main(String[] args){
