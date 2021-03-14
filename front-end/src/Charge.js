@@ -153,7 +153,6 @@ class Charge extends React.Component {
         if (value > localStorage.getItem("UsableBatterySizeforcharge")) {
             ev.preventDefault();
             alert("Usable battery size of your car is less than the kw you filled in");
-            window.location.reload();
         }
         if (value <= 0) {
             ev.preventDefault();

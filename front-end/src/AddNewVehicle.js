@@ -38,7 +38,8 @@ class AddNewVehicle extends React.Component {
                 console.error(error);
             })
     }
-    NewVehicle() {
+    NewVehicle(ev) {
+        ev.preventDefault();
         if (localStorage.getItem("carid") == " ") {
             alert("you have not chosen a car");
             window.location.reload();
@@ -78,7 +79,7 @@ class AddNewVehicle extends React.Component {
             fetch('//localhost:8765/evcharge/api/UserCars/' + localStorage.getItem("username") + '/' + localStorage.getItem("carid"), requestOptions)
                 .then((response) => {
                     localStorage.setItem("carid", " ");
-                    window.location.reload();
+                    window.location = "//localhost:3000/ManageMyVehicles";
                 })
                 .catch(error => {
                     console.error(error);
