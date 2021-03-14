@@ -1,23 +1,12 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.json.*;
-
 import okhttp3.*;
-
 import picocli.CommandLine.*;
 
 import java.io.*;
-import java.lang.Object.*;
-import java.lang.String.*;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.concurrent.Callable;
-import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.List;
 
 @Command(name = "SessionsPerProvider", description = "Session Information Per Provider")
 public class SessionsPerProvider implements Callable<Integer> {
@@ -95,6 +84,7 @@ public class SessionsPerProvider implements Callable<Integer> {
             String[] tokens = line.split(delims);
             token = tokens[1];
         }
+        reader.close();
         return token;
     }
 

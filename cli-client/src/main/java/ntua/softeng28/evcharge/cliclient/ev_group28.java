@@ -1,12 +1,7 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 import java.io.*;
 import java.util.concurrent.Callable;

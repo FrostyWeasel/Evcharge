@@ -1,23 +1,12 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.json.*;
-
 import okhttp3.*;
-
 import picocli.CommandLine.*;
 
 import java.io.*;
-import java.lang.Object.*;
-import java.lang.String.*;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.concurrent.Callable;
-import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.List;
 
 @Command(name = "SessionsPerStation", description = "Session Information Per Charging Station")
 public class SessionsPerStation implements Callable<Integer> {
@@ -47,11 +36,11 @@ public class SessionsPerStation implements Callable<Integer> {
         if(isValid(dateFrom) && isValid(dateTo)){
             String url = new String();
             if(format.equals("csv")){
-                url = baseURL + pointID + "/" + dateFrom + "/" + dateTo + "?format=" + format;
+                url = baseURL + stationID + "/" + dateFrom + "/" + dateTo + "?format=" + format;
                 this.httpRequest(url, format);
             }
             else if(format.equals("json")){
-                url = baseURL + pointID + "/" + dateFrom + "/" + dateTo;
+                url = baseURL + stationID + "/" + dateFrom + "/" + dateTo;
                 this.httpRequest(url, format);
             }
             else
@@ -95,6 +84,7 @@ public class SessionsPerStation implements Callable<Integer> {
             String[] tokens = line.split(delims);
             token = tokens[1];
         }
+        reader.close();
         return token;
     }
 

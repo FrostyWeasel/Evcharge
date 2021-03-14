@@ -1,21 +1,11 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.json.*;
-
 import okhttp3.*;
-
 import picocli.CommandLine.*;
 
 import java.io.*;
-import java.lang.*;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.concurrent.Callable;
-import java.util.Arrays;
-import java.util.List;
+
 
 @Command(name = "--sessionsupd", description = "Create new user or modify existing")
 public class SessionsUpd implements Callable<Integer> {
@@ -51,6 +41,10 @@ public class SessionsUpd implements Callable<Integer> {
             .addHeader("X-OBSERVATORY-AUTH", this.getToken(login_token))
             .build();
         Response response = client.newCall(request).execute();
+        if(response.code() == 200)
+            System.out.println("Sessions were updated succesfully!");
+        else
+            System.out.println("Something went wrong, please try again.");
 
         return 0;
     }
@@ -63,6 +57,7 @@ public class SessionsUpd implements Callable<Integer> {
             String[] tokens = line.split(delims);
             token = tokens[1];
         }
+        reader.close();
         return token;
     }
 

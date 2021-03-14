@@ -1,21 +1,11 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.json.*;
-
 import okhttp3.*;
-
 import picocli.CommandLine.*;
 
 import java.io.*;
-import java.lang.*;
-import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.concurrent.Callable;
-import java.util.Arrays;
-import java.util.List;
 
 
 @Command(name = "--resetsessions", description = "Reset System's Sessions")
@@ -54,7 +44,7 @@ public class ResetSessions implements Callable<Integer> {
             String[] tokens = line.split(delims);
             token = tokens[1];
         }
-
+        reader.close();
         return token;
     }
 
