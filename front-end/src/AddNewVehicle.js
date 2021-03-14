@@ -131,6 +131,9 @@ class AddNewVehicle extends React.Component {
     }
     getBrandData(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.brand.id == ev.currentTarget.value) {
                 types.push(item.type);
@@ -153,6 +156,9 @@ class AddNewVehicle extends React.Component {
     }
     chooseType(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.type === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id) {
                 types.push(item.model);
@@ -175,6 +181,9 @@ class AddNewVehicle extends React.Component {
     }
     chooseModel(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.model === decodeURIComponent(ev.currentTarget.value) && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type) {
                 types.push(item.release_year);
@@ -197,6 +206,9 @@ class AddNewVehicle extends React.Component {
     }
     chooseReleaseYear(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.release_year == null) {
                 var bar = "null";
@@ -230,6 +242,9 @@ class AddNewVehicle extends React.Component {
         })
     }
     chooseAddNewVehicle(ev) {
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             var foo = item.usable_battery_size;
             var bar = '' + foo;
