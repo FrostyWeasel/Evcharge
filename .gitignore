@@ -59,4 +59,6 @@ out/
 ### VS Code ###
 .vscode/
 
-./back-end/src/main/resources/application.properties
+back-end/src/main/resources/application.properties
+
+front-end/node_modules/
