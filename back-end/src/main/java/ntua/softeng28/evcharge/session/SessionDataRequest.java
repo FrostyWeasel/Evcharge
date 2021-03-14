@@ -139,7 +139,5 @@ public class SessionDataRequest {
 				+ energyDelivered + ", energyProviderID=" + energyProviderID + ", finishedOn=" + finishedOn
 				+ ", payment=" + payment + ", protocol=" + protocol + ", startedOn=" + startedOn + ", username="
 				+ username + ", vehicleID=" + vehicleID + "]";
-	}
-
-	
+	}	
 }

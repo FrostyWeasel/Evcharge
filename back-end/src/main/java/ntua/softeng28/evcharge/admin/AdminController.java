@@ -66,7 +66,6 @@ public class AdminController {
     @Autowired
     BCryptPasswordEncoder passwordEncoder; 
     
-    //TODO: Return JSON with data
     @PostMapping(path = baseURL + "/admin/system/sessionsupd")
     public ResponseEntity loadChargingData(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -81,6 +80,10 @@ public class AdminController {
                         .build();
 
                 List<SessionCsvRequest> sessions = csvToBean.parse();
+
+                Integer sessionsInUploadedFile = Integer.valueOf(sessions.size());
+                Integer sessionsImported = Integer.valueOf(sessions.size());
+                Integer totalSessionsInDatabase = Integer.valueOf(sessionRepository.findAll().size() + sessions.size());
 
                 logger.info("Received Session Creation request: {}", sessions);
 
@@ -128,13 +131,16 @@ public class AdminController {
                     sessionRepository.save(session);
                 }
 
+                SessionCsvResponse sessionCsvResponse = new SessionCsvResponse(sessionsInUploadedFile, sessionsImported, totalSessionsInDatabase);
+
+                return ResponseEntity.ok().body(sessionCsvResponse);
+
+
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().build();
             }
         }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping(path = baseURL + "/admin/carsupd")

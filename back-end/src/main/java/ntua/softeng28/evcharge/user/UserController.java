@@ -49,12 +49,12 @@ public class UserController {
         return new ResponseEntity<>(user.toString(), HttpStatus.OK);
     }
 
-    @GetMapping(path = baseURL + "/users")
+    @GetMapping(path = baseURL + "/admin/users")
     public ResponseEntity<List<User>> all() {
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping(path = baseURL + "/users/{username}")
+    @GetMapping(path = baseURL + "/admin/users/{username}")
     public ResponseEntity<User> userByUsername(@PathVariable String username) {
 
         Optional<User> user = userRepository.findByUsername(username);
