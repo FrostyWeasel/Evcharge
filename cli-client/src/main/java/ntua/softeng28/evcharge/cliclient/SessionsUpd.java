@@ -6,7 +6,6 @@ import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 

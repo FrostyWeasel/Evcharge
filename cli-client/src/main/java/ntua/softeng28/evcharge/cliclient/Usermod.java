@@ -1,12 +1,11 @@
 package ntua.softeng28.evcharge.cliclient;
 
-import org.json.*;
+//import org.json.*;
 import okhttp3.*;
 import picocli.CommandLine.*;
 
 import java.io.*;
 import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
