@@ -102,6 +102,7 @@ class Charge extends React.Component {
 
     }
     makeSession(ev) {
+        ev.preventDefault();
         var value = parseFloat(localStorage.getItem("energydelivered"));
         if (value <= localStorage.getItem("UsableBatterySizeforcharge") && value > 0) {
             var date = new Date();
@@ -147,12 +148,15 @@ class Charge extends React.Component {
                     window.location = "/";
                 })
                 .catch(error => {
+                    alert("You need to fill in all the fields");
+                    window.location.reload();
                     console.error(error);
                 })
         }
         if (value > localStorage.getItem("UsableBatterySizeforcharge")) {
             ev.preventDefault();
             alert("Usable battery size of your car is less than the kw you filled in");
+            window.location.reload();
         }
         if (value <= 0) {
             ev.preventDefault();
