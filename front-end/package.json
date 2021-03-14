@@ -7,11 +7,17 @@
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.0",
     "axios": "^0.21.1",
-    "jquery": "^3.5.1",
+    "bootstrap": "^4.6.0",
+    "foundation-sites": "^6.6.3",
     "materialize-css": "^1.0.0",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.5.0",
     "react-dom": "^17.0.1",
+    "react-foundation": "^0.9.6",
+    "react-modal": "^3.12.1",
     "react-route-dom": "^5.2.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1"
   },
   "scripts": {
@@ -37,5 +43,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "datatables.net": "^1.10.23",
+    "jquery": "^3.5.1"
   }
 }
