@@ -17,7 +17,7 @@ class LoginSpec extends Specification {
 
 	private final static int EXPECTED_PORT = 8765;
 
-	def baseurl = "http://localhost:8765/evcharge/api/"
+	def baseurl = "https://localhost:8765/evcharge/api/"
 
 	def "check simple login-logout functionality"(){
 		given:

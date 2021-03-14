@@ -53,7 +53,7 @@ public class EnergyProviderController {
         return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@PutMapping(path = baseURL + "admin/payments/{id}")
+	@PutMapping(path = baseURL + "admin/energyproviders/{id}")
 	public ResponseEntity<EnergyProvider> updateById(@RequestBody EnergyProvider newProvider, @PathVariable Long id) {
 
 		EnergyProvider providertoupdate = energyproviderrepository.findById(id).orElse(null);

@@ -18,7 +18,7 @@ class ChargingPointControllerSpec extends Specification{
 
 	private final static int EXPECTED_PORT = 8765
 
-	def baseurl = "http://localhost:8765/evcharge/api/"
+	def baseurl = "https://localhost:8765/evcharge/api/"
 
 	def "checking if a get all points request returns 200"(){
 		given:

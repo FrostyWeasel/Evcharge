@@ -35,7 +35,7 @@ class AdminControllerSpec extends Specification{
 
 	private final static int EXPECTED_PORT = 8765
 
-	def baseurl = "http://localhost:8765/evcharge/api/"
+	def baseurl = "https://localhost:8765/evcharge/api/"
 
 	def "testing a healthcheck request; should return 200 on success"(){
 		given:
