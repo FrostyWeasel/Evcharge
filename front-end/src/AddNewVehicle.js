@@ -196,11 +196,20 @@ class AddNewVehicle extends React.Component {
     chooseReleaseYear(ev) {
         var types = [];
         this.state.vehicles.forEach(function (item) {
-            var foo = item.release_year;
-            var bar = '' + foo;
-            if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
-                types.push(item.usable_battery_size);
-                localStorage.setItem('carrelease_year', bar);
+            if (item.release_year == null) {
+                var bar = "null";
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
+                    types.push(item.usable_battery_size);
+                    localStorage.setItem('carrelease_year', null);
+                }
+            }
+            else {
+                var foo = item.release_year;
+                var bar = '' + foo;
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
+                    types.push(item.usable_battery_size);
+                    localStorage.setItem('carrelease_year', bar);
+                }
             }
         })
 
@@ -220,9 +229,17 @@ class AddNewVehicle extends React.Component {
         this.state.vehicles.forEach(function (item) {
             var foo = item.usable_battery_size;
             var bar = '' + foo;
-            if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && localStorage.getItem("carrelease_year") == item.release_year) {
-                localStorage.setItem('carusable_battery_size', bar);
-                localStorage.setItem('carid', item.id);
+            if (localStorage.getItem("carrelease_year") == "null") {
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && item.release_year == null) {
+                    localStorage.setItem('carusable_battery_size', bar);
+                    localStorage.setItem('carid', item.id);
+                }
+            }
+            else {
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && localStorage.getItem("carrelease_year") == item.release_year) {
+                    localStorage.setItem('carusable_battery_size', bar);
+                    localStorage.setItem('carid', item.id);
+                }
             }
         })
     }
