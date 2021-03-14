@@ -1,4 +1,4 @@
-package IntegrationTests
+package ntua.softeng28.evcharge.IntegrationTests
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 
@@ -14,13 +14,13 @@ import spock.lang.Stepwise
 @Stepwise
 @SpringBootTest(webEnvironment=DEFINED_PORT)
 @TestPropertySource(locations="classpath:application-test.properties")
-class UserControllerSpec extends Specification{
+class ChargingPointControllerSpec extends Specification{
 
-	private final static int EXPECTED_PORT = 8765;
+	private final static int EXPECTED_PORT = 8765
 
 	def baseurl = "https://localhost:8765/evcharge/api/"
 
-	def "a get all users request should return 200 status code"(){
+	def "checking if a get all points request returns 200"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -39,7 +39,7 @@ class UserControllerSpec extends Specification{
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"admin/users",
+		def getResponse = client.get(path:"chargingPoints",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
@@ -48,7 +48,7 @@ class UserControllerSpec extends Specification{
 		getResponse.status == 200
 	}
 
-	def "a get request with invalid username should throw an exception"(){
+	def "checking if a get request with wrong id returns bad request exception"(){
 		given:
 		def client = new RESTClient(baseurl)
 
@@ -67,7 +67,7 @@ class UserControllerSpec extends Specification{
 
 		def header=["X-OBSERVATORY-AUTH":token]
 
-		def getResponse = client.get(path:"admin/users/BlackMamba",
+		def getResponse = client.get(path:"chargingPoints/1",
 		requestContentType: MediaType.APPLICATION_JSON,
 		contentType: MediaType.APPLICATION_JSON,
 		headers: header)
@@ -75,33 +75,5 @@ class UserControllerSpec extends Specification{
 		then:
 		HttpResponseException e = thrown()
 		e.statusCode == 400
-	}
-
-	def "checking creating a new user functionality"(){
-		given:
-		def client = new RESTClient(baseurl)
-
-		Map<String, Object> user = new HashMap<>();
-		user.put("username", "admin");
-		user.put("password", "petrol4ever");
-
-		when:
-		def loginResponse = client.post(path:"login",
-		requestContentType: MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-		contentType: MediaType.APPLICATION_JSON,
-		body: user)
-
-		def token = loginResponse.getData().toString()
-		token = token.substring(7,token.length()-1)
-
-		def header=["X-OBSERVATORY-AUTH":token]
-
-		def postResponse = client.post(path:"admin/usermod/BlackMamba/24",
-		requestContentType: MediaType.APPLICATION_JSON,
-		contentType: MediaType.TEXT_PLAIN,
-		headers: header)
-
-		then:
-		postResponse.status == 200
 	}
 }

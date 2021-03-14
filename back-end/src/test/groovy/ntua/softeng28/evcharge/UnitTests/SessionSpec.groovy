@@ -1,4 +1,4 @@
-package UnitTests
+package ntua.softeng28.evcharge.UnitTests
 
 import java.sql.Timestamp
 
