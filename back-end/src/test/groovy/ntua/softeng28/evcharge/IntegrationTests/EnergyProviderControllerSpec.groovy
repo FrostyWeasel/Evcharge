@@ -85,7 +85,7 @@ class EnergyProviderControllerSpec extends Specification {
 				
 			def header=["X-OBSERVATORY-AUTH":token]
 			
-		    def postResponse = client.post(path:"energyproviders",
+		    def postResponse = client.post(path:"admin/energyproviders",
 								         requestContentType: MediaType.APPLICATION_JSON,
 									     contentType: MediaType.APPLICATION_JSON,
 										 headers: header,

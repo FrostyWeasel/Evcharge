@@ -53,22 +53,22 @@ class SessionSpec extends Specification{
 
 	@Autowired
 	ChargingPointRepository chargingPointRepo
-	
+
 	@Autowired
 	OperatorRepository operatorrepo
 
-    @Autowired
+	@Autowired
 	EnergyProviderRepository energyproviderrepo
 
-    @Autowired
+	@Autowired
 	private UserRepository userrepo
 
-    @Autowired
+	@Autowired
 	SessionRepository sessionrepo
 
 	def "testing a saving operation"(){
 		given:
-        def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
+		def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
 		def acCharger = new AcCharger()
 		acCharger.setUsable_phases(3)
 		acCharger.setMax_power(1000.0F)
@@ -107,22 +107,22 @@ class SessionSpec extends Specification{
 		car.setUsable_battery_size(123)
 		car.setVariant("who cares")
 
-        def operator = new Operator("Kobe Bryant")
+		def operator = new Operator("Kobe Bryant")
 		def chargingpoint=new ChargingPoint(operator)
 
-        def provider = new EnergyProvider("Energy",100,200,300,150,250)
+		def provider = new EnergyProvider("Energy",100,200,300,150,250)
 
-        def user = new User()
+		def user = new User()
 		user.setUsername("Lebron James")
 		user.setPassword("2020 Champion")
 		user.setLoggedIn(false)
 		user.setRole("Basketball Player")
-        def userCars = new HashSet<Car>()
+		def userCars = new HashSet<Car>()
 		userCars.add(car)
 		user.setCars(userCars)
 
-		Timestamp ts1 = Timestamp.valueOf("2018-09-01")
-		Timestamp ts2 = Timestamp.valueOf("2019-09-01")
+		Timestamp ts1 = Timestamp.valueOf("2018-09-01 09:01:16")
+		Timestamp ts2 = Timestamp.valueOf("2019-09-01 09:01:16")
 		def session = new Session(1L,ts1,ts2,"random","card",124.4F,45,car,chargingpoint,provider,user)
 
 		when:
@@ -131,10 +131,10 @@ class SessionSpec extends Specification{
 		def savedCurvePoint=curvepointrepo.save(curvePoint)
 		def savedDcCharger=dcrepo.save(dcCharger)
 		def savedCar=carrepo.save(car)
-        def savedUser=userrepo.save(user)
+		def savedUser=userrepo.save(user)
 		def savedoperator=operatorrepo.save(operator)
 		def savedchargingpoint=chargingPointRepo.save(chargingpoint)
-        def savedprovider=energyproviderrepo.save(provider)
+		def savedprovider=energyproviderrepo.save(provider)
 		def savedSession=sessionrepo.save(session)
 
 		def List<Session> sessionsfromDB=sessionrepo.findAll()
@@ -143,4 +143,253 @@ class SessionSpec extends Specification{
 		sessionsfromDB.size() == 1
 	}
 
+	def "testing reading operation"(){
+		given:
+		def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
+		def acCharger = new AcCharger()
+		acCharger.setUsable_phases(3)
+		acCharger.setMax_power(1000.0F)
+		acCharger.setPower_per_charging_point(powerPerPoint)
+		String[] ports = ["1", "2", "3"]
+		acCharger.setPorts(ports)
+
+		def brand = new Brand()
+		brand.setId("1")
+		brand.setName("Volvo")
+
+		def curvePoint = new ChargingCurvePoint()
+		curvePoint.setPercentage(75)
+		curvePoint.setPower(645)
+		def curvePointSet = new HashSet()
+		curvePointSet.add(curvePoint)
+
+		def dcCharger = new DcCharger()
+		dcCharger.setPorts(ports)
+		dcCharger.setCharging_curve(curvePointSet)
+		dcCharger.setMax_power(12345)
+		dcCharger.setIs_default_charging_curve(true)
+
+		def consumption = new EnergyConsumption()
+		consumption.setAverage_consumption(34)
+
+		def car = new Car()
+		car.setAc_charger(acCharger)
+		car.setBrand(brand)
+		car.setDc_charger(dcCharger)
+		car.setEnergy_consumption(consumption)
+		car.setId("1")
+		car.setModel("who knows")
+		car.setRelease_year(2015)
+		car.setType("dunno")
+		car.setUsable_battery_size(123)
+		car.setVariant("who cares")
+
+		def operator = new Operator("Kobe Bryant")
+		def chargingpoint=new ChargingPoint(operator)
+
+		def provider = new EnergyProvider("Energy",100,200,300,150,250)
+
+		def user = new User()
+		user.setUsername("Lebron James")
+		user.setPassword("2020 Champion")
+		user.setLoggedIn(false)
+		user.setRole("Basketball Player")
+		def userCars = new HashSet<Car>()
+		userCars.add(car)
+		user.setCars(userCars)
+
+		Timestamp ts1 = Timestamp.valueOf("2018-09-01 09:01:16")
+		Timestamp ts2 = Timestamp.valueOf("2019-09-01 09:01:16")
+		def session = new Session(1L,ts1,ts2,"random","card",124.4F,45,car,chargingpoint,provider,user)
+
+		when:
+		def savedAcCharger=acrepo.save(acCharger)
+		def savedBrand=brandrepo.save(brand)
+		def savedCurvePoint=curvepointrepo.save(curvePoint)
+		def savedDcCharger=dcrepo.save(dcCharger)
+		def savedCar=carrepo.save(car)
+		def savedUser=userrepo.save(user)
+		def savedoperator=operatorrepo.save(operator)
+		def savedchargingpoint=chargingPointRepo.save(chargingpoint)
+		def savedprovider=energyproviderrepo.save(provider)
+		def savedSession=sessionrepo.save(session)
+
+		def List<Session> sessionsfromDB=sessionrepo.findAll()
+
+		then:
+		sessionsfromDB[0].getCar().getId()==savedCar.getId()
+
+		and:
+		sessionsfromDB.size()==1
+	}
+
+	def "testing deletion operation"(){
+		given:
+		def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
+		def acCharger = new AcCharger()
+		acCharger.setUsable_phases(3)
+		acCharger.setMax_power(1000.0F)
+		acCharger.setPower_per_charging_point(powerPerPoint)
+		String[] ports = ["1", "2", "3"]
+		acCharger.setPorts(ports)
+
+		def brand = new Brand()
+		brand.setId("1")
+		brand.setName("Volvo")
+
+		def curvePoint = new ChargingCurvePoint()
+		curvePoint.setPercentage(75)
+		curvePoint.setPower(645)
+		def curvePointSet = new HashSet()
+		curvePointSet.add(curvePoint)
+
+		def dcCharger = new DcCharger()
+		dcCharger.setPorts(ports)
+		dcCharger.setCharging_curve(curvePointSet)
+		dcCharger.setMax_power(12345)
+		dcCharger.setIs_default_charging_curve(true)
+
+		def consumption = new EnergyConsumption()
+		consumption.setAverage_consumption(34)
+
+		def car = new Car()
+		car.setAc_charger(acCharger)
+		car.setBrand(brand)
+		car.setDc_charger(dcCharger)
+		car.setEnergy_consumption(consumption)
+		car.setId("1")
+		car.setModel("who knows")
+		car.setRelease_year(2015)
+		car.setType("dunno")
+		car.setUsable_battery_size(123)
+		car.setVariant("who cares")
+
+		def operator = new Operator("Kobe Bryant")
+		def chargingpoint=new ChargingPoint(operator)
+
+		def provider = new EnergyProvider("Energy",100,200,300,150,250)
+
+		def user = new User()
+		user.setUsername("Lebron James")
+		user.setPassword("2020 Champion")
+		user.setLoggedIn(false)
+		user.setRole("Basketball Player")
+		def userCars = new HashSet<Car>()
+		userCars.add(car)
+		user.setCars(userCars)
+
+		Timestamp ts1 = Timestamp.valueOf("2018-09-01 09:01:16")
+		Timestamp ts2 = Timestamp.valueOf("2019-09-01 09:01:16")
+		def session = new Session(1L,ts1,ts2,"random","card",124.4F,45,car,chargingpoint,provider,user)
+
+		when:
+		def savedAcCharger=acrepo.save(acCharger)
+		def savedBrand=brandrepo.save(brand)
+		def savedCurvePoint=curvepointrepo.save(curvePoint)
+		def savedDcCharger=dcrepo.save(dcCharger)
+		def savedCar=carrepo.save(car)
+		def savedUser=userrepo.save(user)
+		def savedoperator=operatorrepo.save(operator)
+		def savedchargingpoint=chargingPointRepo.save(chargingpoint)
+		def savedprovider=energyproviderrepo.save(provider)
+		def savedSession=sessionrepo.save(session)
+
+		def List<Session> sessionsBeforeDeletion=sessionrepo.findAll()
+
+		sessionrepo.deleteAll()
+
+		def List<Session> sessionsAfterDeletion=sessionrepo.findAll()
+
+		then:
+		sessionsBeforeDeletion.size() == 1
+
+		and:
+		sessionsAfterDeletion.size() == 0
+	}
+
+	def "testing update operation"(){
+		given:
+		def powerPerPoint = new PowerPerChargingPoint(2.0,2.3,3.7,7.4,11,16,22,43)
+		def acCharger = new AcCharger()
+		acCharger.setUsable_phases(3)
+		acCharger.setMax_power(1000.0F)
+		acCharger.setPower_per_charging_point(powerPerPoint)
+		String[] ports = ["1", "2", "3"]
+		acCharger.setPorts(ports)
+
+		def brand = new Brand()
+		brand.setId("1")
+		brand.setName("Volvo")
+
+		def curvePoint = new ChargingCurvePoint()
+		curvePoint.setPercentage(75)
+		curvePoint.setPower(645)
+		def curvePointSet = new HashSet()
+		curvePointSet.add(curvePoint)
+
+		def dcCharger = new DcCharger()
+		dcCharger.setPorts(ports)
+		dcCharger.setCharging_curve(curvePointSet)
+		dcCharger.setMax_power(12345)
+		dcCharger.setIs_default_charging_curve(true)
+
+		def consumption = new EnergyConsumption()
+		consumption.setAverage_consumption(34)
+
+		def car = new Car()
+		car.setAc_charger(acCharger)
+		car.setBrand(brand)
+		car.setDc_charger(dcCharger)
+		car.setEnergy_consumption(consumption)
+		car.setId("1")
+		car.setModel("who knows")
+		car.setRelease_year(2015)
+		car.setType("dunno")
+		car.setUsable_battery_size(123)
+		car.setVariant("who cares")
+
+		def operator = new Operator("Kobe Bryant")
+		def chargingpoint=new ChargingPoint(operator)
+
+		def provider = new EnergyProvider("Energy",100,200,300,150,250)
+
+		def user = new User()
+		user.setUsername("Lebron James")
+		user.setPassword("2020 Champion")
+		user.setLoggedIn(false)
+		user.setRole("Basketball Player")
+		def userCars = new HashSet<Car>()
+		userCars.add(car)
+		user.setCars(userCars)
+
+		Timestamp ts1 = Timestamp.valueOf("2018-09-01 09:01:16")
+		Timestamp ts2 = Timestamp.valueOf("2019-09-01 09:01:16")
+		def session = new Session(1L,ts1,ts2,"random","card",124.4F,45,car,chargingpoint,provider,user)
+
+		when:
+		def savedAcCharger=acrepo.save(acCharger)
+		def savedBrand=brandrepo.save(brand)
+		def savedCurvePoint=curvepointrepo.save(curvePoint)
+		def savedDcCharger=dcrepo.save(dcCharger)
+		def savedCar=carrepo.save(car)
+		def savedUser=userrepo.save(user)
+		def savedoperator=operatorrepo.save(operator)
+		def savedchargingpoint=chargingPointRepo.save(chargingpoint)
+		def savedprovider=energyproviderrepo.save(provider)
+		def savedSession=sessionrepo.save(session)
+
+		def List<Session> sessionsFromDB=sessionrepo.findAll()
+		sessionsFromDB[0].getCar().getBrand().setName("Toyota")
+		sessionsFromDB[0].getCar().setModel("Corolla")
+		sessionrepo.save(sessionsFromDB[0])
+		
+        sessionsFromDB=sessionrepo.findAll()
+
+		then:
+		sessionsFromDB.size() == 1
+
+		and:
+		sessionsFromDB[0].getCar().getBrand().getName()=="Toyota"
+		sessionsFromDB[0].getCar().getModel()=="Corolla"
+	}
 }
