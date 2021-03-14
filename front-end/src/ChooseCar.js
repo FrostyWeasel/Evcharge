@@ -85,7 +85,7 @@ class ChooseCar extends React.Component {
           localStorage.setItem("payment", " ");
           localStorage.setItem("cost", " ");
           localStorage.setItem("energydelivered", " ");
-          window.location = "http://localhost:3000/Charge";
+          window.location = "//localhost:3000/Charge";
         })
       })
       .catch(error => {

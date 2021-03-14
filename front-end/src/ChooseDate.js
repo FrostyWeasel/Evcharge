@@ -127,7 +127,7 @@ class ChooseDate extends React.Component {
       }
     }
     else {
-      alert("It can not be the date from after the date to");
+      alert("It can not be the date From after the date To");
       window.location = "//localhost:3000/ChooseDate";
     }
   }

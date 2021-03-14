@@ -53,7 +53,7 @@ class SessionsPerPoint extends React.Component {
         $(this.refs.main).on("click", ".pointsessions", function (ev) {
           localStorage.setItem('PointDataId', ev.currentTarget.id);
           localStorage.setItem("value", "point");
-          window.location = "http://localhost:3000/ChooseDate";
+          window.location = "//localhost:3000/ChooseDate";
         })
       })
       .catch(error => {

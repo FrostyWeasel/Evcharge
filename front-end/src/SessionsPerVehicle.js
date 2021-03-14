@@ -74,7 +74,7 @@ class SessionsPerVehicle extends React.Component {
         $(this.refs.main).on("click", ".SessionsBtn", function (ev) {
           localStorage.setItem('VehicledataId', ev.currentTarget.id);
           localStorage.setItem("value", "vehicle");
-          window.location = "http://localhost:3000/ChooseDate";
+          window.location = "//localhost:3000/ChooseDate";
         })
       })
       .catch(error => {

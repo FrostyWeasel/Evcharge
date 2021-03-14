@@ -38,8 +38,9 @@ class AddNewVehicle extends React.Component {
                 console.error(error);
             })
     }
-    NewVehicle() {
-        if (localStorage.getItem("carid") == " ") {
+    NewVehicle(ev) {
+        ev.preventDefault();
+        if (localStorage.getItem("Carid") == " ") {
             alert("you have not chosen a car");
             window.location.reload();
         }
@@ -57,7 +58,7 @@ class AddNewVehicle extends React.Component {
                 })
                 .then((data) => {
                     data.forEach(function (item) {
-                        if (item.id == localStorage.getItem("carid")) {
+                        if (item.id == localStorage.getItem("Carid")) {
                             alert("You already have this car");
                             window.location = "//localhost:3000/AddNewVehicle";
                         }
@@ -75,10 +76,10 @@ class AddNewVehicle extends React.Component {
                 },
                 body: JSON.stringify({ title: 'NewVehicle' })
             }
-            fetch('//localhost:8765/evcharge/api/UserCars/' + localStorage.getItem("username") + '/' + localStorage.getItem("carid"), requestOptions)
+            fetch('//localhost:8765/evcharge/api/UserCars/' + localStorage.getItem("username") + '/' + localStorage.getItem("Carid"), requestOptions)
                 .then((response) => {
-                    localStorage.setItem("carid", " ");
-                    window.location.reload();
+                    localStorage.setItem("Carid", " ");
+                    window.location = "//localhost:3000/ManageMyVehicles";
                 })
                 .catch(error => {
                     console.error(error);
@@ -117,10 +118,9 @@ class AddNewVehicle extends React.Component {
                                         <label for="battery_size">Battery size</label>
                                         <select disabled id="battery_size" name="battery_size" onChange={this.chooseAddNewVehicle.bind(this)}>
                                         </select>
-                                        <button id="AddNewVehicle" className="btn" onClick={this.NewVehicle.bind(this)}>Add new vehicle</button>
                                     </div>
-
                                 </div>
+                                <button id="AddNewVehicle" className="btn" onClick={this.NewVehicle.bind(this)}>Add new vehicle</button>
                             </form>
                         </div>
                     </div>
@@ -131,10 +131,14 @@ class AddNewVehicle extends React.Component {
     }
     getBrandData(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.brand.id == ev.currentTarget.value) {
                 types.push(item.type);
                 localStorage.setItem('carbrand', item.brand.id);
+                localStorage.setItem('Carid', " ");
             }
         })
 
@@ -152,10 +156,14 @@ class AddNewVehicle extends React.Component {
     }
     chooseType(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.type === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id) {
                 types.push(item.model);
                 localStorage.setItem('cartype', item.type);
+                localStorage.setItem('Carid', " ");
             }
         })
 
@@ -173,10 +181,14 @@ class AddNewVehicle extends React.Component {
     }
     chooseModel(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             if (item.model === decodeURIComponent(ev.currentTarget.value) && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type) {
                 types.push(item.release_year);
                 localStorage.setItem('carmodel', item.model);
+                localStorage.setItem('Carid', " ");
             }
         })
 
@@ -194,12 +206,26 @@ class AddNewVehicle extends React.Component {
     }
     chooseReleaseYear(ev) {
         var types = [];
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
-            var foo = item.release_year;
-            var bar = '' + foo;
-            if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
-                types.push(item.usable_battery_size);
-                localStorage.setItem('carrelease_year', bar);
+            if (item.release_year == null) {
+                var bar = "null";
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
+                    types.push(item.usable_battery_size);
+                    localStorage.setItem('carrelease_year', null);
+                    localStorage.setItem('Carid', " ");
+                }
+            }
+            else {
+                var foo = item.release_year;
+                var bar = '' + foo;
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model) {
+                    types.push(item.usable_battery_size);
+                    localStorage.setItem('carrelease_year', bar);
+                    localStorage.setItem('Carid', " ");
+                }
             }
         })
 
@@ -215,13 +241,24 @@ class AddNewVehicle extends React.Component {
             )
         })
     }
-    chooseAddNewVehicle(ev) {//?
+    chooseAddNewVehicle(ev) {
+        if(ev.currentTarget.value=="no"){
+            localStorage.setItem('Carid', " ");
+        }
         this.state.vehicles.forEach(function (item) {
             var foo = item.usable_battery_size;
             var bar = '' + foo;
-            if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && localStorage.getItem("carrelease_year") == item.release_year) {
-                localStorage.setItem('carusable_battery_size', bar);
-                localStorage.setItem('carid', item.id);
+            if (localStorage.getItem("carrelease_year") == "null") {
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && item.release_year == null) {
+                    localStorage.setItem('carusable_battery_size', bar);
+                    localStorage.setItem('Carid', item.id);
+                }
+            }
+            else {
+                if (bar === ev.currentTarget.value && localStorage.getItem("carbrand") == item.brand.id && localStorage.getItem("cartype") == item.type && localStorage.getItem("carmodel") == item.model && localStorage.getItem("carrelease_year") == item.release_year) {
+                    localStorage.setItem('carusable_battery_size', bar);
+                    localStorage.setItem('Carid', item.id);
+                }
             }
         })
     }
